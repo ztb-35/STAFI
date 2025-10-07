@@ -1,524 +1,564 @@
-# bit_flip_multi.py  — revised to mirror a working openpilot method
-import os, re, math, json, time, argparse, sys, io
-from typing import List, Tuple, Dict, Any
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Bit-flip search -> JSON plan only (no ONNX export).
+
+Workflow:
+  1) Accumulate importance |dL/dw| on proxy training batches.
+  2) Select Top-W weights (default 50).
+  3) For each candidate bit in those weights:
+       flip once -> eval loss on cached val batches -> revert
+     Rank by Δloss and return Top-B bits (default 50).
+  4) Save a JSON file with:
+       - meta (settings, timestamp)
+       - ranked (top-B with dloss/old/new)
+       - plan   (just {name, flat, bit} for your flipper script)
+
+Assumes:
+  - from openpilot_torch import OpenPilotModel
+  - from data import Comma2k19SequenceDataset
+Adjust imports if paths differ.
+"""
+
+import os
+import sys
+import json
+import math
+import argparse
+from datetime import datetime
+from typing import Dict, List, Tuple, Any, Optional
 
 import numpy as np
 import torch
 import torch.nn as nn
-from torch.utils.data import DataLoader
+import json, torch
 from datetime import datetime
-
-import onnx
 import onnxruntime as ort
-
-# ---- your project imports ----
-from openpilot_torch import OpenPilotModel
+# --------- replace if your module paths differ ----------
+from openpilot_torch import OpenPilotModel, load_weights_from_onnx
 from data import Comma2k19SequenceDataset
 
-# ----------------- tiny tee logger (capture stdout+stderr but still print) -----------------
-class _Tee:
-    def __init__(self, *streams): self.streams = streams
-    def write(self, data):         [s.write(data) for s in self.streams]
-    def flush(self):               [s.flush() for s in self.streams]
-
-def start_log_capture():
-    buf = io.StringIO()
-    orig_out, orig_err = sys.stdout, sys.stderr
-    sys.stdout = _Tee(orig_out, buf); sys.stderr = _Tee(orig_err, buf)
-    def restore():
-        sys.stdout = orig_out; sys.stderr = orig_err
-    return restore, buf
-
-# ----------------- losses & helpers -----------------
+# ---------------- Loss pieces ----------------
 distance_func = nn.CosineSimilarity(dim=2)
 cls_loss = nn.CrossEntropyLoss()
 reg_loss = nn.SmoothL1Loss(reduction='none')
 
-def timestamp_id() -> str:
-    return datetime.now().strftime("%Y%m%d-%H%M%S")
-
-def make_supercombo_inputs(batch, device, K: int = 33):
-    seq_imgs   = batch['seq_input_img'].to(device, non_blocking=True)      # (B,T,C,H,W)
-    seq_labels = batch['seq_future_poses'].to(device, non_blocking=True)   # (B,T,K,3)
-
+def make_supercombo_inputs(batch, device):
+    """
+    batch:
+      - 'seq_input_img': (B,T,C,H,W) (C=6 or 12)
+      - 'seq_future_poses': (B,T,33,3)
+    returns:
+      imgs12 (B,12,H,W), desire (B,8), traffic (B,2), h0 (B,512), traj_gt (B,33,3)
+    """
+    seq_imgs   = batch['seq_input_img'].to(device, non_blocking=True)
+    seq_labels = batch['seq_future_poses'].to(device, non_blocking=True)
     B, T, C, H, W = seq_imgs.shape
     if C == 6:
-        seq_imgs = torch.cat([seq_imgs, seq_imgs], dim=2)  # (B,T,12,H,W)
-
-    imgs12  = seq_imgs[:, -1]                      # (B,12,H,W)
-    desire  = torch.zeros((B, 8),   device=device)
+        seq_imgs = torch.cat([seq_imgs, seq_imgs], dim=2)  # -> (B,T,12,H,W)
+    imgs12  = seq_imgs[:, -1]                              # (B,12,H,W)
+    desire  = torch.zeros((B, 8),  device=device)
     traffic = torch.tensor([[1., 0.]], device=device).repeat(B, 1)
     h0      = torch.zeros((B, 512), device=device)
-    traj_gt = seq_labels[:, -1, :, :]              # (B,K,3)
+    traj_gt = seq_labels[:, -1, :, :]                      # (B,33,3)
     return imgs12, desire, traffic, h0, traj_gt
 
+@torch.no_grad()
+def plan_loss_on_batch(model, pack, use_amp=True) -> float:
+    imgs12, desire, traffic, h0, gt = pack
+    with torch.cuda.amp.autocast(enabled=use_amp):
+        out  = model(imgs12, desire, traffic, h0)       # (B, N)
+        B    = out.shape[0]
+        plan = out[:, :5 * 991].view(B, 5, 991)
+        pred_cls = plan[:, :, -1]                       # (B,5)
+        params_flat = plan[:, :, :-1]                   # (B,5,990)
+        pred_traj = params_flat.view(B, 5, 2, 33, 15)[:, :, 0, :, :3]  # mean xyz
+
+        pred_end = pred_traj[:, :, 32, :]                              # (B,5,3)
+        gt_end   = gt[:, 32:33, :].expand(-1, 5, -1)                   # (B,5,3)
+        distances = 1 - distance_func(pred_end, gt_end)                # (B,5)
+        index = distances.argmin(dim=1)                                # (B,)
+
+        gt_cls = index
+        row_idx = torch.arange(len(gt_cls), device=gt_cls.device)
+        best_traj = pred_traj[row_idx, gt_cls, :, :]                   # (B,33,3)
+
+        cls_loss_ = cls_loss(pred_cls, gt_cls)
+        reg_loss_ = reg_loss(best_traj, gt).mean(dim=(0,1))
+        loss = cls_loss_ + reg_loss_.mean()
+    return float(loss.item())
+
+@torch.no_grad()
+def eval_loss_cached(model, cached_batches, use_amp=True) -> float:
+    model.eval()
+    vals = [plan_loss_on_batch(model, cb, use_amp) for cb in cached_batches]
+    return float(np.mean(vals)) if vals else float('nan')
+
+# --------------- Importance accumulation ---------------
 def score_tensor(p: torch.Tensor, mode: str) -> torch.Tensor:
     with torch.no_grad():
-        if mode == 'w':      return p.detach().abs()
-        if p.grad is None:   return torch.zeros_like(p, dtype=torch.float32)
-        if mode == 'grad':   return p.grad.detach().abs()
-        if mode in ('gradxw','taylor1'): return (p.grad.detach() * p.detach()).abs()
-        if mode == 'fisher': return (p.grad.detach() ** 2)
-        raise ValueError(f'unknown mode {mode}')
+        if mode == 'w':       return p.detach().abs()
+        if p.grad is None:    return torch.zeros_like(p, dtype=torch.float32)
+        if mode == 'grad':    return p.grad.detach().abs()
+        if mode in ('taylor1','gradxw'): return (p.grad.detach() * p.detach()).abs()
+        if mode == 'fisher':  return (p.grad.detach() ** 2)
+        raise ValueError(f"unknown mode: {mode}")
 
-# ----------------- importance accumulation -----------------
-def accumulate_importance(model: nn.Module, data_loader: DataLoader,
-                          device: torch.device, num_batches: int,
-                          mode: str = 'gradxw', use_amp: bool = True) -> Dict[str, torch.Tensor]:
+def accumulate_importance(model, loader, device, num_batches=4, mode='gradxw', use_amp=True) -> Dict[str, torch.Tensor]:
     scaler = torch.cuda.amp.GradScaler(enabled=use_amp)
-    running: Dict[str, torch.Tensor] = {}
-    opt = torch.optim.SGD(model.parameters(), lr=0.0)
-
     model.train()
-    it = iter(data_loader)
+    it = iter(loader)
+    out: Dict[str, torch.Tensor] = {}
     processed = 0
     for _ in range(num_batches):
         try:
-            batch = next(it)
+            b = next(it)
         except StopIteration:
             break
-
-        imgs12, desire, traffic, h0, gt = make_supercombo_inputs(batch, device)
-        opt.zero_grad(set_to_none=True)
-
+        imgs12, desire, traffic, h0, gt = make_supercombo_inputs(b, device)
+        model.zero_grad(set_to_none=True)
         with torch.cuda.amp.autocast(enabled=use_amp):
-            out = model(imgs12, desire, traffic, h0)      # (B, ~6609/6690 depending on variant)
-            B = out.shape[0]
-            plan = out[:, :5 * 991].view(B, 5, 991)
-
-            pred_cls = plan[:, :, -1]
-            params_flat = plan[:, :, :-1]
-            pred_trajectory = params_flat.view(B, 5, 2, 33, 15)[:, :, 0, :, :3]
-
+            y   = model(imgs12, desire, traffic, h0)
+            B   = y.shape[0]
+            pl  = y[:, :5*991].view(B, 5, 991)
+            cls = pl[:, :, -1]
+            pf  = pl[:, :, :-1]
+            traj= pf.view(B,5,2,33,15)[:, :, 0, :, :3]
             with torch.no_grad():
-                pred_end = pred_trajectory[:, :, 32, :]
-                gt_end   = gt[:, 32:33, :].expand(-1, 5, -1)
-                distances = 1 - distance_func(pred_end, gt_end)
-                index = distances.argmin(dim=1)
-
-            gt_cls = index
-            row_idx = torch.arange(len(gt_cls), device=gt_cls.device)
-            best_traj = pred_trajectory[row_idx, gt_cls, :, :]
-
-            cls_loss_ = cls_loss(pred_cls, gt_cls)
-            reg_loss_ = reg_loss(best_traj, gt).mean(dim=(0, 1))
-            loss = cls_loss_ + reg_loss_.mean()
-
+                pend = traj[:, :, 32, :]
+                gend = gt[:, 32:33, :].expand(-1,5,-1)
+                d    = 1 - distance_func(pend, gend)
+                idx  = d.argmin(dim=1)
+            gt_cls = idx
+            row = torch.arange(len(gt_cls), device=gt_cls.device)
+            best_traj = traj[row, gt_cls, :, :]
+            loss = cls_loss(cls, gt_cls) + reg_loss(best_traj, gt).mean(dim=(0,1)).mean()
         scaler.scale(loss).backward()
-        scaler.unscale_(opt)
+        scaler.unscale_(torch.optim.SGD(model.parameters(), lr=0.0))
         scaler.update()
-
         with torch.no_grad():
-            for name, p in model.named_parameters():
-                if not p.requires_grad: continue
-                s = score_tensor(p, mode).detach()
-                running[name] = s.clone() if name not in running else (running[name] + s)
+            for n, p in model.named_parameters():
+                if p.requires_grad and p.dtype == torch.float32:
+                    s = score_tensor(p, mode)
+                    out[n] = s.clone() if n not in out else out[n].add_(s)
         processed += 1
-
-    if processed > 0:
-        for k in running.keys(): running[k] = running[k] / float(processed)
-    return running
-
-def flatten_scores(score_dict: Dict[str, torch.Tensor]) -> Tuple[torch.Tensor, List[Tuple[str,int,int]]]:
-    flats, mapping, offset = [], [], 0
-    for name, t in score_dict.items():
-        v = t.reshape(-1).cpu()
-        flats.append(v)
-        mapping.append((name, t.numel(), offset))
-        offset += t.numel()
-    if not flats:
-        return torch.empty(0), []
-    return torch.cat(flats, dim=0), mapping
-
-# ----------------- bit flip (tuple-assign, safe) -----------------
-def _unravel(flat_idx: int, shape: torch.Size):
-    return np.unravel_index(int(flat_idx), tuple(shape), order='C')
-
-@torch.no_grad()
-def flip_bit_assign_(t: torch.Tensor, index_tuple, bit_idx: int) -> float:
-    """
-    Flip one bit of a single scalar and assign it back to tensor t at index_tuple.
-    Returns the new float value (or leaves unchanged if it would become non-finite).
-    """
-    # pull scalar value
-    val = float(t[index_tuple].item())
-    # make a 1-element float32 tensor, view as int32, flip, view back
-    buf = torch.tensor([val], dtype=torch.float32)
-    int_view = buf.view(torch.int32)
-    int_view[0] = int_view[0] ^ (1 << int(bit_idx))
-    flipped = float(buf.view(torch.float32)[0].item())
-    # safety: avoid NaN/Inf (common if exponent/sign combos go wild)
-    if not (math.isfinite(flipped)):
-        return val  # skip
-    t[index_tuple] = flipped
-    return flipped
-
-@torch.no_grad()
-def bitflip_inplace_and_log(param: torch.Tensor,
-                            flat_indices: torch.Tensor,
-                            bit: int,
-                            param_name: str) -> List[Dict[str, Any]]:
-    """
-    Tuple-assign version (matches the method that works in openpilot).
-    """
-    flips: List[Dict[str, Any]] = []
-    if param.dtype != torch.float32 or flat_indices.numel() == 0:
-        return flips
-    for fi in flat_indices.detach().cpu().to(torch.long).tolist():
-        idx_tup = tuple(map(int, _unravel(int(fi), param.shape)))
-        old = float(param[idx_tup].item())
-        new = flip_bit_assign_(param, idx_tup, bit)
-        if new != old:
-            flips.append({
-                "name": param_name,
-                "bit": int(bit),
-                "index_flat": int(fi),
-                "index": idx_tup,
-                "old": old,
-                "new": new,
-            })
-    return flips
-
-def filter_params_for_flipping(model: nn.Module,
-                               allow_bias: bool,
-                               restrict_to: List[str] = None,
-                               kinds: List[str] = None) -> Dict[str, torch.Tensor]:
-    out = {}
-    for name, p in model.named_parameters():
-        if not p.requires_grad: continue
-        if p.dtype != torch.float32: continue
-        if not allow_bias and name.endswith(".bias"): continue
-        if restrict_to is not None and not any(tag in name for tag in restrict_to): continue
-        if kinds is not None and not any(k in name for k in kinds): continue
-        out[name] = p
+    if processed:
+        for k in out:
+            out[k].div_(processed)
     return out
 
-def select_topk_elements(score_dict: Dict[str, torch.Tensor],
-                         model: nn.Module,
-                         allow_bias: bool,
-                         restrict_to: List[str] = None,
-                         kinds: List[str] = None,
-                         topk: int = 100) -> Tuple[List[Tuple[str,int]], Dict[str, torch.Tensor]]:
-    eligible = filter_params_for_flipping(model, allow_bias, restrict_to, kinds)
-    filt_scores = {n: s for n, s in score_dict.items() if n in eligible}
-    all_scores, mapping = flatten_scores(filt_scores)
-    if all_scores.numel() == 0:
-        return [], {}
-    k = min(topk, all_scores.numel())
-    vals, idx = torch.topk(all_scores, k, largest=True, sorted=True)
-    items: List[Tuple[str,int]] = []
-    for gpos in idx.tolist():
-        for name, numel, off in mapping:
-            if off <= gpos < off + numel:
-                items.append((name, gpos - off))
-                break
-    name_to_param = {n: p for n, p in model.named_parameters()}
-    return items, name_to_param
+# --------------- Utilities for mapping & flipping ---------------
+def unravel(fi: int, shape: Tuple[int, ...]) -> Tuple[int, ...]:
+    return tuple(int(i) for i in np.unravel_index(int(fi), shape, order='C'))
 
-# --- bit sets for FP32 ---
-_MANTISSA      = list(range(0, 23))
-_EXPONENT      = list(range(23, 31))
-_SIGN          = [31]
-_MANTISSA_LOW  = list(range(0, 7))
+def live_params(model) -> Dict[str, torch.Tensor]:
+    return dict(model.named_parameters())
 
-def parse_bits_spec(bits_spec: str) -> List[int]:
-    s = bits_spec.strip().lower()
-    if s == 'mantissa':     return _MANTISSA
-    if s == 'mantissa_low': return _MANTISSA_LOW
-    if s == 'exponent':     return _EXPONENT
-    if s == 'sign':         return _SIGN
-    bits = [int(b.strip()) for b in s.split(',') if b.strip()!='']
-    if not bits: raise ValueError(f'invalid --bits: {bits_spec}')
+@torch.no_grad()
+def flip_scalar_bit_(param: torch.Tensor, flat_idx: int, bit: int) -> Tuple[float, float]:
+    """
+    Toggle one bit in-place and return (old, new). Revert internally if new is non-finite.
+    Uses torch.int32 XOR (no Python-int overflow).
+    """
+    assert param.dtype == torch.float32
+    assert 0 <= int(bit) <= 31
+    cpu = param.detach().cpu().contiguous()
+    f = cpu.view(torch.float32).view(-1)
+    i = cpu.view(torch.int32).view(-1)
+    flat_idx = int(flat_idx)
+    old = float(f[flat_idx].item())
+    mask = (torch.ones((), dtype=torch.int32) << int(bit))
+    i[flat_idx] = torch.bitwise_xor(i[flat_idx], mask)
+    new = float(f[flat_idx].item())
+    if not math.isfinite(new):
+        i[flat_idx] = torch.bitwise_xor(i[flat_idx], mask)
+        param.copy_(cpu.to(param.device))
+        return old, old
+    param.copy_(cpu.to(param.device))
+    return old, new
+
+@torch.no_grad()
+def revert_scalar_bit_(param: torch.Tensor, flat_idx: int, bit: int) -> None:
+    """Toggle again to restore original value (also torch.int32 XOR)."""
+    assert param.dtype == torch.float32
+    assert 0 <= int(bit) <= 31
+    cpu = param.detach().cpu().contiguous()
+    i = cpu.view(torch.int32).view(-1)
+    flat_idx = int(flat_idx)
+    mask = (torch.ones((), dtype=torch.int32) << int(bit))
+    i[flat_idx] = torch.bitwise_xor(i[flat_idx], mask)
+    param.copy_(cpu.to(param.device))
+
+# Bit sets
+MANTISSA      = list(range(0, 23))
+MANTISSA_LOW  = list(range(0, 7))
+EXPONENT      = list(range(23, 31))
+SIGN          = [31]
+
+def parse_bitset(s: str) -> List[int]:
+    s = s.strip().lower()
+    if s == 'mantissa':      return MANTISSA
+    if s == 'mantissa_low':  return MANTISSA_LOW
+    if s == 'exponent':      return EXPONENT
+    if s == 'sign':          return SIGN
+    if s in ('full','all'):  return list(range(32))
+    bits = [int(x) for x in s.split(',') if x.strip()!='']
     for b in bits:
-        if b < 0 or b > 31: raise ValueError(f'bit {b} out of range [0,31]')
+        if b < 0 or b > 31: raise ValueError(f"bit {b} out of range")
     return bits
 
-@torch.no_grad()
-def mbu_flip_multi_bits(model: nn.Module,
-                        name_to_param: Dict[str, torch.Tensor],
-                        items: List[Tuple[str,int]],
-                        bits: List[int],
-                        bits_per_weight: int) -> List[Dict[str, Any]]:
-    logs: List[Dict[str, Any]] = []
-    if not items: return logs
-    for (pname, lidx) in items:
-        p = name_to_param[pname]
-        for j in range(bits_per_weight):
-            bit = bits[min(j, len(bits)-1)]
-            logs += bitflip_inplace_and_log(p, torch.tensor([lidx], dtype=torch.long), bit, pname)
-    return logs
+# --------------- Data helpers ---------------
+def build_loaders(data_root, train_idx, val_idx, batch_size, device):
+    tr = Comma2k19SequenceDataset(train_idx, data_root, 'train', use_memcache=False)
+    va = Comma2k19SequenceDataset(val_idx,   data_root, 'val',   use_memcache=False)
+    tr_loader = torch.utils.data.DataLoader(tr, batch_size=batch_size, shuffle=True,
+                                            num_workers=0, pin_memory=(device.type=='cuda'))
+    va_loader = torch.utils.data.DataLoader(va, batch_size=1, shuffle=False,
+                                            num_workers=0, pin_memory=(device.type=='cuda'))
+    return tr_loader, va_loader
 
-# ----------------- eval -----------------
 @torch.no_grad()
-def evaluate_loss_mdn(model, data_loader, device, num_batches: int = 5, use_amp: bool = True):
-    model.eval()
-    losses = []
-    it = iter(data_loader)
+def cache_eval_batches(val_loader, device, num_batches=3):
+    cached = []
+    it = iter(val_loader)
     for _ in range(num_batches):
         try:
-            batch = next(it)
+            b = next(it)
         except StopIteration:
             break
-        imgs12, desire, traffic, h0, gt = make_supercombo_inputs(batch, device)
-        with torch.cuda.amp.autocast(enabled=use_amp):
-            out  = model(imgs12, desire, traffic, h0)
-            B    = out.shape[0]
-            plan = out[:, :5 * 991].view(B, 5, 991)
+        imgs12, desire, traffic, h0, gt = make_supercombo_inputs(b, device)
+        cached.append((imgs12, desire, traffic, h0, gt))
+    return cached
 
-            pred_cls = plan[:, :, -1]
-            params_flat = plan[:, :, :-1]
-            pred_traj = params_flat.view(B, 5, 2, 33, 15)[:, :, 0, :, :3]
-
-            with torch.no_grad():
-                pred_end = pred_traj[:, :, 32, :]
-                gt_end   = gt[:, 32:33, :].expand(-1, 5, -1)
-                distances = 1 - distance_func(pred_end, gt_end)
-                index = distances.argmin(dim=1)
-
-            gt_cls = index
-            row_idx = torch.arange(len(gt_cls), device=gt_cls.device)
-            best_traj = pred_traj[row_idx, gt_cls, :, :]
-
-            cls_loss_ = cls_loss(pred_cls, gt_cls)
-            reg_loss_ = reg_loss(best_traj, gt).mean(dim=(0, 1))
-            loss = cls_loss_ + reg_loss_.mean()
-        losses.append(loss.item())
-    return float(np.mean(losses)) if losses else float('nan')
-
-# ----------------- ONNX helpers -----------------
-def read_original_onnx_signature(path: str):
-    if not (path and os.path.isfile(path)):
-        return None
-    m = onnx.load(path)
-    opset = max((op.version for op in m.opset_import), default=None)
-    try:
-        sess = ort.InferenceSession(path, providers=['CPUExecutionProvider'])
-        outs = sess.get_outputs()
-        out_name = 'outputs' if any(o.name=='outputs' for o in outs) else outs[0].name
-        # build a zero feed using model-declared shapes (fallback to known shapes)
-        feed = {}
-        for i in sess.get_inputs():
-            shp = [d if isinstance(d, int) and d>0 else {
-                'input_imgs': [1,12,128,256],
-                'desire': [1,8],
-                'traffic_convention': [1,2],
-                'initial_state': [1,512],
-            }.get(i.name, None)[k] for k, d in enumerate(i.shape)]
-            if None in shp:  # fallback if any dim unresolved
-                shp = {
-                    'input_imgs': [1,12,128,256],
-                    'desire': [1,8],
-                    'traffic_convention': [1,2],
-                    'initial_state': [1,512],
-                }[i.name]
-            feed[i.name] = np.zeros(tuple(shp), np.float32)
-        y = sess.run([out_name], feed)[0]
-        out_len = int(y.shape[1])
-        return {'opset': int(opset) if opset else None, 'out_name': out_name, 'out_len': out_len}
-    except Exception:
-        return {'opset': int(opset) if opset else None, 'out_name': 'outputs', 'out_len': None}
+# --------------- Selection ---------------
+def select_topW_weights(importance: Dict[str, torch.Tensor],
+                        W: int,
+                        allow_bias: bool,
+                        restrict: Optional[List[str]]) -> List[Tuple[str, int, float]]:
+    """
+    Returns list of (param_name, local_flat_idx, score) sorted descending.
+    """
+    items: List[Tuple[str,int,float]] = []
+    for n, s in importance.items():
+        if s.dtype != torch.float32: continue
+        if not allow_bias and n.endswith(".bias"): continue
+        if restrict and not any(tag in n for tag in restrict): continue
+        flat = s.reshape(-1).cpu()
+        if flat.numel() == 0: continue
+        val, idx = torch.max(flat, dim=0)
+        items.append((n, int(idx), float(val)))
+    items.sort(key=lambda x: x[2], reverse=True)
+    return items[:W]
 
 @torch.no_grad()
-def export_flipped_model_onnx(model: nn.Module,
-                              save_dir: str,
-                              prefix: str,
-                              flips: List[Dict[str, Any]],
-                              mirror_sig: Dict[str, Any] = None,
-                              fallback_opset: int = 17,
-                              fold_constants: bool = True,
-                              logs_text: str = None) -> str:
-    os.makedirs(save_dir, exist_ok=True)
-    ts = timestamp_id()
-    base = f"{prefix}_{ts}"
-    onnx_path = os.path.join(save_dir, base + ".onnx")
-    json_path = os.path.join(save_dir, base + ".json")
-    i = 0
-    while os.path.exists(onnx_path) or os.path.exists(json_path):
-        i += 1
-        onnx_path = os.path.join(save_dir, f"{base}-{i:03d}.onnx")
-        json_path = os.path.join(save_dir, f"{base}-{i:03d}.json")
+def rank_bits_independent(model,
+                          cached_batches,
+                          candidates: List[Tuple[str, int]],
+                          bitset: List[int],
+                          use_amp: bool = True,
+                          max_iters: Optional[int] = None,
+                          per_weight_once: bool = True,
+                          value_guard: Optional[float] = None) -> List[Dict[str, Any]]:
+    """
+    PROGRESSIVE bit selection (one bit per iteration), with two fixes:
+      - per_weight_once: once we flip a scalar at (name, flat_idx), remove *all* other bits of that scalar.
+      - skip non-finite Δloss: do not break the loop if the best candidate is inf/NaN; just ignore it.
 
-    # dummy inputs (torch tensors, static shapes)
-    imgs   = torch.zeros(1, 12, 128, 256, dtype=torch.float32)
-    desire = torch.zeros(1, 8, dtype=torch.float32)
-    traffic= torch.tensor([[1., 0.]], dtype=torch.float32)
-    h0     = torch.zeros(1, 512, dtype=torch.float32)
+    value_guard (optional): if set (e.g. 1e6), skip a flip that makes |new| > value_guard.
+    """
+    records: List[Dict[str, Any]] = []
+    P = live_params(model)
 
-    model.eval(); model_cpu = model.cpu()
+    # Expand candidate space: (name, flat_idx, bit)
+    pending: List[Tuple[str, int, int]] = [(n, fi, b) for (n, fi) in candidates for b in bitset]
+    if not pending:
+        return records
 
-    opset = (mirror_sig or {}).get('opset') or fallback_opset
-    out_name = (mirror_sig or {}).get('out_name') or 'outputs'
-    torch.onnx.export(
-        model_cpu,
-        (imgs, desire, traffic, h0),
-        onnx_path,
-        input_names=["input_imgs", "desire", "traffic_convention", "initial_state"],
-        output_names=[out_name],
-        export_params=True,
-        opset_version=opset,
-        do_constant_folding=bool(fold_constants),
-        training=torch.onnx.TrainingMode.EVAL,
-        dynamic_axes=None
-    )
+    base = eval_loss_cached(model, cached_batches, use_amp)
+    total_iters = len(pending) if max_iters is None else min(max_iters, len(pending))
+    # Optionally keep track of which scalar locations were used already
+    used_keys: set[Tuple[str, int]] = set()
 
-    # (optional) verify with ORT that output length matches original (if known)
-    try:
-        sess = ort.InferenceSession(onnx_path, providers=['CPUExecutionProvider'])
-        y = sess.run([out_name], {
-            "input_imgs": np.zeros((1,12,128,256), np.float32),
-            "desire": np.zeros((1,8), np.float32),
-            "traffic_convention": np.array([[1.,0.]], np.float32),
-            "initial_state": np.zeros((1,512), np.float32),
-        })[0]
-        out_len = int(y.shape[1])
-    except Exception:
-        out_len = None
+    for it in range(total_iters):
+        best_pos = -1
+        best_delta = -math.inf
+        best_triplet: Optional[Tuple[str, int, int]] = None
+        best_old_new: Optional[Tuple[float, float]] = None
 
-    meta = {
-        "arch": model.__class__.__name__,
-        "num_flips": len(flips),
-        "timestamp": os.path.splitext(os.path.basename(onnx_path))[0].split(prefix + "_", 1)[-1],
-        "opset": opset,
-        "fold_constants": bool(fold_constants),
-        "out_len": out_len,
-        "mirrored": (mirror_sig is not None)
+        # Evaluate each remaining candidate vs CURRENT baseline
+        for pos, (name, fi, bit) in enumerate(pending):
+            # optional: enforce one flip per scalar
+            if per_weight_once and (name, fi) in used_keys:
+                continue
+
+            t = P[name]
+            old, new = flip_scalar_bit_(t, fi, bit)
+
+            # guard bad flips
+            bad_flip = (new == old) or (value_guard is not None and abs(new) > float(value_guard))
+            if bad_flip:
+                # revert if we actually changed (we didn't if new==old)
+                if new != old:
+                    revert_scalar_bit_(t, fi, bit)
+                continue
+
+            loss = eval_loss_cached(model, cached_batches, use_amp)
+            revert_scalar_bit_(t, fi, bit)
+            cand_delta = loss - base
+
+            # **skip** non-finite deltas instead of letting them win and halting search
+            if not math.isfinite(cand_delta):
+                continue
+
+            if cand_delta > best_delta:
+                best_delta = cand_delta
+                best_pos = pos
+                best_triplet = (name, fi, bit)
+                best_old_new = (old, new)
+
+        # No valid candidate this round → stop
+        if best_triplet is None or best_pos < 0:
+            break
+
+        # Permanently apply the winner and update baseline
+        name, fi, bit = best_triplet
+        t = P[name]
+        flip_scalar_bit_(t, fi, bit)  # keep
+        base += best_delta
+
+        records.append({
+            "name": name,
+            "index_flat": int(fi),
+            "bit": int(bit),
+            "old": float(best_old_new[0]),
+            "new": float(best_old_new[1]),
+            "dloss": float(best_delta)
+        })
+
+        # Remove candidates to avoid reusing this scalar
+        if per_weight_once:
+            used_keys.add((name, fi))
+            pending = [c for c in pending if not (c[0] == name and c[1] == fi)]
+        else:
+            # only remove the exact (name, fi, bit)
+            pending.pop(best_pos)
+
+        # Stop when we have collected max_iters bits
+        if max_iters is not None and len(records) >= max_iters:
+            break
+
+    return records
+
+
+# --------------- JSON export ---------------
+def timestamp():
+    return datetime.now().strftime("%Y%m%d-%H%M%S")
+
+def save_plan_json(records: List[Dict[str,Any]],
+                   path: str,
+                   topB: int,
+                   meta: Dict[str,Any]):
+    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+    top = records[:topB]
+    payload = {
+        "meta": {**meta, "timestamp": timestamp(), "num_candidates": len(records), "num_top": len(top)},
+        "flips": top,
+        "plan": [{"name": r["name"], "index_flat": r["index_flat"], "bit": r["bit"]} for r in top]
     }
-    payload = {"flips": flips, "meta": meta}
-    if logs_text is not None:
-        payload["logs"] = logs_text
-    with open(json_path, "w") as f:
+    with open(path, "w") as f:
         json.dump(payload, f, indent=2)
+    print(f"[Save] plan -> {path}")
 
-    return onnx_path
-
-# ----------------- data & weights -----------------
-def build_loaders(args, device):
-    train = Comma2k19SequenceDataset(args.train_index, args.data_root, 'train', use_memcache=False)
-    val   = Comma2k19SequenceDataset(args.val_index,   args.data_root, 'val',   use_memcache=False)
-    loader_args = dict(num_workers=0, pin_memory=(device.type=='cuda'))
-    train_loader = DataLoader(train, batch_size=args.batch_size, shuffle=True,  **loader_args)
-    val_loader   = DataLoader(val,   batch_size=1,               shuffle=False, **loader_args)
-    return train_loader, val_loader
-
-def load_weights(model, ckpt_path: str):
-    if not ckpt_path or not os.path.isfile(ckpt_path):
-        print(f"[Load] WARNING: checkpoint not found: {ckpt_path} (using random init).")
-        return
-    print(f"[Load] loading {ckpt_path}")
-    sd = torch.load(ckpt_path, map_location='cpu')
-    if isinstance(sd, dict) and "state_dict" in sd:
-        sd = sd["state_dict"]
-    try:
-        model.load_state_dict(sd, strict=True)
-    except RuntimeError:
-        from collections import OrderedDict
-        new_sd = OrderedDict((k.replace('module.', ''), v) for k, v in sd.items())
-        model.load_state_dict(new_sd, strict=False)
-
-# ----------------- args & main -----------------
+# --------------- CLI / Main ---------------
 def parse_args():
-    p = argparse.ArgumentParser()
-    p.add_argument('--train_index', type=str, default='data/comma2k19_train_non_overlap.txt')
-    p.add_argument('--val_index',   type=str, default='data/comma2k19_val_non_overlap.txt')
-    p.add_argument('--data_root',   type=str, default='data/comma2k19/')
-    p.add_argument('--batch_size',  type=int, default=2)
+    ap = argparse.ArgumentParser("Bit-flip plan only (no ONNX export)")
+    ap.add_argument("--data-root", default="data/comma2k19/")
+    ap.add_argument("--train-index", default="data/comma2k19_train_non_overlap.txt")
+    ap.add_argument("--val-index",   default="data/comma2k19_val_non_overlap.txt")
+    ap.add_argument("--batch-size", type=int, default=2)
+    ap.add_argument("--ckpt", type=str, default="openpilot_model/supercombo_torch_weights.pth")
 
-    p.add_argument('--ckpt',        type=str, default='openpilot_model/supercombo_torch_weights.pth')
-    p.add_argument('--mode',        type=str, default='gradxw',
-                   choices=['w','grad','gradxw','taylor1','fisher'])
-    p.add_argument('--calib_batches', type=int, default=8)
+    ap.add_argument("--imp-batches", type=int, default=6, help="batches for importance accumulation")
+    ap.add_argument("--eval-batches", type=int, default=3, help="cached val batches for loss eval")
+    ap.add_argument("--imp-mode", choices=["w","grad","gradxw","taylor1","fisher"], default="gradxw")
 
-    # selection & flipping
-    p.add_argument('--topk',        type=int, default=100)
-    p.add_argument('--attack',      type=str, default='single',
-                   choices=['single','double','triple'])
-    p.add_argument('--bits',        type=str, default='sign',   # default to safe & working like your demo
-                   help='bit list or preset: "5", "5,10", "mantissa_low", "mantissa", "exponent", "sign"')
-    p.add_argument('--restrict',    type=str, default='')
-    p.add_argument('--kinds',       type=str, default='')
-    p.add_argument('--allow_bias',  type=int, default=1)
+    ap.add_argument("--topW", type=int, default=20, help="number of important weights to consider")
+    ap.add_argument("--topB", type=int, default=20, help="number of best bits to return")
+    ap.add_argument("--bitset", type=str, default="full",
+                    help='mantissa_low|mantissa|exponent|sign|full or comma list "0,1,2,3"')
+    ap.add_argument("--restrict", type=str, default="", help='comma substrings to filter params (e.g., "vision_net,plan_head")')
+    ap.add_argument("--allow-bias", type=int, default=1)
+    ap.add_argument('--save_dir', type=str, default='flipped_models')
+    ap.add_argument('--save_prefix', type=str, default='model')
+    ap.add_argument("--amp", action="store_true")
+    return ap.parse_args()
 
-    # export & mirroring
-    p.add_argument('--orig_onnx',   type=str, default='openpilot_model/supercombo.onnx',
-                   help='mirror opset/output name/length from this ONNX if available')
-    p.add_argument('--onnx_opset',  type=int, default=17, help='fallback opset if mirroring not possible')
-    p.add_argument('--fold_const',  type=int, default=1,  help='1=enable constant folding (matches your working method)')
-    p.add_argument('--save_dir',    type=str, default='flipped_models')
-    p.add_argument('--save_prefix', type=str, default='model')
-    p.add_argument('--amp',         action='store_true')
-    return p.parse_args()
+def timestamp_id() -> str:
+    # e.g., "20250927-130542"
+    return datetime.now().strftime("%Y%m%d-%H%M%S")
 
 def main():
-    restore_streams, log_buffer = start_log_capture()
-    try:
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        torch.backends.cudnn.benchmark = False
+    args = parse_args()
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-        # args from outer scope
-        restrict_to = [s.strip() for s in args.restrict.split(',') if s.strip()] or None
-        kinds = [s.strip() for s in args.kinds.split(',') if s.strip()] or None
-        allow_bias = bool(args.allow_bias)
+    # data
+    tr_loader = torch.utils.data.DataLoader(
+        Comma2k19SequenceDataset(args.train_index, args.data_root, 'train', use_memcache=False),
+        batch_size=args.batch_size, shuffle=True, num_workers=0, pin_memory=(device.type=='cuda')
+    )
+    va_loader = torch.utils.data.DataLoader(
+        Comma2k19SequenceDataset(args.val_index,   args.data_root, 'val',   use_memcache=False),
+        batch_size=1, shuffle=False, num_workers=0, pin_memory=(device.type=='cuda')
+    )
+    cached = cache_eval_batches(va_loader, device, num_batches=args.eval_batches)
 
-        # loaders
-        train_loader, val_loader = build_loaders(args, device)
-        print("train samples:", len(train_loader.dataset), "val samples:", len(val_loader.dataset))
+    # model + weights
+    model = OpenPilotModel().to(device)
+    if os.path.isfile(args.ckpt):
+        sd = torch.load(args.ckpt, map_location="cpu")
+        if isinstance(sd, dict) and "state_dict" in sd:
+            sd = sd["state_dict"]
+        try:
+            model.load_state_dict(sd, strict=True)
+        except RuntimeError:
+            from collections import OrderedDict
+            new_sd = OrderedDict((k.replace("module.", ""), v) for k, v in sd.items())
+            model.load_state_dict(new_sd, strict=False)
+    model.eval()
 
-        # model
-        model = OpenPilotModel().to(device)
-        load_weights(model, args.ckpt)
+    # 1) Importance
+    print(f"[Importance] mode={args.imp_mode}, batches={args.imp_batches}")
+    imp = accumulate_importance(model, tr_loader, device, num_batches=args.imp_batches,
+                                mode=args.imp_mode, use_amp=args.amp)
 
-        # baseline loss
-        base_loss = evaluate_loss_mdn(model, val_loader, device, num_batches=5, use_amp=args.amp)
-        print(f"[Eval] baseline traj loss: {base_loss:.6f}")
+    # 2) Top-W weights
+    restrict = [s.strip() for s in args.restrict.split(",") if s.strip()] or None
+    topW = select_topW_weights(imp, args.topW, allow_bias=bool(args.allow_bias), restrict=restrict)
+    if not topW:
+        print("No important weights found.")
+        return
+    print(f"[Select] Top {len(topW)} weights ready.")
 
-        # accumulate importance
-        print(f"[Importance] mode={args.mode}, batches={args.calib_batches}")
-        imp = accumulate_importance(model, train_loader, device,
-                                    num_batches=args.calib_batches,
-                                    mode=args.mode, use_amp=args.amp)
+    # 3) Rank bits independently (no permanent flips here)
+    candidates = [(name, fi) for (name, fi, _) in topW]
+    bitset = parse_bitset(args.bitset)
+    print(f"[Bitset] {bitset}  | candidates={len(candidates)}")
+    records = rank_bits_independent(model, cached, candidates, bitset, use_amp=args.amp)
 
-        # select targets
-        items, name_to_param = select_topk_elements(
-            imp, model, allow_bias, restrict_to, kinds, topk=args.topk
-        )
-        if not items:
-            print("[Flip] No eligible elements to flip.")
-            return
+    if not records:
+        print("No viable bit candidates produced.")
+        return
 
-        # decide bits per weight
-        bits_per_weight = {'single': 1, 'double': 2, 'triple': 3}[args.attack]
-        bits_list = parse_bits_spec(args.bits)
+    # 4) Save plan JSON only
+    meta = {
+        "ckpt": args.ckpt,
+        "imp_mode": args.imp_mode,
+        "imp_batches": args.imp_batches,
+        "eval_batches": args.eval_batches,
+        "topW": args.topW,
+        "topB": args.topB,
+        "bitset": args.bitset,
+        "restrict": args.restrict,
+        "allow_bias": bool(args.allow_bias),
+    }
+    # build base name (seconds only) & collision guard
+    ts = timestamp_id()  # e.g., "20250927-130542"
+    base = f"{args.save_prefix}_{ts}"
+    json_path = os.path.join(args.save_dir, base + ".json")
+    suffix = 0
+    while os.path.exists(json_path):
+        suffix += 1
+        json_path = os.path.join(args.save_dir, f"{base}-{suffix:03d}.json")
+    save_plan_json(records, json_path, args.topB, meta)
+    return json_path
 
-        # flip (tuple-assign, safe)
-        flips = mbu_flip_multi_bits(model, name_to_param, items, bits_list, bits_per_weight)
-        print(f"[Flip] topK={args.topk}, per-weight bits={bits_per_weight}, "
-              f"bits_spec={args.bits} -> total flips={len(flips)}")
-
-        # post-flip loss
-        post_loss = evaluate_loss_mdn(model, val_loader, device, num_batches=5, use_amp=args.amp)
-        print(f"[Eval] post-flip traj loss: {post_loss:.6f} (Δ={post_loss - base_loss:+.6f})")
-
-        # mirror original ONNX opset/output if available
-        mirror_sig = read_original_onnx_signature(args.orig_onnx)
-        if mirror_sig:
-            print(f"[Mirror] using opset={mirror_sig['opset']} out_name={mirror_sig['out_name']} "
-                  f"orig_out_len={mirror_sig['out_len']}")
-        else:
-            print(f"[Mirror] original ONNX not available; fallback opset={args.onnx_opset}")
-
-        # export ONNX + JSON metadata
-        if flips:
-            logs_text = log_buffer.getvalue()
-            onnx_path = export_flipped_model_onnx(
-                model, args.save_dir, args.save_prefix, flips,
-                mirror_sig=mirror_sig, fallback_opset=args.onnx_opset,
-                fold_constants=bool(args.fold_const), logs_text=logs_text
-            )
-            print(f"[Save] wrote {onnx_path} and {onnx_path.replace('.onnx', '.json')}")
-    finally:
-        restore_streams()
+def flip_bit(t: torch.Tensor, index_tuple, bit_idx=0):
+    # 取出元素
+    val = t[index_tuple].item()
+    # 转成 int32 raw bits
+    int_view = torch.tensor([val], dtype=torch.float32).view(torch.int32)
+    # 翻转
+    mask = 1 << bit_idx
+    int_flipped = int_view ^ mask
+    # 转回 float
+    flipped_val = int_flipped.view(torch.float32).item()
+    return flipped_val
 
 if __name__ == "__main__":
-    args = parse_args()
-    # if you want to sweep bits (like before), do it outside or parametrize; default keeps your working style
-    main()
+    json_path = main()
+
+    onnx_path = 'openpilot_model/supercombo.onnx'
+    # Load the bit-flip record
+    with open(json_path, "r") as f:
+        flips = json.load(f)["flips"]
+    session = ort.InferenceSession(
+        onnx_path,
+        providers=['CPUExecutionProvider']  # 如需 GPU: ['CUDAExecutionProvider', 'CPUExecutionProvider']
+    )
+    inputs_meta = session.get_inputs()
+    outputs_meta = session.get_outputs()
+
+    # 4) 加载 PyTorch 模型 & 从 ONNX 权重迁移
+    model = OpenPilotModel()
+    load_weights_from_onnx(model, onnx_path)
+    model.eval()
+    model.cpu()
+
+    # 5) 保存权重
+    torch.save(model.state_dict(), 'flipped_models/supercombo_torch_weights.pth')
+
+    # 6）导出 onnx
+
+    ## 准备 dummy 输入（以 openpilot supercombo 为例）
+    # 用 torch 张量作为 dummy 输入
+    imgs = torch.zeros(1, 12, 128, 256, dtype=torch.float32)  # input_imgs
+    desire = torch.zeros(1, 8, dtype=torch.float32)  # desire
+    tc = torch.tensor([[1., 0.]], dtype=torch.float32)  # traffic_convention
+    state = torch.zeros(1, 512, dtype=torch.float32)  # initial_state
+
+    # bitflip
+    sd = model.state_dict()
+    for flip in flips:
+        name = flip["name"]
+        bit = flip["bit"]
+        flat_idx = flip["index_flat"]
+
+        param = sd[name]
+        was_cuda = param.is_cuda
+        p_cpu = param.detach().cpu().contiguous()
+        fview = p_cpu.view(torch.float32).view(-1)
+        iview = p_cpu.view(torch.int32).view(-1)
+
+        # Flip the bit
+        mask = torch.tensor(1 << bit, dtype=torch.int32)
+        iview[flat_idx] = iview[flat_idx] ^ mask
+
+        if was_cuda:
+            sd[name].copy_(p_cpu.to(param.device))
+        else:
+            sd[name].copy_(p_cpu)
+
+    model.load_state_dict(sd)
+
+    # create timestamp string like "20251006-094604"
+    ts = datetime.now().strftime("%Y%m%d-%H%M%S")
+
+    out_dir = "flipped_models"
+    os.makedirs(out_dir, exist_ok=True)
+
+    # export to ONNX with timestamped filename
+    onnx_path = os.path.join(out_dir, f"model_{ts}.onnx")
+
+    with torch.no_grad():
+        torch.onnx.export(
+            model,
+            (imgs, desire, tc, state),
+            onnx_path,
+            input_names=["input_imgs", "desire", "traffic_convention", "initial_state"],
+            output_names=["outputs"],
+            do_constant_folding=False,
+            opset_version=17,
+            training=torch.onnx.TrainingMode.EVAL
+        )
+
+    print(f"saved: {onnx_path}")
