@@ -193,15 +193,19 @@ def revert_scalar_bit_(param: torch.Tensor, flat_idx: int, bit: int) -> None:
 MANTISSA      = list(range(0, 23))
 MANTISSA_LOW  = list(range(0, 7))
 EXPONENT      = list(range(23, 31))
+FIRST_EXPONENT_SIGN = [30, 31]
+FIRST_EXPONENT = [30]
 SIGN          = [31]
 
 def parse_bitset(s: str) -> List[int]:
     s = s.strip().lower()
-    if s == 'mantissa':      return MANTISSA
-    if s == 'mantissa_low':  return MANTISSA_LOW
-    if s == 'exponent':      return EXPONENT
-    if s == 'sign':          return SIGN
-    if s in ('full','all'):  return list(range(32))
+    if s == 'mantissa':        return MANTISSA
+    if s == 'mantissa_low':    return MANTISSA_LOW
+    if s == 'exponent':        return EXPONENT
+    if s == 'sign':            return SIGN
+    if s == 'first exponent':  return FIRST_EXPONENT
+    if s == 'first exponent & sign':  return FIRST_EXPONENT_SIGN
+    if s in ('full','all'):    return list(range(32))
     bits = [int(x) for x in s.split(',') if x.strip()!='']
     for b in bits:
         if b < 0 or b > 31: raise ValueError(f"bit {b} out of range")
@@ -255,6 +259,7 @@ def rank_bits_independent(model,
                           cached_batches,
                           candidates: List[Tuple[str, int]],
                           bitset: List[int],
+                          topk,
                           use_amp: bool = True,
                           max_iters: Optional[int] = None,
                           per_weight_once: bool = True,
@@ -273,81 +278,91 @@ def rank_bits_independent(model,
     pending: List[Tuple[str, int, int]] = [(n, fi, b) for (n, fi) in candidates for b in bitset]
     if not pending:
         return records
+    imgs12_list, desire_list, traffic_list, h0_list, gt_list = zip(*cached_batches)
 
-    base = eval_loss_cached(model, cached_batches, use_amp)
-    total_iters = len(pending) if max_iters is None else min(max_iters, len(pending))
+    # Stack along batch dimension (dim=0)
+    imgs12 = torch.cat(imgs12_list, dim=0)
+    desire = torch.cat(desire_list, dim=0)
+    traffic = torch.cat(traffic_list, dim=0)
+    h0 = torch.cat(h0_list, dim=0)
+    gt = torch.cat(gt_list, dim=0)
+    device = imgs12.device
+    model.zero_grad(set_to_none=True)
+    with torch.cuda.amp.autocast(enabled=use_amp):
+        y = model(imgs12, desire, traffic, h0)
+        B = y.shape[0]
+        pl = y[:, :5 * 991].view(B, 5, 991)
+        cls = pl[:, :, -1]
+        pf = pl[:, :, :-1]
+        traj = pf.view(B, 5, 2, 33, 15)[:, :, 0, :, :3]
+        with torch.no_grad():
+            pend = traj[:, :, 32, :]
+            gend = gt[:, 32:33, :].expand(-1, 5, -1)
+            d = 1 - distance_func(pend, gend)
+            index = d.argmin(dim=1)
+        gt_cls = index
+        row_idx = torch.arange(len(gt_cls), device=gt_cls.device)
+        clean_best_traj = traj[row_idx, gt_cls, :, :]  # (B,33,3)
+
     # Optionally keep track of which scalar locations were used already
     used_keys: set[Tuple[str, int]] = set()
 
-    for it in range(total_iters):
-        best_pos = -1
-        best_delta = -math.inf
-        best_triplet: Optional[Tuple[str, int, int]] = None
-        best_old_new: Optional[Tuple[float, float]] = None
+    # Evaluate each remaining candidate vs CURRENT baseline
+    for pos, (name, fi, bit) in enumerate(pending):
+        # optional: enforce one flip per scalar
+        if per_weight_once and (name, fi) in used_keys:
+            continue
 
-        # Evaluate each remaining candidate vs CURRENT baseline
-        for pos, (name, fi, bit) in enumerate(pending):
-            # optional: enforce one flip per scalar
-            if per_weight_once and (name, fi) in used_keys:
-                continue
-
-            t = P[name]
-            old, new = flip_scalar_bit_(t, fi, bit)
-
-            # guard bad flips
-            bad_flip = (new == old) or (value_guard is not None and abs(new) > float(value_guard))
-            if bad_flip:
-                # revert if we actually changed (we didn't if new==old)
-                if new != old:
-                    revert_scalar_bit_(t, fi, bit)
-                continue
-
-            loss = eval_loss_cached(model, cached_batches, use_amp)
-            revert_scalar_bit_(t, fi, bit)
-            cand_delta = loss - base
-
-            # **skip** non-finite deltas instead of letting them win and halting search
-            if not math.isfinite(cand_delta):
-                continue
-
-            if cand_delta > best_delta:
-                best_delta = cand_delta
-                best_pos = pos
-                best_triplet = (name, fi, bit)
-                best_old_new = (old, new)
-
-        # No valid candidate this round → stop
-        if best_triplet is None or best_pos < 0:
-            break
-
-        # Permanently apply the winner and update baseline
-        name, fi, bit = best_triplet
         t = P[name]
-        flip_scalar_bit_(t, fi, bit)  # keep
-        base += best_delta
+        old, new = flip_scalar_bit_(t, fi, bit)
 
+        # guard bad flips
+        bad_flip = (new == old) or (value_guard is not None and abs(new) > float(value_guard))
+        if bad_flip:
+            # revert if we actually changed (we didn't if new==old)
+            if new != old:
+                revert_scalar_bit_(t, fi, bit)
+            continue
+
+        #loss = eval_loss_cached(model, cached_batches, use_amp)
+        model.zero_grad(set_to_none=True)
+        with torch.cuda.amp.autocast(enabled=use_amp):
+            y = model(imgs12, desire, traffic, h0)
+            B = y.shape[0]
+            pl = y[:, :5 * 991].view(B, 5, 991)
+            cls = pl[:, :, -1]
+            pf = pl[:, :, :-1]
+            traj = pf.view(B, 5, 2, 33, 15)[:, :, 0, :, :3]
+            with torch.no_grad():
+                pend = traj[:, :, 32, :]
+                gend = gt[:, 32:33, :].expand(-1, 5, -1)
+                d = 1 - distance_func(pend, gend)
+                index = d.argmin(dim=1)
+            gt_cls = index
+            row_idx = torch.arange(len(gt_cls), device=gt_cls.device)
+            flipped_best_traj = traj[row_idx, gt_cls, :, :]  # (B,33,3)
+        old_, new_ = flip_scalar_bit_(t, fi, bit)
+        cand_delta = (flipped_best_traj[:,:,0] - clean_best_traj[:,:,0]).mean()#maximize the forward distance
+        #cand_delta = (flipped_best_traj[:, :, 1] - clean_best_traj[:, :, 1]).mean()  # maximize the left distance
+
+        # **skip** non-finite deltas instead of letting them win and halting search
+        if not math.isfinite(cand_delta):
+            continue
+        if per_weight_once:
+            used_keys.add((name, fi))
+            pending = [c for c in pending if not (c[0] == name and c[1] == fi)]
+        else:  # only remove the exact (name, fi, bit)
+            pending.pop(pos)
         records.append({
             "name": name,
             "index_flat": int(fi),
             "bit": int(bit),
-            "old": float(best_old_new[0]),
-            "new": float(best_old_new[1]),
-            "dloss": float(best_delta)
+            "old": float(old),
+            "new": float(new),
+            "score": float(cand_delta)
         })
-
-        # Remove candidates to avoid reusing this scalar
-        if per_weight_once:
-            used_keys.add((name, fi))
-            pending = [c for c in pending if not (c[0] == name and c[1] == fi)]
-        else:
-            # only remove the exact (name, fi, bit)
-            pending.pop(best_pos)
-
-        # Stop when we have collected max_iters bits
-        if max_iters is not None and len(records) >= max_iters:
-            break
-
-    return records
+    records.sort(key=lambda r: r["score"], reverse=True)
+    return records[:topk]
 
 
 # --------------- JSON export ---------------
@@ -375,17 +390,17 @@ def parse_args():
     ap.add_argument("--data-root", default="data/comma2k19/")
     ap.add_argument("--train-index", default="data/comma2k19_train_non_overlap.txt")
     ap.add_argument("--val-index",   default="data/comma2k19_val_non_overlap.txt")
-    ap.add_argument("--batch-size", type=int, default=2)
+    ap.add_argument("--batch-size", type=int, default=5)
     ap.add_argument("--ckpt", type=str, default="openpilot_model/supercombo_torch_weights.pth")
 
-    ap.add_argument("--imp-batches", type=int, default=6, help="batches for importance accumulation")
-    ap.add_argument("--eval-batches", type=int, default=3, help="cached val batches for loss eval")
+    ap.add_argument("--imp-batches", type=int, default=10, help="batches for importance accumulation")
+    ap.add_argument("--eval-batches", type=int, default=10, help="cached val batches for loss eval")
     ap.add_argument("--imp-mode", choices=["w","grad","gradxw","taylor1","fisher"], default="gradxw")
 
     ap.add_argument("--topW", type=int, default=20, help="number of important weights to consider")
-    ap.add_argument("--topB", type=int, default=20, help="number of best bits to return")
-    ap.add_argument("--bitset", type=str, default="full",
-                    help='mantissa_low|mantissa|exponent|sign|full or comma list "0,1,2,3"')
+    ap.add_argument("--topB", type=int, default=10, help="number of best bits to return")
+    ap.add_argument("--bitset", type=str, default="sign",
+                    help='mantissa_low|mantissa|exponent|sign|full|first exponent|first exponent & sign or comma list "0,1,2,3"')
     ap.add_argument("--restrict", type=str, default="", help='comma substrings to filter params (e.g., "vision_net,plan_head")')
     ap.add_argument("--allow-bias", type=int, default=1)
     ap.add_argument('--save_dir', type=str, default='flipped_models')
@@ -408,7 +423,7 @@ def main():
     )
     va_loader = torch.utils.data.DataLoader(
         Comma2k19SequenceDataset(args.val_index,   args.data_root, 'val',   use_memcache=False),
-        batch_size=1, shuffle=False, num_workers=0, pin_memory=(device.type=='cuda')
+        batch_size=args.batch_size, shuffle=False, num_workers=0, pin_memory=(device.type=='cuda')
     )
     cached = cache_eval_batches(va_loader, device, num_batches=args.eval_batches)
 
@@ -443,7 +458,7 @@ def main():
     candidates = [(name, fi) for (name, fi, _) in topW]
     bitset = parse_bitset(args.bitset)
     print(f"[Bitset] {bitset}  | candidates={len(candidates)}")
-    records = rank_bits_independent(model, cached, candidates, bitset, use_amp=args.amp)
+    records = rank_bits_independent(model, cached, candidates, bitset, topk=args.topB, use_amp=args.amp)
 
     if not records:
         print("No viable bit candidates produced.")
@@ -485,6 +500,7 @@ def flip_bit(t: torch.Tensor, index_tuple, bit_idx=0):
     return flipped_val
 
 if __name__ == "__main__":
+    #set a for loop, during iterations, find which bits appears most times
     json_path = main()
 
     onnx_path = 'openpilot_model/supercombo.onnx'
@@ -556,7 +572,7 @@ if __name__ == "__main__":
             onnx_path,
             input_names=["input_imgs", "desire", "traffic_convention", "initial_state"],
             output_names=["outputs"],
-            do_constant_folding=False,
+            do_constant_folding=True,
             opset_version=17,
             training=torch.onnx.TrainingMode.EVAL
         )
