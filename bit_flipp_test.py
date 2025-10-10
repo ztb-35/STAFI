@@ -305,12 +305,12 @@ def rank_bits_independent(model,
         clean_best_traj = traj[row_idx, gt_cls, :, :]  # (B,33,3)
 
     # Optionally keep track of which scalar locations were used already
-    used_keys: set[Tuple[str, int]] = set()
+    used_keys: set[Tuple[str, int, int]] = set()
 
     # Evaluate each remaining candidate vs CURRENT baseline
     for pos, (name, fi, bit) in enumerate(pending):
         # optional: enforce one flip per scalar
-        if per_weight_once and (name, fi) in used_keys:
+        if per_weight_once and (name, fi, bit) in used_keys:
             continue
 
         t = P[name]
@@ -349,8 +349,8 @@ def rank_bits_independent(model,
         if not math.isfinite(cand_delta):
             continue
         if per_weight_once:
-            used_keys.add((name, fi))
-            pending = [c for c in pending if not (c[0] == name and c[1] == fi)]
+            used_keys.add((name, fi, bit))
+            pending = [c for c in pending if not (c[0] == name and c[1] == fi and c[2] == bit)]
         else:  # only remove the exact (name, fi, bit)
             pending.pop(pos)
         records.append({
@@ -398,8 +398,8 @@ def parse_args():
     ap.add_argument("--imp-mode", choices=["w","grad","gradxw","taylor1","fisher"], default="gradxw")
 
     ap.add_argument("--topW", type=int, default=20, help="number of important weights to consider")
-    ap.add_argument("--topB", type=int, default=10, help="number of best bits to return")
-    ap.add_argument("--bitset", type=str, default="sign",
+    ap.add_argument("--topB", type=int, default=20, help="number of best bits to return")
+    ap.add_argument("--bitset", type=str, default="full",
                     help='mantissa_low|mantissa|exponent|sign|full|first exponent|first exponent & sign or comma list "0,1,2,3"')
     ap.add_argument("--restrict", type=str, default="", help='comma substrings to filter params (e.g., "vision_net,plan_head")')
     ap.add_argument("--allow-bias", type=int, default=1)
