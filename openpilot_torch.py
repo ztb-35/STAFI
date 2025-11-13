@@ -282,7 +282,8 @@ class TemporalSummarizer(nn.Module):
 
         # initial state must have shape (1, N, hidden_dim) if batched
         # x must have shape (N, 1, input_dim) if batched
-        rnn_out, _ = self._rnn(x.reshape(-1, 1, 1024), initial_state.reshape(1, -1, 512))
+        rnn_out, _ = self._rnn(x.reshape(-1, 1, 1024), initial_state.reshape(1, -1, 512).contiguous())
+
         rnn_out = rnn_out.squeeze(1)  # squeeze rnn_out from (N, 1, 512) to (N, 512)
         out = torch.concat((rnn_out, x), axis=1)
         out = self._outfeats0(out)
@@ -402,7 +403,8 @@ class OpenPilotModel(nn.Module):
         # #Lane_group1 is (lane1,2,3,4), lane_group2 is (lane0,5)
         out = torch.concat(
             (plan, lane_group1, lane_lines_prob, lane_group2, lead, lead_prob, desire_state, meta, desire_pred, pose,
-             rnn_out), axis=1)
+             rnn_out), axis=1)#plan(4955), lane_group1(132*4), lane_lines_prob(8), lane_group2(132*2), lead(255),
+        # lead_prob(3), desire_state(8), meta(32), desire_pred(32), pose(12) rnn_out(512)
         return out
 
 
@@ -480,8 +482,8 @@ onnx_name_to_torch_name = {
 }
 
 
-def load_weights_from_onnx(model):
-    onnx_model = onnx.load('../openpilot_model/supercombo_server3.onnx')
+def load_weights_from_onnx(model, model_path):
+    onnx_model = onnx.load(model_path)
     weights = onnx_model.graph.initializer
 
     # prepare map of ONNX weight names to PyTorch weight names
@@ -1159,12 +1161,13 @@ def sigmoid(x):
 
 if __name__ == '__main__':
     # load in preloaded example data
-    input_imgs = np.load('test_inputs/input_imgs.npy')
-    desire = np.load('test_inputs/desire.npy')
-    traffic_convention = np.load('test_inputs/traffic_convention.npy')
-    initial_state = np.load('test_inputs/initial_state.npy')
+    input_imgs = torch.randn(1, 12, 128, 256, dtype=torch.float32)
+    desire = torch.zeros(1, 8, dtype=torch.float32)
+    traffic_convention = torch.tensor([[1.0, 0.0]], dtype=torch.float32)
+    initial_state = torch.zeros(1, 512, dtype=torch.float32)
 
     # load ONNX model and pass input through
+    model_path = 'openpilot_model/supercombo_server3.onnx'
     session = onnxruntime.InferenceSession('openpilot_model/supercombo_server3.onnx', None)
     onnx_res = session.run(['outputs'], {
         'input_imgs': input_imgs,
@@ -1184,7 +1187,7 @@ if __name__ == '__main__':
 
     # load PyTorch model and pass input through
     model = OpenPilotModel()
-    load_weights_from_onnx(model)
+    load_weights_from_onnx(model, model_path)
     torch_out = model(
         torch.tensor(input_imgs),
         torch.tensor(desire),
