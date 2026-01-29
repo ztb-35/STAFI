@@ -11,7 +11,7 @@
 
 <p align="center">
 
-<img src="./figures/overview.png">
+<img src="./figures/overview.pdf">
 
 </p>
 
