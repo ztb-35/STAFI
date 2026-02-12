@@ -356,6 +356,99 @@ def select_weight_candidates(
     return items[: min(top_w, len(items))]
 
 
+def select_weight_candidates_by_gradient(
+    model: onnx.ModelProto,
+    cached_batches: Sequence[CachedBatch],
+    output_slices: Dict[str, slice],
+    input_shapes: Dict[str, Tuple[int, ...]],
+    top_w: int,
+    per_tensor_k: int,
+    allow_bias: bool,
+    restrict: Optional[List[str]],
+    providers: Sequence[str] = ("CPUExecutionProvider",),
+    epsilon: float = 1e-3,
+    sample_all: bool = False,
+) -> List[Tuple[str, int, float]]:
+    """Select weight candidates based on gradient magnitude using numerical differentiation.
+
+    For each weight parameter, compute numerical gradient:
+        grad ≈ (loss(w + ε) - loss(w)) / ε
+
+    Then select top-k weights per tensor by |grad|.
+    """
+    print("[Gradient] Computing baseline loss...")
+    base_sess = make_session(model.SerializeToString(), providers=providers)
+    base_loss = eval_loss(base_sess, cached_batches, output_slices, input_shapes)
+    print(f"[Gradient] Baseline loss: {base_loss:.6f}")
+
+    base_bytes = model.SerializeToString()
+    items: List[Tuple[str, int, float]] = []
+
+    # Iterate over all fp16 initializers
+    tensor_list = list(iter_fp16_initializers(model, allow_bias=allow_bias, restrict=restrict))
+    print(f"[Gradient] Computing gradients for {len(tensor_list)} tensors...")
+
+    for tensor_idx, (name, arr) in enumerate(tqdm(tensor_list, desc="Computing gradients", unit="tensor")):
+        flat = arr.reshape(-1)
+        n = flat.size
+
+        # Sample indices if tensor is too large
+        if sample_all:
+            # Test ALL weights in this tensor
+            sample_idx = np.arange(n)
+        elif per_tensor_k > 0 and per_tensor_k < n:
+            # First sample by magnitude to focus on larger weights
+            flat_abs = np.abs(flat.astype(np.float32))
+            sample_k = min(per_tensor_k * 10, n)  # Sample 10x more for gradient computation
+            sample_idx = np.argpartition(flat_abs, -sample_k)[-sample_k:]
+        else:
+            sample_idx = np.arange(n)
+
+        gradients = np.zeros(len(sample_idx), dtype=np.float32)
+
+        # Compute numerical gradient for sampled indices
+        for i, flat_idx in enumerate(sample_idx):
+            # Perturb weight by epsilon
+            m = onnx.load_from_string(base_bytes)
+            for t in m.graph.initializer:
+                if t.name != name:
+                    continue
+                arr_copy = numpy_helper.to_array(t).copy()
+                flat_arr = arr_copy.reshape(-1)
+
+                original_val = float(flat_arr[flat_idx])
+                # Add perturbation
+                flat_arr[flat_idx] = np.float16(original_val + epsilon)
+
+                t.CopyFrom(numpy_helper.from_array(arr_copy.astype(np.float16), name=t.name))
+                break
+
+            # Compute loss with perturbed weight
+            perturbed_bytes = m.SerializeToString()
+            perturbed_sess = make_session(perturbed_bytes, providers=providers)
+            perturbed_loss = eval_loss(perturbed_sess, cached_batches, output_slices, input_shapes)
+
+            # Numerical gradient (forward difference)
+            grad = (perturbed_loss - base_loss) / epsilon
+            gradients[i] = abs(grad)
+
+        # Select top-k by gradient magnitude
+        k = min(per_tensor_k, len(sample_idx))
+        if k <= 0:
+            continue
+
+        top_k_idx = np.argpartition(gradients, -k)[-k:]
+        for i in top_k_idx:
+            flat_idx = int(sample_idx[i])
+            grad_mag = float(gradients[i])
+            items.append((name, flat_idx, grad_mag))
+
+    # Sort by gradient magnitude and return top_w
+    items.sort(key=lambda x: x[2], reverse=True)
+    print(f"[Gradient] Selected {len(items[:top_w])} candidates by gradient magnitude")
+    return items[: min(top_w, len(items))]
+
+
 def flip_fp16_value(arr: np.ndarray, flat_idx: int, bit: int) -> Tuple[float, float]:
     flat = arr.reshape(-1)
     raw = flat.view(np.uint16)
@@ -460,10 +553,6 @@ def rank_bits_progressive(
 
         current_model_bytes = best_item.pop("_model_bytes")
         current_score = float(best_item["flipped_score"])
-
-        # backward-compat fields
-        best_item["dscore"] = best_item["score"]
-        best_item["base_score"] = best_item["original_score"]
         records.append(best_item)
 
         pending.pop(best_idx)
@@ -483,6 +572,8 @@ def save_weight_candidates(
     allow_bias: bool,
     top_w: int,
     per_tensor_k: int,
+    selection_method: str = "magnitude",
+    gradient_epsilon: Optional[float] = None,
 ) -> None:
     payload = {
         "meta": {
@@ -493,12 +584,15 @@ def save_weight_candidates(
             "top_w": int(top_w),
             "per_tensor_k": int(per_tensor_k),
             "num_candidates": int(len(candidates)),
+            "selection_method": selection_method,
         },
         "candidates": [
             {"name": name, "flat": int(flat), "score": float(score)}
             for name, flat, score in candidates
         ],
     }
+    if gradient_epsilon is not None:
+        payload["meta"]["gradient_epsilon"] = float(gradient_epsilon)
     os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2)
@@ -540,7 +634,7 @@ def get_args() -> argparse.Namespace:
     p.add_argument("--num-val-batches", type=int, default=2)
     p.add_argument("--top-w", type=int, default=50)
     p.add_argument("--per-tensor-k", type=int, default=1)
-    p.add_argument("--top-b", type=int, default=50)
+    p.add_argument("--top-b", type=int, default=1)
     p.add_argument("--bitset", default="exponent_sign", help="fp16 bit set: mantissa/exponent/sign/exponent_sign/all or csv")
     p.add_argument("--allow-bias", action="store_true")
     p.add_argument("--restrict", default="", help="comma-separated substrings to keep, e.g. vision,policy")
@@ -558,6 +652,14 @@ def get_args() -> argparse.Namespace:
     p.add_argument("--eval-seq-len", type=int, default=20, help="timesteps used per cached sequence; <=0 means full sequence")
     p.add_argument("--provider", choices=["auto", "cpu", "cuda"], default="auto", help="ONNX Runtime provider")
     p.add_argument("--inspect-only", action="store_true", help="Only print observed output stats and baseline loss")
+    p.add_argument(
+        "--weight-selection-method",
+        choices=["magnitude", "gradient"],
+        default="magnitude",
+        help="Weight selection method: magnitude (absolute value) or gradient (numerical gradient)"
+    )
+    p.add_argument("--gradient-epsilon", type=float, default=1e-3, help="Epsilon for numerical gradient computation")
+    p.add_argument("--sample-all-weights", action="store_true", help="Compute gradients for ALL weights in each tensor (ignores per-tensor-k)")
     return p.parse_args()
 
 
@@ -585,13 +687,44 @@ def main() -> None:
 
     if args.stage == "select-weights":
         base_model = onnx.load(args.onnx)
-        selected = select_weight_candidates(
-            base_model,
-            top_w=args.top_w,
-            per_tensor_k=args.per_tensor_k,
-            allow_bias=args.allow_bias,
-            restrict=restrict,
-        )
+
+        if args.weight_selection_method == "gradient":
+            # Need to load data for gradient computation
+            train_loader, val_loader = build_loaders(args)
+            cached_batches = collect_cached_batches(
+                val_loader,
+                input_shapes=input_shapes,
+                num_batches=args.num_val_batches,
+                eval_seq_len=args.eval_seq_len,
+            )
+            if not cached_batches:
+                raise RuntimeError("No validation batches cached. Check dataset path/splits.")
+
+            mode_str = "ALL weights" if args.sample_all_weights else f"sampled (per_tensor_k={args.per_tensor_k})"
+            print(f"[Weights] Using gradient-based selection (epsilon={args.gradient_epsilon}, mode={mode_str})")
+            selected = select_weight_candidates_by_gradient(
+                base_model,
+                cached_batches=cached_batches,
+                output_slices=output_slices,
+                input_shapes=input_shapes,
+                top_w=args.top_w,
+                per_tensor_k=args.per_tensor_k,
+                allow_bias=args.allow_bias,
+                restrict=restrict,
+                providers=providers,
+                epsilon=args.gradient_epsilon,
+                sample_all=args.sample_all_weights,
+            )
+        else:
+            print(f"[Weights] Using magnitude-based selection")
+            selected = select_weight_candidates(
+                base_model,
+                top_w=args.top_w,
+                per_tensor_k=args.per_tensor_k,
+                allow_bias=args.allow_bias,
+                restrict=restrict,
+            )
+
         if not selected:
             raise RuntimeError("No fp16 initializer candidates selected.")
         save_weight_candidates(
@@ -602,6 +735,8 @@ def main() -> None:
             allow_bias=args.allow_bias,
             top_w=args.top_w,
             per_tensor_k=args.per_tensor_k,
+            selection_method=args.weight_selection_method,
+            gradient_epsilon=args.gradient_epsilon if args.weight_selection_method == "gradient" else None,
         )
         print(f"[Done] Saved {len(selected)} weight candidates to: {weights_out_path}")
         return
@@ -642,13 +777,32 @@ def main() -> None:
             selected = selected[: min(args.top_w, len(selected))]
         print(f"[Weights] loaded {len(selected)} candidates from {args.weights_in}")
     else:
-        selected = select_weight_candidates(
-            base_model,
-            top_w=args.top_w,
-            per_tensor_k=args.per_tensor_k,
-            allow_bias=args.allow_bias,
-            restrict=restrict,
-        )
+        if args.weight_selection_method == "gradient":
+            mode_str = "ALL weights" if args.sample_all_weights else f"sampled (per_tensor_k={args.per_tensor_k})"
+            print(f"[Weights] Using gradient-based selection (epsilon={args.gradient_epsilon}, mode={mode_str})")
+            selected = select_weight_candidates_by_gradient(
+                base_model,
+                cached_batches=cached_batches,
+                output_slices=output_slices,
+                input_shapes=input_shapes,
+                top_w=args.top_w,
+                per_tensor_k=args.per_tensor_k,
+                allow_bias=args.allow_bias,
+                restrict=restrict,
+                providers=providers,
+                epsilon=args.gradient_epsilon,
+                sample_all=args.sample_all_weights,
+            )
+        else:
+            print(f"[Weights] Using magnitude-based selection")
+            selected = select_weight_candidates(
+                base_model,
+                top_w=args.top_w,
+                per_tensor_k=args.per_tensor_k,
+                allow_bias=args.allow_bias,
+                restrict=restrict,
+            )
+
         if args.stage == "all":
             save_weight_candidates(
                 weights_out_path,
@@ -658,6 +812,8 @@ def main() -> None:
                 allow_bias=args.allow_bias,
                 top_w=args.top_w,
                 per_tensor_k=args.per_tensor_k,
+                selection_method=args.weight_selection_method,
+                gradient_epsilon=args.gradient_epsilon if args.weight_selection_method == "gradient" else None,
             )
             print(f"[Weights] saved {len(selected)} candidates to {weights_out_path}")
     if not selected:
@@ -695,14 +851,16 @@ def main() -> None:
             "bitset": bitset,
             "allow_bias": bool(args.allow_bias),
             "restrict": restrict,
-            "base_loss": base_loss,
             "original_metric_score": original_metric_score,
             "eval_metric": args.eval_metric,
             "search_mode": "progressive",
+            "weight_selection_method": args.weight_selection_method,
         },
         "ranked": ranked,
         "plan": plan,
     }
+    if args.weight_selection_method == "gradient":
+        payload["meta"]["gradient_epsilon"] = args.gradient_epsilon
 
     os.makedirs(os.path.dirname(result_out_path) or ".", exist_ok=True)
     with open(result_out_path, "w", encoding="utf-8") as f:

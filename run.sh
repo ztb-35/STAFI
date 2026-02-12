@@ -1,0 +1,12 @@
+/work/xzha135/conda_envs/op97_py311/bin/python op_097/important_bits_onnx.py \
+  --stage all \
+  --provider auto \
+  --data-root /home/xzha135/work/comma2k19 \
+  --num-val-batches 1 \
+  --eval-seq-len 100 \
+  --top-w 50 \
+  --top-b 2 \
+  --bitset exponent_sign \
+  --eval-metric loss \
+  --weights-out op_097/weights_candidates_097.json \
+  --out op_097/important_bits_097_loss.json
