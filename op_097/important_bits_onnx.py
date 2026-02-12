@@ -28,6 +28,7 @@ import torch
 import torch.nn.functional as F
 from onnx import TensorProto, numpy_helper
 from torch.utils.data import DataLoader
+from tqdm import tqdm
 
 # # Reuse the existing comma2k19 loader logic from 0.8.9 implementation.
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -46,12 +47,28 @@ class CachedBatch:
     seq_gt: torch.Tensor
 
 
-def make_session(model_bytes_or_path: Any) -> ort.InferenceSession:
+def make_session(model_bytes_or_path: Any, providers: Sequence[str]) -> ort.InferenceSession:
     so = ort.SessionOptions()
     so.intra_op_num_threads = 1
     so.inter_op_num_threads = 1
     so.graph_optimization_level = ort.GraphOptimizationLevel.ORT_DISABLE_ALL
-    return ort.InferenceSession(model_bytes_or_path, sess_options=so, providers=["CPUExecutionProvider"])
+    return ort.InferenceSession(model_bytes_or_path, sess_options=so, providers=list(providers))
+
+
+def resolve_providers(provider_mode: str) -> List[str]:
+    avail = set(ort.get_available_providers())
+    if provider_mode == "cpu":
+        return ["CPUExecutionProvider"]
+    if provider_mode == "cuda":
+        if "CUDAExecutionProvider" not in avail:
+            raise RuntimeError(
+                "CUDAExecutionProvider is not available in current onnxruntime. "
+                "Install onnxruntime-gpu or use --provider cpu/auto."
+            )
+        return ["CUDAExecutionProvider", "CPUExecutionProvider"]
+    if "CUDAExecutionProvider" in avail:
+        return ["CUDAExecutionProvider", "CPUExecutionProvider"]
+    return ["CPUExecutionProvider"]
 
 
 def parse_bitset(name: str) -> List[int]:
@@ -223,48 +240,31 @@ def eval_loss(
     return float(np.mean(vals)) if vals else float("nan")
 
 
-def collect_clean_best_traj(
+def traj_metric(best_traj: torch.Tensor, metric: str) -> float:
+    if metric == "+diffx":
+        return float(best_traj[:, :, 0].mean().item())
+    if metric == "-diffx":
+        return float((-best_traj[:, :, 0]).mean().item())
+    if metric == "+diffy":
+        return float(best_traj[:, :, 1].mean().item())
+    if metric == "-diffy":
+        return float((-best_traj[:, :, 1]).mean().item())
+    raise ValueError(f"Unknown trajectory metric: {metric}")
+
+
+def eval_metric_value(
     session: ort.InferenceSession,
     cached_batches: Sequence[CachedBatch],
     output_slices: Dict[str, slice],
     input_shapes: Dict[str, Tuple[int, ...]],
-) -> List[List[torch.Tensor]]:
-    """Collect clean best trajectories per cached batch and per timestep."""
-    clean: List[List[torch.Tensor]] = []
-    for cb in cached_batches:
-        bsz, t, _, _, _ = cb.seq_imgs12.shape
-        feature_buffer = np.zeros((bsz, 99, 512), dtype=np.float16)
-        one_batch: List[torch.Tensor] = []
-        for i in range(t):
-            inputs = {
-                "input_imgs": cb.seq_imgs12[:, i],
-                "big_input_imgs": cb.seq_imgs12[:, i],
-            }
-            inputs.update(build_static_onnx_inputs(input_shapes, bsz, feature_buffer))
-            raw = session.run(["outputs"], inputs)[0]
-            _, best_traj = decode_plan(raw, output_slices, cb.seq_gt[:, i])
-            one_batch.append(best_traj)
-            if "features_buffer" in input_shapes:
-                hs = raw[:, output_slices["hidden_state"]].astype(np.float16)
-                feature_buffer = np.concatenate([feature_buffer[:, 1:, :], hs[:, None, :]], axis=1)
-        clean.append(one_batch)
-    return clean
-
-
-def eval_diff_metric(
-    session: ort.InferenceSession,
-    cached_batches: Sequence[CachedBatch],
-    output_slices: Dict[str, slice],
-    input_shapes: Dict[str, Tuple[int, ...]],
-    clean_best_traj: List[List[torch.Tensor]],
     metric: str,
 ) -> float:
-    """Evaluate signed trajectory-difference metrics: +/-diffx, +/-diffy."""
+    if metric == "loss":
+        return eval_loss(session, cached_batches, output_slices, input_shapes)
     if metric not in {"+diffx", "-diffx", "+diffy", "-diffy"}:
-        raise ValueError(f"Unknown diff metric: {metric}")
-
+        raise ValueError(f"Unknown metric: {metric}")
     vals: List[float] = []
-    for bi, cb in enumerate(cached_batches):
+    for cb in cached_batches:
         bsz, t, _, _, _ = cb.seq_imgs12.shape
         feature_buffer = np.zeros((bsz, 99, 512), dtype=np.float16)
         for ti in range(t):
@@ -275,17 +275,7 @@ def eval_diff_metric(
             inputs.update(build_static_onnx_inputs(input_shapes, bsz, feature_buffer))
             raw = session.run(["outputs"], inputs)[0]
             _, flipped_best = decode_plan(raw, output_slices, cb.seq_gt[:, ti])
-            clean_best = clean_best_traj[bi][ti]
-            delta = flipped_best - clean_best
-
-            if metric in {"+diffx", "-diffx"}:
-                v = delta[:, :, 0]
-            else:
-                v = delta[:, :, 1]
-
-            if metric.startswith("-"):
-                v = -v
-            vals.append(float(v.mean().item()))
+            vals.append(traj_metric(flipped_best, metric))
 
             if "features_buffer" in input_shapes:
                 hs = raw[:, output_slices["hidden_state"]].astype(np.float16)
@@ -392,9 +382,9 @@ def make_flipped_model_bytes(base_bytes: bytes, name: str, flat_idx: int, bit: i
     raise KeyError(f"Initializer not found: {name}")
 
 
-def rank_bits_independent(
+def rank_bits_progressive(
     base_model: onnx.ModelProto,
-    base_score: float,
+    original_score: float,
     cached_batches: Sequence[CachedBatch],
     output_slices: Dict[str, slice],
     input_shapes: Dict[str, Tuple[int, ...]],
@@ -402,53 +392,86 @@ def rank_bits_independent(
     bitset: Sequence[int],
     top_b: int,
     eval_metric: str,
-    clean_best_traj: Optional[List[List[torch.Tensor]]] = None,
+    providers: Sequence[str] = ("CPUExecutionProvider",),
 ) -> List[Dict[str, Any]]:
-    base_bytes = base_model.SerializeToString()
+    if not np.isfinite(original_score):
+        raise RuntimeError(f"Baseline metric score is non-finite: {original_score}")
+
+    current_model_bytes = base_model.SerializeToString()
+    current_score = float(original_score)
     records: List[Dict[str, Any]] = []
 
-    total = len(candidates) * len(bitset)
-    done = 0
-    for name, flat_idx in candidates:
-        for bit in bitset:
-            done += 1
-            model_bytes, old, new = make_flipped_model_bytes(base_bytes, name, flat_idx, int(bit))
-            if model_bytes is None:
-                continue
-            sess = make_session(model_bytes)
-            if eval_metric == "loss":
-                flipped_score = eval_loss(sess, cached_batches, output_slices, input_shapes)
-            else:
-                if clean_best_traj is None:
-                    raise RuntimeError("clean_best_traj is required for diff metrics")
-                flipped_score = eval_diff_metric(
-                    sess,
-                    cached_batches,
-                    output_slices,
-                    input_shapes,
-                    clean_best_traj,
-                    eval_metric,
-                )
-            dscore = flipped_score - base_score
+    pending: List[Tuple[str, int, int]] = [(n, fi, b) for (n, fi) in candidates for b in bitset]
+    if not pending:
+        return records
 
-            records.append(
-                {
+    total_steps = min(top_b, len(pending))
+    skipped_non_finite = 0
+    outer = tqdm(total=total_steps, desc="Progressive rank", unit="step", dynamic_ncols=True)
+    for step in range(total_steps):
+        if not pending:
+            break
+
+        best_idx = -1
+        best_item: Optional[Dict[str, Any]] = None
+        inner = tqdm(total=len(pending), desc=f"Scan step {step+1}", unit="flip", leave=False, dynamic_ncols=True)
+        for idx, (name, flat_idx, bit) in enumerate(pending):
+            model_bytes, old, new = make_flipped_model_bytes(current_model_bytes, name, flat_idx, int(bit))
+            if model_bytes is None:
+                inner.update(1)
+                continue
+
+            sess = make_session(model_bytes, providers=providers)
+            flipped_score = eval_metric_value(
+                sess,
+                cached_batches,
+                output_slices,
+                input_shapes,
+                eval_metric,
+            )
+            if not np.isfinite(flipped_score):
+                skipped_non_finite += 1
+                inner.update(1)
+                continue
+
+            score = float(flipped_score - current_score)
+            if (best_item is None) or (score > best_item["score"]):
+                best_idx = idx
+                best_item = {
                     "name": name,
                     "flat": int(flat_idx),
                     "bit": int(bit),
                     "metric": eval_metric,
-                    "dscore": float(dscore),
-                    "base_score": float(base_score),
+                    "score": float(score),
+                    "original_score": float(current_score),
                     "flipped_score": float(flipped_score),
                     "old": float(old),
                     "new": float(new),
+                    "step": int(step + 1),
+                    "_model_bytes": model_bytes,
                 }
-            )
-            if done % 10 == 0 or done == total:
-                print(f"[Rank] {done}/{total} tested")
+                inner.set_postfix(best_score=f"{score:.4f}")
+            inner.update(1)
+        inner.close()
 
-    records.sort(key=lambda r: r["dscore"], reverse=True)
-    return records[: min(top_b, len(records))]
+        if best_item is None:
+            print("[Rank] stop early: no finite candidate remained.")
+            break
+
+        current_model_bytes = best_item.pop("_model_bytes")
+        current_score = float(best_item["flipped_score"])
+
+        # backward-compat fields
+        best_item["dscore"] = best_item["score"]
+        best_item["base_score"] = best_item["original_score"]
+        records.append(best_item)
+
+        pending.pop(best_idx)
+        outer.update(1)
+        outer.set_postfix(current_score=f"{current_score:.4f}", kept=len(records), pending=len(pending), skipped_nan=skipped_non_finite)
+    outer.close()
+
+    return records
 
 
 def save_weight_candidates(
@@ -533,6 +556,7 @@ def get_args() -> argparse.Namespace:
     )
     p.add_argument("--out", default=str(root / "op_097" / "important_bits_097.json"))
     p.add_argument("--eval-seq-len", type=int, default=20, help="timesteps used per cached sequence; <=0 means full sequence")
+    p.add_argument("--provider", choices=["auto", "cpu", "cuda"], default="auto", help="ONNX Runtime provider")
     p.add_argument("--inspect-only", action="store_true", help="Only print observed output stats and baseline loss")
     return p.parse_args()
 
@@ -545,6 +569,8 @@ def main() -> None:
     out_dir = os.path.join(REPO_ROOT, "op_097", "out")
     weights_out_path = with_timestamp(args.weights_out, run_ts, out_dir)
     result_out_path = with_timestamp(args.out, run_ts, out_dir)
+    providers = resolve_providers(args.provider)
+    print(f"[ORT] providers={providers}")
 
     import pickle
 
@@ -590,14 +616,20 @@ def main() -> None:
     if not cached_batches:
         raise RuntimeError("No validation batches cached. Check dataset path/splits.")
 
-    base_sess = make_session(args.onnx)
+    base_sess = make_session(args.onnx, providers=providers)
+    providers = list(base_sess.get_providers())
+    print(f"[ORT] active_providers={providers}")
     inspect_outputs(base_sess, cached_batches[0], output_slices, input_shapes)
     base_loss = eval_loss(base_sess, cached_batches, output_slices, input_shapes)
     print(f"\n[Eval] Baseline planning loss on cached val batches: {base_loss:.6f}")
-    clean_best_traj = None
-    if args.eval_metric != "loss":
-        clean_best_traj = collect_clean_best_traj(base_sess, cached_batches, output_slices, input_shapes)
-        print(f"[Eval] Ranking metric: {args.eval_metric} (computed as flipped-clean on best_traj)")
+    original_metric_score = eval_metric_value(
+        base_sess,
+        cached_batches,
+        output_slices,
+        input_shapes,
+        args.eval_metric,
+    )
+    print(f"[Eval] Baseline {args.eval_metric} score on cached val batches: {original_metric_score:.6f}")
 
     if args.inspect_only:
         print("[Done] inspect-only mode")
@@ -632,9 +664,9 @@ def main() -> None:
         raise RuntimeError("No fp16 initializer candidates selected.")
 
     candidates = [(n, fi) for (n, fi, _score) in selected]
-    ranked = rank_bits_independent(
+    ranked = rank_bits_progressive(
         base_model=base_model,
-        base_score=0.0 if args.eval_metric != "loss" else base_loss,
+        original_score=original_metric_score,
         cached_batches=cached_batches,
         output_slices=output_slices,
         input_shapes=input_shapes,
@@ -642,7 +674,7 @@ def main() -> None:
         bitset=bitset,
         top_b=args.top_b,
         eval_metric=args.eval_metric,
-        clean_best_traj=clean_best_traj,
+        providers=providers,
     )
 
     plan = [{"name": r["name"], "flat": r["flat"], "bit": r["bit"]} for r in ranked]
@@ -664,7 +696,9 @@ def main() -> None:
             "allow_bias": bool(args.allow_bias),
             "restrict": restrict,
             "base_loss": base_loss,
+            "original_metric_score": original_metric_score,
             "eval_metric": args.eval_metric,
+            "search_mode": "progressive",
         },
         "ranked": ranked,
         "plan": plan,
@@ -679,8 +713,8 @@ def main() -> None:
         top = ranked[0]
         print(
             f"[Top-1] name={top['name']} flat={top['flat']} bit={top['bit']} "
-            f"metric={top['metric']} dscore={top['dscore']:.6f} "
-            f"({top['base_score']:.6f} -> {top['flipped_score']:.6f})"
+            f"metric={top['metric']} score={top['score']:.6f} "
+            f"({top['original_score']:.6f} -> {top['flipped_score']:.6f})"
         )
 
 

@@ -28,6 +28,7 @@
 /work/xzha135/conda_envs/op97_py311/bin/python op_097/important_bits_onnx.py \
   --stage select-weights \
   --onnx op_097/models/supercombo.onnx \
+  --provider auto \
   --top-w 50 \
   --per-tensor-k 1 \
   --weights-out op_097/weights_candidates_097.json
@@ -44,6 +45,7 @@
 /work/xzha135/conda_envs/op97_py311/bin/python op_097/important_bits_onnx.py \
   --stage rank-bits \
   --weights-in op_097/out/weights_candidates_097_YYYYMMDD-HHMMSS.json \
+  --provider auto \
   --data-root /home/xzha135/work/comma2k19 \
   --num-val-batches 3 \
   --eval-seq-len 20 \
@@ -67,6 +69,7 @@
 /work/xzha135/conda_envs/op97_py311/bin/python op_097/important_bits_onnx.py \
   --stage rank-bits \
   --weights-in op_097/out/weights_candidates_097_YYYYMMDD-HHMMSS.json \
+  --provider auto \
   --data-root /home/xzha135/work/comma2k19 \
   --num-val-batches 3 \
   --eval-seq-len 20 \
@@ -79,13 +82,21 @@
 输出 JSON 关键字段：
 - `meta.eval_metric`
 - `meta.bitset_mode`
-- `ranked[].dscore`（排序依据，越大越靠前）
+- `ranked[].original_score / ranked[].flipped_score / ranked[].score`
 - `plan[]`（导出翻转模型时直接用）
+
+说明：
+- 当前 `rank-bits` 使用 progressive 搜索：每一步会在“已翻转模型”基础上继续搜索下一个 bit。
+- 非有限值（`NaN/Inf`）候选会被自动跳过，不写入最终 `ranked`。
 
 注意：
 - `important_bits_onnx.py` 会自动给 `--weights-out` 和 `--out` 增加时间戳后缀，并统一写入 `op_097/out/`。
 - 例如传入 `--out op_097/important_bits_097_diffx.json`，实际输出类似：
   - `op_097/out/important_bits_097_diffx_20260212-135959.json`
+- `--provider` 可选 `auto/cpu/cuda`：
+  - `auto`：优先 CUDA（可用时），否则 CPU
+  - `cpu`：强制 CPU
+  - `cuda`：强制 CUDA（环境不支持会报错）
 
 ## 4. 第三步：导出翻转后的 ONNX
 
@@ -107,6 +118,7 @@
 ```bash
 /work/xzha135/conda_envs/op97_py311/bin/python op_097/important_bits_onnx.py \
   --stage all \
+  --provider auto \
   --data-root /home/xzha135/work/comma2k19 \
   --num-val-batches 3 \
   --eval-seq-len 20 \
