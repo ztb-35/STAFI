@@ -1,0 +1,2672 @@
+Activating conda environment: op97_py311
+
+=========================================
+Gradient Selection - ALL Tensors
+=========================================
+
+WARNING: This will process ~313 FP16 tensors
+Expected time: ~30 minutes
+
+Starting gradient-based selection on ALL tensors...
+----------------------------------------------------------------------
+[ORT] providers=['CUDAExecutionProvider', 'CPUExecutionProvider']
+[Split] train=1630 val=405
+Caching val batches:   0%|          | 0/64 [00:00<?, ?batch/s]
+Read video idx=0: 0frame [00:00, ?frame/s][A
+Read video idx=0: 48frame [00:00, 476.59frame/s][A
+Read video idx=0: 111frame [00:00, 563.37frame/s][A
+Read video idx=0: 173frame [00:00, 584.84frame/s][A
+Read video idx=0: 234frame [00:00, 592.58frame/s][A
+Read video idx=0: 296frame [00:00, 600.21frame/s][A
+Read video idx=0: 360frame [00:00, 612.20frame/s][A
+Read video idx=0: 428frame [00:00, 633.73frame/s][A
+Read video idx=0: 492frame [00:00, 631.98frame/s][A
+Read video idx=0: 556frame [00:00, 626.31frame/s][A
+Read video idx=0: 624frame [00:01, 641.61frame/s][A
+Read video idx=0: 692frame [00:01, 651.63frame/s][A
+Read video idx=0: 759frame [00:01, 656.54frame/s][A
+Read video idx=0: 826frame [00:01, 658.84frame/s][A
+Read video idx=0: 892frame [00:01, 656.88frame/s][A
+Read video idx=0: 960frame [00:01, 662.31frame/s][A
+Read video idx=0: 1027frame [00:01, 654.47frame/s][A
+Read video idx=0: 1099frame [00:01, 672.18frame/s][A
+Read video idx=0: 1167frame [00:01, 670.19frame/s][A
+                                                  [A
+Preprocess idx=0:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=0:   4%|▍         | 31/801 [00:00<00:02, 308.00img/s][A
+Preprocess idx=0:  10%|█         | 84/801 [00:00<00:01, 434.83img/s][A
+Preprocess idx=0:  17%|█▋        | 138/801 [00:00<00:01, 479.06img/s][A
+Preprocess idx=0:  24%|██▍       | 192/801 [00:00<00:01, 500.06img/s][A
+Preprocess idx=0:  31%|███       | 245/801 [00:00<00:01, 507.82img/s][A
+Preprocess idx=0:  37%|███▋      | 298/801 [00:00<00:00, 514.47img/s][A
+Preprocess idx=0:  44%|████▎     | 350/801 [00:00<00:01, 379.05img/s][A
+Preprocess idx=0:  50%|█████     | 402/801 [00:00<00:00, 414.33img/s][A
+Preprocess idx=0:  57%|█████▋    | 454/801 [00:01<00:00, 441.93img/s][A
+Preprocess idx=0:  63%|██████▎   | 507/801 [00:01<00:00, 464.95img/s][A
+Preprocess idx=0:  70%|███████   | 561/801 [00:01<00:00, 483.66img/s][A
+Preprocess idx=0:  77%|███████▋  | 614/801 [00:01<00:00, 496.56img/s][A
+Preprocess idx=0:  83%|████████▎ | 667/801 [00:01<00:00, 505.37img/s][A
+Preprocess idx=0:  90%|████████▉ | 720/801 [00:01<00:00, 512.18img/s][A
+Preprocess idx=0:  97%|█████████▋| 774/801 [00:01<00:00, 517.91img/s][A
+                                                                     [A
+Interpolate pose idx=0:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=0:  58%|█████▊    | 463/800 [00:00<00:00, 4621.96step/s][A
+                                                                             [ACaching val batches:   2%|▏         | 1/64 [00:04<04:35,  4.37s/batch]
+Read video idx=1: 0frame [00:00, ?frame/s][A
+Read video idx=1: 54frame [00:00, 536.67frame/s][A
+Read video idx=1: 116frame [00:00, 582.42frame/s][A
+Read video idx=1: 179frame [00:00, 603.38frame/s][A
+Read video idx=1: 244frame [00:00, 619.44frame/s][A
+Read video idx=1: 309frame [00:00, 629.17frame/s][A
+Read video idx=1: 373frame [00:00, 632.04frame/s][A
+Read video idx=1: 437frame [00:00, 622.27frame/s][A
+Read video idx=1: 500frame [00:00, 619.82frame/s][A
+Read video idx=1: 563frame [00:00, 621.36frame/s][A
+Read video idx=1: 626frame [00:01, 622.65frame/s][A
+Read video idx=1: 689frame [00:01, 617.07frame/s][A
+Read video idx=1: 751frame [00:01, 617.16frame/s][A
+Read video idx=1: 816frame [00:01, 625.49frame/s][A
+Read video idx=1: 879frame [00:01, 621.77frame/s][A
+Read video idx=1: 942frame [00:01, 617.23frame/s][A
+Read video idx=1: 1008frame [00:01, 628.39frame/s][A
+Read video idx=1: 1071frame [00:01, 626.44frame/s][A
+Read video idx=1: 1134frame [00:01, 616.03frame/s][A
+Read video idx=1: 1196frame [00:01, 614.76frame/s][A
+                                                  [A
+Preprocess idx=1:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=1:   7%|▋         | 54/801 [00:00<00:01, 532.50img/s][A
+Preprocess idx=1:  13%|█▎        | 108/801 [00:00<00:01, 531.84img/s][A
+Preprocess idx=1:  20%|██        | 162/801 [00:00<00:01, 531.13img/s][A
+Preprocess idx=1:  27%|██▋       | 216/801 [00:00<00:01, 529.85img/s][A
+Preprocess idx=1:  34%|███▎      | 269/801 [00:00<00:01, 528.26img/s][A
+Preprocess idx=1:  40%|████      | 322/801 [00:00<00:00, 526.91img/s][A
+Preprocess idx=1:  47%|████▋     | 375/801 [00:00<00:00, 523.49img/s][A
+Preprocess idx=1:  53%|█████▎    | 428/801 [00:00<00:00, 521.85img/s][A
+Preprocess idx=1:  60%|██████    | 481/801 [00:00<00:00, 519.89img/s][A
+Preprocess idx=1:  67%|██████▋   | 533/801 [00:01<00:00, 518.29img/s][A
+Preprocess idx=1:  73%|███████▎  | 585/801 [00:01<00:00, 517.08img/s][A
+Preprocess idx=1:  80%|███████▉  | 637/801 [00:01<00:00, 516.27img/s][A
+Preprocess idx=1:  86%|████████▌ | 689/801 [00:01<00:00, 515.58img/s][A
+Preprocess idx=1:  93%|█████████▎| 741/801 [00:01<00:00, 515.30img/s][A
+Preprocess idx=1:  99%|█████████▉| 793/801 [00:01<00:00, 515.03img/s][A
+                                                                     [A
+Interpolate pose idx=1:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=1:  59%|█████▉    | 470/800 [00:00<00:00, 4695.64step/s][A
+                                                                             [ACaching val batches:   3%|▎         | 2/64 [00:08<04:22,  4.23s/batch]
+Read video idx=2: 0frame [00:00, ?frame/s][A
+Read video idx=2: 45frame [00:00, 449.49frame/s][A
+Read video idx=2: 117frame [00:00, 607.03frame/s][A
+Read video idx=2: 184frame [00:00, 632.22frame/s][A
+Read video idx=2: 249frame [00:00, 637.64frame/s][A
+Read video idx=2: 313frame [00:00, 617.97frame/s][A
+Read video idx=2: 375frame [00:00, 615.41frame/s][A
+Read video idx=2: 447frame [00:00, 647.45frame/s][A
+Read video idx=2: 512frame [00:00, 633.69frame/s][A
+Read video idx=2: 576frame [00:00, 632.38frame/s][A
+Read video idx=2: 642frame [00:01, 640.07frame/s][A
+Read video idx=2: 707frame [00:01, 634.86frame/s][A
+Read video idx=2: 779frame [00:01, 659.47frame/s][A
+Read video idx=2: 846frame [00:01, 637.45frame/s][A
+Read video idx=2: 910frame [00:01, 629.58frame/s][A
+Read video idx=2: 974frame [00:01, 629.77frame/s][A
+Read video idx=2: 1041frame [00:01, 640.88frame/s][A
+Read video idx=2: 1106frame [00:01, 643.44frame/s][A
+Read video idx=2: 1171frame [00:01, 641.95frame/s][A
+                                                  [A
+Preprocess idx=2:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=2:   7%|▋         | 53/801 [00:00<00:01, 520.67img/s][A
+Preprocess idx=2:  13%|█▎        | 107/801 [00:00<00:01, 526.93img/s][A
+Preprocess idx=2:  20%|██        | 161/801 [00:00<00:01, 528.28img/s][A
+Preprocess idx=2:  27%|██▋       | 214/801 [00:00<00:01, 526.15img/s][A
+Preprocess idx=2:  33%|███▎      | 267/801 [00:00<00:01, 525.90img/s][A
+Preprocess idx=2:  40%|███▉      | 320/801 [00:00<00:00, 525.77img/s][A
+Preprocess idx=2:  47%|████▋     | 373/801 [00:00<00:00, 524.11img/s][A
+Preprocess idx=2:  53%|█████▎    | 426/801 [00:00<00:00, 524.91img/s][A
+Preprocess idx=2:  60%|█████▉    | 479/801 [00:00<00:00, 525.27img/s][A
+Preprocess idx=2:  66%|██████▋   | 532/801 [00:01<00:00, 525.42img/s][A
+Preprocess idx=2:  73%|███████▎  | 585/801 [00:01<00:00, 522.70img/s][A
+Preprocess idx=2:  80%|███████▉  | 638/801 [00:01<00:00, 520.16img/s][A
+Preprocess idx=2:  86%|████████▋ | 691/801 [00:01<00:00, 518.32img/s][A
+Preprocess idx=2:  93%|█████████▎| 743/801 [00:01<00:00, 517.14img/s][A
+Preprocess idx=2:  99%|█████████▉| 795/801 [00:01<00:00, 515.99img/s][A
+                                                                     [A
+Interpolate pose idx=2:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=2:  58%|█████▊    | 467/800 [00:00<00:00, 4662.82step/s][A
+                                                                             [ACaching val batches:   5%|▍         | 3/64 [00:12<04:06,  4.04s/batch]
+Read video idx=3: 0frame [00:00, ?frame/s][A
+Read video idx=3: 55frame [00:00, 546.78frame/s][A
+Read video idx=3: 122frame [00:00, 615.60frame/s][A
+Read video idx=3: 184frame [00:00, 600.69frame/s][A
+Read video idx=3: 247frame [00:00, 611.53frame/s][A
+Read video idx=3: 311frame [00:00, 619.21frame/s][A
+Read video idx=3: 374frame [00:00, 622.70frame/s][A
+Read video idx=3: 437frame [00:00, 624.03frame/s][A
+Read video idx=3: 511frame [00:00, 653.75frame/s][A
+Read video idx=3: 577frame [00:00, 653.76frame/s][A
+Read video idx=3: 644frame [00:01, 655.05frame/s][A
+Read video idx=3: 714frame [00:01, 667.66frame/s][A
+Read video idx=3: 781frame [00:01, 662.55frame/s][A
+Read video idx=3: 848frame [00:01, 648.82frame/s][A
+Read video idx=3: 913frame [00:01, 638.07frame/s][A
+Read video idx=3: 984frame [00:01, 658.69frame/s][A
+Read video idx=3: 1050frame [00:01, 646.64frame/s][A
+Read video idx=3: 1115frame [00:01, 637.91frame/s][A
+Read video idx=3: 1181frame [00:01, 643.00frame/s][A
+                                                  [A
+Preprocess idx=3:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=3:   6%|▌         | 50/801 [00:00<00:01, 496.04img/s][A
+Preprocess idx=3:  12%|█▏        | 100/801 [00:00<00:01, 496.84img/s][A
+Preprocess idx=3:  19%|█▊        | 150/801 [00:00<00:01, 497.69img/s][A
+Preprocess idx=3:  25%|██▍       | 200/801 [00:00<00:01, 497.27img/s][A
+Preprocess idx=3:  31%|███       | 250/801 [00:00<00:01, 498.21img/s][A
+Preprocess idx=3:  38%|███▊      | 303/801 [00:00<00:00, 506.65img/s][A
+Preprocess idx=3:  44%|████▍     | 356/801 [00:00<00:00, 512.32img/s][A
+Preprocess idx=3:  51%|█████     | 408/801 [00:00<00:00, 514.20img/s][A
+Preprocess idx=3:  58%|█████▊    | 461/801 [00:00<00:00, 517.51img/s][A
+Preprocess idx=3:  64%|██████▍   | 513/801 [00:01<00:00, 513.89img/s][A
+Preprocess idx=3:  71%|███████   | 566/801 [00:01<00:00, 518.65img/s][A
+Preprocess idx=3:  77%|███████▋  | 619/801 [00:01<00:00, 521.95img/s][A
+Preprocess idx=3:  84%|████████▍ | 672/801 [00:01<00:00, 522.69img/s][A
+Preprocess idx=3:  91%|█████████ | 725/801 [00:01<00:00, 522.61img/s][A
+Preprocess idx=3:  97%|█████████▋| 778/801 [00:01<00:00, 522.56img/s][A
+                                                                     [A
+Interpolate pose idx=3:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=3:  58%|█████▊    | 468/800 [00:00<00:00, 4676.46step/s][A
+                                                                             [ACaching val batches:   6%|▋         | 4/64 [00:16<03:56,  3.95s/batch]
+Read video idx=4: 0frame [00:00, ?frame/s][A
+Read video idx=4: 50frame [00:00, 498.62frame/s][A
+Read video idx=4: 117frame [00:00, 589.04frame/s][A
+Read video idx=4: 179frame [00:00, 602.43frame/s][A
+Read video idx=4: 246frame [00:00, 626.03frame/s][A
+Read video idx=4: 313frame [00:00, 640.28frame/s][A
+Read video idx=4: 385frame [00:00, 665.02frame/s][A
+Read video idx=4: 456frame [00:00, 678.96frame/s][A
+Read video idx=4: 524frame [00:00, 670.57frame/s][A
+Read video idx=4: 592frame [00:00, 651.68frame/s][A
+Read video idx=4: 658frame [00:01, 633.18frame/s][A
+Read video idx=4: 722frame [00:01, 627.87frame/s][A
+Read video idx=4: 785frame [00:01, 618.88frame/s][A
+Read video idx=4: 850frame [00:01, 626.02frame/s][A
+Read video idx=4: 913frame [00:01, 570.19frame/s][A
+Read video idx=4: 975frame [00:01, 582.11frame/s][A
+Read video idx=4: 1041frame [00:01, 603.64frame/s][A
+Read video idx=4: 1109frame [00:01, 623.60frame/s][A
+Read video idx=4: 1175frame [00:01, 633.91frame/s][A
+                                                  [A
+Preprocess idx=4:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=4:   7%|▋         | 54/801 [00:00<00:01, 530.86img/s][A
+Preprocess idx=4:  13%|█▎        | 108/801 [00:00<00:01, 533.83img/s][A
+Preprocess idx=4:  20%|██        | 162/801 [00:00<00:01, 534.20img/s][A
+Preprocess idx=4:  27%|██▋       | 216/801 [00:00<00:01, 534.16img/s][A
+Preprocess idx=4:  34%|███▎      | 270/801 [00:00<00:00, 533.76img/s][A
+Preprocess idx=4:  40%|████      | 324/801 [00:00<00:00, 532.92img/s][A
+Preprocess idx=4:  47%|████▋     | 378/801 [00:00<00:00, 532.87img/s][A
+Preprocess idx=4:  54%|█████▍    | 432/801 [00:00<00:00, 532.85img/s][A
+Preprocess idx=4:  61%|██████    | 486/801 [00:00<00:00, 533.31img/s][A
+Preprocess idx=4:  67%|██████▋   | 540/801 [00:01<00:00, 533.66img/s][A
+Preprocess idx=4:  74%|███████▍  | 594/801 [00:01<00:00, 531.20img/s][A
+Preprocess idx=4:  81%|████████  | 648/801 [00:01<00:00, 531.54img/s][A
+Preprocess idx=4:  88%|████████▊ | 702/801 [00:01<00:00, 530.91img/s][A
+Preprocess idx=4:  94%|█████████▍| 756/801 [00:01<00:00, 526.27img/s][A
+                                                                     [A
+Interpolate pose idx=4:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=4:  59%|█████▉    | 470/800 [00:00<00:00, 4690.07step/s][A
+                                                                             [ACaching val batches:   8%|▊         | 5/64 [00:19<03:49,  3.89s/batch]
+Read video idx=5: 0frame [00:00, ?frame/s][A
+Read video idx=5: 58frame [00:00, 577.87frame/s][A
+Read video idx=5: 121frame [00:00, 598.80frame/s][A
+Read video idx=5: 184frame [00:00, 608.55frame/s][A
+Read video idx=5: 247frame [00:00, 616.53frame/s][A
+Read video idx=5: 309frame [00:00, 606.47frame/s][A
+Read video idx=5: 370frame [00:00, 599.86frame/s][A
+Read video idx=5: 432frame [00:00, 602.40frame/s][A
+Read video idx=5: 494frame [00:00, 606.59frame/s][A
+Read video idx=5: 561frame [00:00, 625.30frame/s][A
+Read video idx=5: 628frame [00:01, 638.76frame/s][A
+Read video idx=5: 692frame [00:01, 627.91frame/s][A
+Read video idx=5: 757frame [00:01, 634.24frame/s][A
+Read video idx=5: 821frame [00:01, 634.26frame/s][A
+Read video idx=5: 885frame [00:01, 629.47frame/s][A
+Read video idx=5: 950frame [00:01, 635.41frame/s][A
+Read video idx=5: 1019frame [00:01, 651.00frame/s][A
+Read video idx=5: 1086frame [00:01, 649.93frame/s][A
+Read video idx=5: 1153frame [00:01, 651.90frame/s][A
+                                                  [A
+Preprocess idx=5:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=5:   7%|▋         | 53/801 [00:00<00:01, 527.32img/s][A
+Preprocess idx=5:  13%|█▎        | 107/801 [00:00<00:01, 530.62img/s][A
+Preprocess idx=5:  20%|██        | 161/801 [00:00<00:01, 520.29img/s][A
+Preprocess idx=5:  27%|██▋       | 214/801 [00:00<00:01, 517.95img/s][A
+Preprocess idx=5:  33%|███▎      | 267/801 [00:00<00:01, 520.62img/s][A
+Preprocess idx=5:  40%|███▉      | 320/801 [00:00<00:00, 519.64img/s][A
+Preprocess idx=5:  47%|████▋     | 373/801 [00:00<00:00, 520.29img/s][A
+Preprocess idx=5:  53%|█████▎    | 426/801 [00:00<00:00, 520.25img/s][A
+Preprocess idx=5:  60%|█████▉    | 479/801 [00:00<00:00, 521.43img/s][A
+Preprocess idx=5:  66%|██████▋   | 532/801 [00:01<00:00, 518.90img/s][A
+Preprocess idx=5:  73%|███████▎  | 584/801 [00:01<00:00, 518.00img/s][A
+Preprocess idx=5:  80%|███████▉  | 637/801 [00:01<00:00, 519.87img/s][A
+Preprocess idx=5:  86%|████████▌ | 689/801 [00:01<00:00, 519.30img/s][A
+Preprocess idx=5:  93%|█████████▎| 742/801 [00:01<00:00, 520.23img/s][A
+Preprocess idx=5:  99%|█████████▉| 795/801 [00:01<00:00, 521.10img/s][A
+                                                                     [A
+Interpolate pose idx=5:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=5:  58%|█████▊    | 468/800 [00:00<00:00, 4673.36step/s][A
+                                                                             [ACaching val batches:   9%|▉         | 6/64 [00:23<03:44,  3.87s/batch]
+Read video idx=6: 0frame [00:00, ?frame/s][A
+Read video idx=6: 56frame [00:00, 556.14frame/s][A
+Read video idx=6: 126frame [00:00, 639.45frame/s][A
+Read video idx=6: 192frame [00:00, 644.18frame/s][A
+Read video idx=6: 258frame [00:00, 649.43frame/s][A
+Read video idx=6: 323frame [00:00, 641.84frame/s][A
+Read video idx=6: 388frame [00:00, 621.80frame/s][A
+Read video idx=6: 451frame [00:00, 623.97frame/s][A
+Read video idx=6: 515frame [00:00, 628.57frame/s][A
+Read video idx=6: 581frame [00:00, 634.18frame/s][A
+Read video idx=6: 645frame [00:01, 630.66frame/s][A
+Read video idx=6: 709frame [00:01, 625.37frame/s][A
+Read video idx=6: 776frame [00:01, 635.94frame/s][A
+Read video idx=6: 840frame [00:01, 629.23frame/s][A
+Read video idx=6: 903frame [00:01, 623.04frame/s][A
+Read video idx=6: 966frame [00:01, 620.77frame/s][A
+Read video idx=6: 1031frame [00:01, 627.33frame/s][A
+Read video idx=6: 1096frame [00:01, 631.83frame/s][A
+Read video idx=6: 1163frame [00:01, 642.16frame/s][A
+                                                  [A
+Preprocess idx=6:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=6:   7%|▋         | 53/801 [00:00<00:01, 520.34img/s][A
+Preprocess idx=6:  13%|█▎        | 106/801 [00:00<00:01, 523.34img/s][A
+Preprocess idx=6:  20%|█▉        | 160/801 [00:00<00:01, 528.45img/s][A
+Preprocess idx=6:  27%|██▋       | 213/801 [00:00<00:01, 527.24img/s][A
+Preprocess idx=6:  33%|███▎      | 266/801 [00:00<00:01, 525.36img/s][A
+Preprocess idx=6:  40%|███▉      | 320/801 [00:00<00:00, 527.79img/s][A
+Preprocess idx=6:  47%|████▋     | 373/801 [00:00<00:00, 525.56img/s][A
+Preprocess idx=6:  53%|█████▎    | 426/801 [00:00<00:00, 524.46img/s][A
+Preprocess idx=6:  60%|█████▉    | 479/801 [00:00<00:00, 522.08img/s][A
+Preprocess idx=6:  66%|██████▋   | 532/801 [00:01<00:00, 516.17img/s][A
+Preprocess idx=6:  73%|███████▎  | 584/801 [00:01<00:00, 514.47img/s][A
+Preprocess idx=6:  79%|███████▉  | 636/801 [00:01<00:00, 510.72img/s][A
+Preprocess idx=6:  86%|████████▌ | 688/801 [00:01<00:00, 507.84img/s][A
+Preprocess idx=6:  92%|█████████▏| 739/801 [00:01<00:00, 503.85img/s][A
+Preprocess idx=6:  99%|█████████▊| 790/801 [00:01<00:00, 501.49img/s][A
+                                                                     [A
+Interpolate pose idx=6:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=6:  58%|█████▊    | 466/800 [00:00<00:00, 4652.92step/s][A
+                                                                             [ACaching val batches:  11%|█         | 7/64 [00:27<03:40,  3.87s/batch]
+Read video idx=7: 0frame [00:00, ?frame/s][A
+Read video idx=7: 58frame [00:00, 570.17frame/s][A
+Read video idx=7: 119frame [00:00, 577.97frame/s][A
+Read video idx=7: 190frame [00:00, 632.41frame/s][A
+Read video idx=7: 254frame [00:00, 632.01frame/s][A
+Read video idx=7: 323frame [00:00, 652.55frame/s][A
+Read video idx=7: 389frame [00:00, 634.14frame/s][A
+Read video idx=7: 453frame [00:00, 619.78frame/s][A
+Read video idx=7: 516frame [00:00, 608.63frame/s][A
+Read video idx=7: 577frame [00:00, 601.13frame/s][A
+Read video idx=7: 638frame [00:01, 588.51frame/s][A
+Read video idx=7: 704frame [00:01, 604.53frame/s][A
+Read video idx=7: 769frame [00:01, 616.83frame/s][A
+Read video idx=7: 834frame [00:01, 624.99frame/s][A
+Read video idx=7: 897frame [00:01, 622.55frame/s][A
+Read video idx=7: 960frame [00:01, 621.73frame/s][A
+Read video idx=7: 1023frame [00:01, 616.42frame/s][A
+Read video idx=7: 1085frame [00:01, 616.48frame/s][A
+Read video idx=7: 1148frame [00:01, 618.77frame/s][A
+                                                  [A
+Preprocess idx=7:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=7:   6%|▌         | 49/801 [00:00<00:01, 484.01img/s][A
+Preprocess idx=7:  12%|█▏        | 100/801 [00:00<00:01, 497.17img/s][A
+Preprocess idx=7:  19%|█▊        | 150/801 [00:00<00:01, 498.17img/s][A
+Preprocess idx=7:  25%|██▍       | 200/801 [00:00<00:01, 498.12img/s][A
+Preprocess idx=7:  31%|███       | 250/801 [00:00<00:01, 498.25img/s][A
+Preprocess idx=7:  37%|███▋      | 300/801 [00:00<00:01, 488.41img/s][A
+Preprocess idx=7:  44%|████▎     | 350/801 [00:00<00:00, 490.48img/s][A
+Preprocess idx=7:  50%|████▉     | 400/801 [00:00<00:00, 493.08img/s][A
+Preprocess idx=7:  56%|█████▋    | 451/801 [00:00<00:00, 495.77img/s][A
+Preprocess idx=7:  63%|██████▎   | 501/801 [00:01<00:00, 496.79img/s][A
+Preprocess idx=7:  69%|██████▉   | 551/801 [00:01<00:00, 497.51img/s][A
+Preprocess idx=7:  75%|███████▌  | 602/801 [00:01<00:00, 498.35img/s][A
+Preprocess idx=7:  81%|████████▏ | 652/801 [00:01<00:00, 497.46img/s][A
+Preprocess idx=7:  88%|████████▊ | 702/801 [00:01<00:00, 496.72img/s][A
+Preprocess idx=7:  94%|█████████▍| 752/801 [00:01<00:00, 494.99img/s][A
+                                                                     [A
+Interpolate pose idx=7:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=7:  58%|█████▊    | 468/800 [00:00<00:00, 4676.50step/s][A
+                                                                             [ACaching val batches:  12%|█▎        | 8/64 [00:31<03:38,  3.90s/batch]
+Read video idx=8: 0frame [00:00, ?frame/s][A
+Read video idx=8: 49frame [00:00, 485.37frame/s][A
+Read video idx=8: 118frame [00:00, 603.88frame/s][A
+Read video idx=8: 181frame [00:00, 608.29frame/s][A
+Read video idx=8: 242frame [00:00, 608.50frame/s][A
+Read video idx=8: 306frame [00:00, 618.24frame/s][A
+Read video idx=8: 368frame [00:00, 614.02frame/s][A
+Read video idx=8: 430frame [00:00, 609.63frame/s][A
+Read video idx=8: 492frame [00:00, 612.50frame/s][A
+Read video idx=8: 554frame [00:00, 614.57frame/s][A
+Read video idx=8: 616frame [00:01, 606.69frame/s][A
+Read video idx=8: 682frame [00:01, 621.94frame/s][A
+Read video idx=8: 745frame [00:01, 613.42frame/s][A
+Read video idx=8: 807frame [00:01, 614.80frame/s][A
+Read video idx=8: 870frame [00:01, 616.28frame/s][A
+Read video idx=8: 935frame [00:01, 624.11frame/s][A
+Read video idx=8: 999frame [00:01, 624.66frame/s][A
+Read video idx=8: 1062frame [00:01, 613.49frame/s][A
+Read video idx=8: 1125frame [00:01, 616.32frame/s][A
+Read video idx=8: 1191frame [00:01, 629.02frame/s][A
+                                                  [A
+Preprocess idx=8:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=8:   6%|▌         | 49/801 [00:00<00:01, 487.79img/s][A
+Preprocess idx=8:  13%|█▎        | 102/801 [00:00<00:01, 507.20img/s][A
+Preprocess idx=8:  19%|█▉        | 153/801 [00:00<00:01, 495.60img/s][A
+Preprocess idx=8:  25%|██▌       | 203/801 [00:00<00:01, 488.70img/s][A
+Preprocess idx=8:  32%|███▏      | 254/801 [00:00<00:01, 494.34img/s][A
+Preprocess idx=8:  38%|███▊      | 306/801 [00:00<00:00, 500.41img/s][A
+Preprocess idx=8:  45%|████▍     | 357/801 [00:00<00:00, 495.29img/s][A
+Preprocess idx=8:  51%|█████     | 409/801 [00:00<00:00, 500.45img/s][A
+Preprocess idx=8:  58%|█████▊    | 461/801 [00:00<00:00, 503.98img/s][A
+Preprocess idx=8:  64%|██████▍   | 512/801 [00:01<00:00, 504.14img/s][A
+Preprocess idx=8:  70%|███████   | 564/801 [00:01<00:00, 506.70img/s][A
+Preprocess idx=8:  77%|███████▋  | 616/801 [00:01<00:00, 508.76img/s][A
+Preprocess idx=8:  83%|████████▎ | 668/801 [00:01<00:00, 511.95img/s][A
+Preprocess idx=8:  90%|████████▉ | 720/801 [00:01<00:00, 510.72img/s][A
+Preprocess idx=8:  96%|█████████▋| 772/801 [00:01<00:00, 507.51img/s][A
+                                                                     [A
+Interpolate pose idx=8:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=8:  58%|█████▊    | 466/800 [00:00<00:00, 4659.25step/s][A
+                                                                             [ACaching val batches:  14%|█▍        | 9/64 [00:35<03:34,  3.91s/batch]
+Read video idx=9: 0frame [00:00, ?frame/s][A
+Read video idx=9: 50frame [00:00, 497.70frame/s][A
+Read video idx=9: 113frame [00:00, 573.56frame/s][A
+Read video idx=9: 177frame [00:00, 603.28frame/s][A
+Read video idx=9: 242frame [00:00, 619.53frame/s][A
+Read video idx=9: 306frame [00:00, 624.87frame/s][A
+Read video idx=9: 369frame [00:00, 624.01frame/s][A
+Read video idx=9: 434frame [00:00, 632.29frame/s][A
+Read video idx=9: 498frame [00:00, 625.47frame/s][A
+Read video idx=9: 569frame [00:00, 648.00frame/s][A
+Read video idx=9: 634frame [00:01, 645.54frame/s][A
+Read video idx=9: 702frame [00:01, 655.72frame/s][A
+Read video idx=9: 776frame [00:01, 680.25frame/s][A
+Read video idx=9: 845frame [00:01, 663.66frame/s][A
+Read video idx=9: 912frame [00:01, 661.70frame/s][A
+Read video idx=9: 979frame [00:01, 655.20frame/s][A
+Read video idx=9: 1049frame [00:01, 665.48frame/s][A
+Read video idx=9: 1116frame [00:01, 654.53frame/s][A
+Read video idx=9: 1182frame [00:01, 647.71frame/s][A
+                                                  [A
+Preprocess idx=9:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=9:   7%|▋         | 53/801 [00:00<00:01, 528.35img/s][A
+Preprocess idx=9:  13%|█▎        | 107/801 [00:00<00:01, 531.13img/s][A
+Preprocess idx=9:  20%|██        | 161/801 [00:00<00:01, 531.73img/s][A
+Preprocess idx=9:  27%|██▋       | 215/801 [00:00<00:01, 532.62img/s][A
+Preprocess idx=9:  34%|███▎      | 269/801 [00:00<00:00, 532.13img/s][A
+Preprocess idx=9:  40%|████      | 323/801 [00:00<00:00, 530.57img/s][A
+Preprocess idx=9:  47%|████▋     | 377/801 [00:00<00:00, 531.15img/s][A
+Preprocess idx=9:  54%|█████▍    | 431/801 [00:00<00:00, 526.40img/s][A
+Preprocess idx=9:  60%|██████    | 484/801 [00:00<00:00, 524.65img/s][A
+Preprocess idx=9:  67%|██████▋   | 537/801 [00:01<00:00, 523.48img/s][A
+Preprocess idx=9:  74%|███████▎  | 590/801 [00:01<00:00, 524.50img/s][A
+Preprocess idx=9:  80%|████████  | 643/801 [00:01<00:00, 525.43img/s][A
+Preprocess idx=9:  87%|████████▋ | 696/801 [00:01<00:00, 525.87img/s][A
+Preprocess idx=9:  94%|█████████▎| 749/801 [00:01<00:00, 526.36img/s][A
+                                                                     [A
+Interpolate pose idx=9:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=9:  59%|█████▉    | 470/800 [00:00<00:00, 4691.98step/s][A
+                                                                             [ACaching val batches:  16%|█▌        | 10/64 [00:39<03:28,  3.86s/batch]
+Read video idx=10: 0frame [00:00, ?frame/s][A
+Read video idx=10: 50frame [00:00, 496.75frame/s][A
+Read video idx=10: 114frame [00:00, 580.42frame/s][A
+Read video idx=10: 173frame [00:00, 581.90frame/s][A
+Read video idx=10: 232frame [00:00, 572.96frame/s][A
+Read video idx=10: 290frame [00:00, 559.38frame/s][A
+Read video idx=10: 353frame [00:00, 581.43frame/s][A
+Read video idx=10: 417frame [00:00, 600.16frame/s][A
+Read video idx=10: 478frame [00:00, 596.50frame/s][A
+Read video idx=10: 538frame [00:00, 596.23frame/s][A
+Read video idx=10: 599frame [00:01, 599.52frame/s][A
+Read video idx=10: 659frame [00:01, 593.92frame/s][A
+Read video idx=10: 720frame [00:01, 593.53frame/s][A
+Read video idx=10: 781frame [00:01, 593.11frame/s][A
+Read video idx=10: 843frame [00:01, 597.57frame/s][A
+Read video idx=10: 903frame [00:01, 596.27frame/s][A
+Read video idx=10: 967frame [00:01, 604.77frame/s][A
+Read video idx=10: 1028frame [00:01, 603.26frame/s][A
+Read video idx=10: 1089frame [00:01, 598.92frame/s][A
+Read video idx=10: 1151frame [00:01, 604.55frame/s][A
+                                                   [A
+Preprocess idx=10:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=10:   7%|▋         | 54/801 [00:00<00:01, 531.05img/s][A
+Preprocess idx=10:  13%|█▎        | 108/801 [00:00<00:01, 522.22img/s][A
+Preprocess idx=10:  20%|██        | 162/801 [00:00<00:01, 528.76img/s][A
+Preprocess idx=10:  27%|██▋       | 215/801 [00:00<00:01, 529.05img/s][A
+Preprocess idx=10:  34%|███▎      | 269/801 [00:00<00:01, 531.15img/s][A
+Preprocess idx=10:  40%|████      | 323/801 [00:00<00:00, 531.83img/s][A
+Preprocess idx=10:  47%|████▋     | 377/801 [00:00<00:00, 533.38img/s][A
+Preprocess idx=10:  54%|█████▍    | 431/801 [00:00<00:00, 533.76img/s][A
+Preprocess idx=10:  61%|██████    | 485/801 [00:00<00:00, 530.54img/s][A
+Preprocess idx=10:  67%|██████▋   | 539/801 [00:01<00:00, 520.80img/s][A
+Preprocess idx=10:  74%|███████▍  | 593/801 [00:01<00:00, 524.45img/s][A
+Preprocess idx=10:  81%|████████  | 647/801 [00:01<00:00, 526.48img/s][A
+Preprocess idx=10:  87%|████████▋ | 700/801 [00:01<00:00, 527.50img/s][A
+Preprocess idx=10:  94%|█████████▍| 754/801 [00:01<00:00, 529.35img/s][A
+                                                                      [A
+Interpolate pose idx=10:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=10:  59%|█████▉    | 470/800 [00:00<00:00, 4698.30step/s][A
+                                                                              [ACaching val batches:  17%|█▋        | 11/64 [00:43<03:24,  3.87s/batch]
+Read video idx=11: 0frame [00:00, ?frame/s][A
+Read video idx=11: 52frame [00:00, 517.76frame/s][A
+Read video idx=11: 114frame [00:00, 576.85frame/s][A
+Read video idx=11: 178frame [00:00, 599.43frame/s][A
+Read video idx=11: 240frame [00:00, 602.34frame/s][A
+Read video idx=11: 304frame [00:00, 609.97frame/s][A
+Read video idx=11: 365frame [00:00, 606.98frame/s][A
+Read video idx=11: 428frame [00:00, 612.15frame/s][A
+Read video idx=11: 491frame [00:00, 617.70frame/s][A
+Read video idx=11: 564frame [00:00, 650.33frame/s][A
+Read video idx=11: 630frame [00:01, 652.13frame/s][A
+Read video idx=11: 696frame [00:01, 645.57frame/s][A
+Read video idx=11: 761frame [00:01, 641.35frame/s][A
+Read video idx=11: 831frame [00:01, 655.73frame/s][A
+Read video idx=11: 897frame [00:01, 656.82frame/s][A
+Read video idx=11: 963frame [00:01, 649.39frame/s][A
+Read video idx=11: 1028frame [00:01, 649.24frame/s][A
+Read video idx=11: 1093frame [00:01, 632.79frame/s][A
+Read video idx=11: 1157frame [00:01, 621.84frame/s][A
+                                                   [A
+Preprocess idx=11:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=11:   5%|▍         | 38/801 [00:00<00:02, 372.42img/s][A
+Preprocess idx=11:  11%|█         | 87/801 [00:00<00:01, 436.44img/s][A
+Preprocess idx=11:  17%|█▋        | 137/801 [00:00<00:01, 462.58img/s][A
+Preprocess idx=11:  23%|██▎       | 186/801 [00:00<00:01, 470.47img/s][A
+Preprocess idx=11:  29%|██▉       | 234/801 [00:00<00:01, 454.85img/s][A
+Preprocess idx=11:  35%|███▌      | 283/801 [00:00<00:01, 465.42img/s][A
+Preprocess idx=11:  42%|████▏     | 333/801 [00:00<00:00, 475.58img/s][A
+Preprocess idx=11:  48%|████▊     | 384/801 [00:00<00:00, 484.51img/s][A
+Preprocess idx=11:  54%|█████▍    | 435/801 [00:00<00:00, 491.32img/s][A
+Preprocess idx=11:  61%|██████    | 486/801 [00:01<00:00, 495.11img/s][A
+Preprocess idx=11:  67%|██████▋   | 537/801 [00:01<00:00, 497.55img/s][A
+Preprocess idx=11:  73%|███████▎  | 587/801 [00:01<00:00, 497.74img/s][A
+Preprocess idx=11:  80%|███████▉  | 638/801 [00:01<00:00, 499.11img/s][A
+Preprocess idx=11:  86%|████████▌ | 689/801 [00:01<00:00, 500.21img/s][A
+Preprocess idx=11:  92%|█████████▏| 740/801 [00:01<00:00, 497.75img/s][A
+Preprocess idx=11:  99%|█████████▊| 790/801 [00:01<00:00, 496.40img/s][A
+                                                                      [A
+Interpolate pose idx=11:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=11:  58%|█████▊    | 467/800 [00:00<00:00, 4666.99step/s][A
+                                                                              [ACaching val batches:  19%|█▉        | 12/64 [00:47<03:21,  3.88s/batch]
+Read video idx=12: 0frame [00:00, ?frame/s][A
+Read video idx=12: 48frame [00:00, 478.66frame/s][A
+Read video idx=12: 118frame [00:00, 607.85frame/s][A
+Read video idx=12: 183frame [00:00, 626.96frame/s][A
+Read video idx=12: 249frame [00:00, 635.30frame/s][A
+Read video idx=12: 313frame [00:00, 634.53frame/s][A
+Read video idx=12: 377frame [00:00, 622.38frame/s][A
+Read video idx=12: 440frame [00:00, 621.32frame/s][A
+Read video idx=12: 504frame [00:00, 623.72frame/s][A
+Read video idx=12: 569frame [00:00, 627.83frame/s][A
+Read video idx=12: 632frame [00:01, 620.22frame/s][A
+Read video idx=12: 696frame [00:01, 625.44frame/s][A
+Read video idx=12: 759frame [00:01, 624.73frame/s][A
+Read video idx=12: 822frame [00:01, 619.06frame/s][A
+Read video idx=12: 884frame [00:01, 618.58frame/s][A
+Read video idx=12: 946frame [00:01, 607.07frame/s][A
+Read video idx=12: 1014frame [00:01, 624.97frame/s][A
+Read video idx=12: 1077frame [00:01, 624.32frame/s][A
+Read video idx=12: 1140frame [00:01, 614.99frame/s][A
+                                                   [A
+Preprocess idx=12:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=12:   7%|▋         | 53/801 [00:00<00:01, 529.28img/s][A
+Preprocess idx=12:  13%|█▎        | 107/801 [00:00<00:01, 530.40img/s][A
+Preprocess idx=12:  20%|██        | 161/801 [00:00<00:01, 521.09img/s][A
+Preprocess idx=12:  27%|██▋       | 215/801 [00:00<00:01, 525.69img/s][A
+Preprocess idx=12:  34%|███▎      | 269/801 [00:00<00:01, 527.90img/s][A
+Preprocess idx=12:  40%|████      | 323/801 [00:00<00:00, 529.42img/s][A
+Preprocess idx=12:  47%|████▋     | 377/801 [00:00<00:00, 530.43img/s][A
+Preprocess idx=12:  54%|█████▍    | 431/801 [00:00<00:00, 531.14img/s][A
+Preprocess idx=12:  61%|██████    | 485/801 [00:00<00:00, 529.27img/s][A
+Preprocess idx=12:  67%|██████▋   | 538/801 [00:01<00:00, 527.76img/s][A
+Preprocess idx=12:  74%|███████▍  | 591/801 [00:01<00:00, 527.76img/s][A
+Preprocess idx=12:  80%|████████  | 644/801 [00:01<00:00, 526.51img/s][A
+Preprocess idx=12:  87%|████████▋ | 698/801 [00:01<00:00, 527.65img/s][A
+Preprocess idx=12:  94%|█████████▍| 751/801 [00:01<00:00, 526.24img/s][A
+                                                                      [A
+Interpolate pose idx=12:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=12:  57%|█████▋    | 458/800 [00:00<00:00, 4579.46step/s][A
+                                                                              [ACaching val batches:  20%|██        | 13/64 [00:50<03:16,  3.86s/batch]
+Read video idx=13: 0frame [00:00, ?frame/s][A
+Read video idx=13: 39frame [00:00, 387.76frame/s][A
+Read video idx=13: 126frame [00:00, 667.96frame/s][A
+Read video idx=13: 206frame [00:00, 723.13frame/s][A
+Read video idx=13: 285frame [00:00, 747.88frame/s][A
+Read video idx=13: 370frame [00:00, 781.91frame/s][A
+Read video idx=13: 450frame [00:00, 785.34frame/s][A
+Read video idx=13: 532frame [00:00, 795.17frame/s][A
+Read video idx=13: 614frame [00:00, 800.95frame/s][A
+Read video idx=13: 695frame [00:00, 803.44frame/s][A
+Read video idx=13: 777frame [00:01, 807.85frame/s][A
+Read video idx=13: 858frame [00:01, 805.11frame/s][A
+Read video idx=13: 939frame [00:01, 805.06frame/s][A
+Read video idx=13: 1020frame [00:01, 792.39frame/s][A
+Read video idx=13: 1102frame [00:01, 800.53frame/s][A
+Read video idx=13: 1183frame [00:01, 802.45frame/s][A
+                                                   [A
+Preprocess idx=13:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=13:   6%|▌         | 49/801 [00:00<00:01, 488.24img/s][A
+Preprocess idx=13:  13%|█▎        | 103/801 [00:00<00:01, 513.76img/s][A
+Preprocess idx=13:  20%|█▉        | 157/801 [00:00<00:01, 521.88img/s][A
+Preprocess idx=13:  26%|██▌       | 210/801 [00:00<00:01, 520.66img/s][A
+Preprocess idx=13:  33%|███▎      | 263/801 [00:00<00:01, 520.44img/s][A
+Preprocess idx=13:  40%|███▉      | 317/801 [00:00<00:00, 524.84img/s][A
+Preprocess idx=13:  46%|████▌     | 370/801 [00:00<00:00, 522.59img/s][A
+Preprocess idx=13:  53%|█████▎    | 423/801 [00:00<00:00, 518.30img/s][A
+Preprocess idx=13:  59%|█████▉    | 476/801 [00:00<00:00, 521.09img/s][A
+Preprocess idx=13:  66%|██████▌   | 530/801 [00:01<00:00, 525.35img/s][A
+Preprocess idx=13:  73%|███████▎  | 584/801 [00:01<00:00, 527.13img/s][A
+Preprocess idx=13:  80%|███████▉  | 637/801 [00:01<00:00, 526.13img/s][A
+Preprocess idx=13:  86%|████████▌ | 690/801 [00:01<00:00, 525.40img/s][A
+Preprocess idx=13:  93%|█████████▎| 743/801 [00:01<00:00, 522.43img/s][A
+Preprocess idx=13:  99%|█████████▉| 796/801 [00:01<00:00, 512.75img/s][A
+                                                                      [A
+Interpolate pose idx=13:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=13:  59%|█████▊    | 469/800 [00:00<00:00, 4680.93step/s][A
+                                                                              [ACaching val batches:  22%|██▏       | 14/64 [00:54<03:07,  3.75s/batch]
+Read video idx=14: 0frame [00:00, ?frame/s][A
+Read video idx=14: 40frame [00:00, 398.65frame/s][A
+Read video idx=14: 125frame [00:00, 660.45frame/s][A
+Read video idx=14: 203frame [00:00, 714.09frame/s][A
+Read video idx=14: 283frame [00:00, 744.89frame/s][A
+Read video idx=14: 361frame [00:00, 753.05frame/s][A
+Read video idx=14: 437frame [00:00, 656.92frame/s][A
+Read video idx=14: 517frame [00:00, 698.79frame/s][A
+Read video idx=14: 597frame [00:00, 726.96frame/s][A
+Read video idx=14: 682frame [00:00, 762.08frame/s][A
+Read video idx=14: 764frame [00:01, 779.31frame/s][A
+Read video idx=14: 843frame [00:01, 780.43frame/s][A
+Read video idx=14: 927frame [00:01, 795.38frame/s][A
+Read video idx=14: 1007frame [00:01, 795.64frame/s][A
+Read video idx=14: 1088frame [00:01, 797.67frame/s][A
+Read video idx=14: 1168frame [00:01, 791.38frame/s][A
+                                                   [A
+Preprocess idx=14:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=14:   2%|▏         | 13/801 [00:00<00:06, 124.84img/s][A
+Preprocess idx=14:   6%|▌         | 48/801 [00:00<00:03, 249.66img/s][A
+Preprocess idx=14:   9%|▉         | 73/801 [00:00<00:03, 223.00img/s][A
+Preprocess idx=14:  12%|█▏        | 96/801 [00:00<00:03, 212.18img/s][A
+Preprocess idx=14:  15%|█▍        | 118/801 [00:00<00:03, 208.30img/s][A
+Preprocess idx=14:  20%|█▉        | 157/801 [00:00<00:02, 263.65img/s][A
+Preprocess idx=14:  26%|██▌       | 209/801 [00:00<00:01, 340.61img/s][A
+Preprocess idx=14:  32%|███▏      | 258/801 [00:00<00:01, 384.60img/s][A
+Preprocess idx=14:  38%|███▊      | 302/801 [00:00<00:01, 401.12img/s][A
+Preprocess idx=14:  44%|████▍     | 354/801 [00:01<00:01, 435.42img/s][A
+Preprocess idx=14:  51%|█████     | 405/801 [00:01<00:00, 457.17img/s][A
+Preprocess idx=14:  57%|█████▋    | 455/801 [00:01<00:00, 467.77img/s][A
+Preprocess idx=14:  63%|██████▎   | 505/801 [00:01<00:00, 476.60img/s][A
+Preprocess idx=14:  69%|██████▉   | 555/801 [00:01<00:00, 482.97img/s][A
+Preprocess idx=14:  76%|███████▌  | 606/801 [00:01<00:00, 489.72img/s][A
+Preprocess idx=14:  82%|████████▏ | 658/801 [00:01<00:00, 496.78img/s][A
+Preprocess idx=14:  88%|████████▊ | 708/801 [00:01<00:00, 496.72img/s][A
+Preprocess idx=14:  95%|█████████▍| 758/801 [00:01<00:00, 493.44img/s][A
+                                                                      [A
+Interpolate pose idx=14:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=14:  58%|█████▊    | 467/800 [00:00<00:00, 4661.27step/s][A
+                                                                              [ACaching val batches:  23%|██▎       | 15/64 [00:58<03:07,  3.83s/batch]
+Read video idx=15: 0frame [00:00, ?frame/s][A
+Read video idx=15: 39frame [00:00, 389.12frame/s][A
+Read video idx=15: 116frame [00:00, 610.80frame/s][A
+Read video idx=15: 191frame [00:00, 673.73frame/s][A
+Read video idx=15: 261frame [00:00, 681.99frame/s][A
+Read video idx=15: 333frame [00:00, 694.74frame/s][A
+Read video idx=15: 403frame [00:00, 543.16frame/s][A
+Read video idx=15: 479frame [00:00, 601.52frame/s][A
+Read video idx=15: 553frame [00:00, 638.71frame/s][A
+Read video idx=15: 630frame [00:00, 675.57frame/s][A
+Read video idx=15: 714frame [00:01, 722.16frame/s][A
+Read video idx=15: 793frame [00:01, 741.12frame/s][A
+Read video idx=15: 872frame [00:01, 754.69frame/s][A
+Read video idx=15: 951frame [00:01, 764.27frame/s][A
+Read video idx=15: 1029frame [00:01, 749.72frame/s][A
+Read video idx=15: 1105frame [00:01, 742.44frame/s][A
+Read video idx=15: 1183frame [00:01, 749.29frame/s][A
+                                                   [A
+Preprocess idx=15:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=15:   6%|▌         | 50/801 [00:00<00:01, 497.33img/s][A
+Preprocess idx=15:  13%|█▎        | 102/801 [00:00<00:01, 507.05img/s][A
+Preprocess idx=15:  19%|█▉        | 153/801 [00:00<00:01, 507.03img/s][A
+Preprocess idx=15:  26%|██▌       | 206/801 [00:00<00:01, 514.18img/s][A
+Preprocess idx=15:  32%|███▏      | 259/801 [00:00<00:01, 519.24img/s][A
+Preprocess idx=15:  39%|███▉      | 312/801 [00:00<00:00, 519.93img/s][A
+Preprocess idx=15:  46%|████▌     | 365/801 [00:00<00:00, 520.38img/s][A
+Preprocess idx=15:  52%|█████▏    | 418/801 [00:00<00:00, 519.26img/s][A
+Preprocess idx=15:  59%|█████▊    | 470/801 [00:00<00:00, 518.20img/s][A
+Preprocess idx=15:  65%|██████▌   | 522/801 [00:01<00:00, 517.46img/s][A
+Preprocess idx=15:  72%|███████▏  | 574/801 [00:01<00:00, 514.69img/s][A
+Preprocess idx=15:  78%|███████▊  | 627/801 [00:01<00:00, 516.58img/s][A
+Preprocess idx=15:  85%|████████▍ | 680/801 [00:01<00:00, 518.95img/s][A
+Preprocess idx=15:  92%|█████████▏| 733/801 [00:01<00:00, 519.53img/s][A
+Preprocess idx=15:  98%|█████████▊| 785/801 [00:01<00:00, 513.84img/s][A
+                                                                      [A
+Interpolate pose idx=15:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=15:  58%|█████▊    | 467/800 [00:00<00:00, 4661.81step/s][A
+                                                                              [ACaching val batches:  25%|██▌       | 16/64 [01:02<03:02,  3.79s/batch]
+Read video idx=16: 0frame [00:00, ?frame/s][A
+Read video idx=16: 37frame [00:00, 368.88frame/s][A
+Read video idx=16: 120frame [00:00, 637.44frame/s][A
+Read video idx=16: 198frame [00:00, 700.45frame/s][A
+Read video idx=16: 280frame [00:00, 745.90frame/s][A
+Read video idx=16: 355frame [00:00, 746.83frame/s][A
+Read video idx=16: 433frame [00:00, 753.88frame/s][A
+Read video idx=16: 516frame [00:00, 776.06frame/s][A
+Read video idx=16: 599frame [00:00, 791.08frame/s][A
+Read video idx=16: 679frame [00:00, 791.36frame/s][A
+Read video idx=16: 761frame [00:01, 797.74frame/s][A
+Read video idx=16: 845frame [00:01, 809.98frame/s][A
+Read video idx=16: 927frame [00:01, 803.19frame/s][A
+Read video idx=16: 1008frame [00:01, 786.84frame/s][A
+Read video idx=16: 1090frame [00:01, 796.10frame/s][A
+Read video idx=16: 1170frame [00:01, 795.96frame/s][A
+                                                   [A
+Preprocess idx=16:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=16:   4%|▍         | 36/801 [00:00<00:02, 344.92img/s][A
+Preprocess idx=16:   9%|▉         | 71/801 [00:00<00:02, 317.62img/s][A
+Preprocess idx=16:  13%|█▎        | 105/801 [00:00<00:02, 323.10img/s][A
+Preprocess idx=16:  17%|█▋        | 138/801 [00:00<00:02, 257.52img/s][A
+Preprocess idx=16:  23%|██▎       | 182/801 [00:00<00:01, 311.67img/s][A
+Preprocess idx=16:  29%|██▉       | 232/801 [00:00<00:01, 365.93img/s][A
+Preprocess idx=16:  35%|███▍      | 280/801 [00:00<00:01, 398.92img/s][A
+Preprocess idx=16:  41%|████      | 325/801 [00:00<00:01, 413.73img/s][A
+Preprocess idx=16:  47%|████▋     | 376/801 [00:00<00:00, 441.51img/s][A
+Preprocess idx=16:  53%|█████▎    | 428/801 [00:01<00:00, 462.86img/s][A
+Preprocess idx=16:  60%|█████▉    | 480/801 [00:01<00:00, 478.21img/s][A
+Preprocess idx=16:  66%|██████▋   | 531/801 [00:01<00:00, 486.52img/s][A
+Preprocess idx=16:  73%|███████▎  | 582/801 [00:01<00:00, 492.48img/s][A
+Preprocess idx=16:  79%|███████▉  | 632/801 [00:01<00:00, 494.51img/s][A
+Preprocess idx=16:  85%|████████▌ | 682/801 [00:01<00:00, 489.43img/s][A
+Preprocess idx=16:  92%|█████████▏| 733/801 [00:01<00:00, 494.13img/s][A
+Preprocess idx=16:  98%|█████████▊| 783/801 [00:01<00:00, 495.27img/s][A
+                                                                      [A
+Interpolate pose idx=16:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=16:  57%|█████▋    | 455/800 [00:00<00:00, 4549.30step/s][A
+                                                                              [ACaching val batches:  27%|██▋       | 17/64 [01:05<02:59,  3.81s/batch]
+Read video idx=17: 0frame [00:00, ?frame/s][A
+Read video idx=17: 38frame [00:00, 377.22frame/s][A
+Read video idx=17: 103frame [00:00, 532.19frame/s][A
+Read video idx=17: 184frame [00:00, 656.35frame/s][A
+Read video idx=17: 263frame [00:00, 706.76frame/s][A
+Read video idx=17: 344frame [00:00, 739.83frame/s][A
+Read video idx=17: 428frame [00:00, 772.31frame/s][A
+Read video idx=17: 509frame [00:00, 784.05frame/s][A
+Read video idx=17: 588frame [00:00, 784.89frame/s][A
+Read video idx=17: 669frame [00:00, 789.73frame/s][A
+Read video idx=17: 752frame [00:01, 800.75frame/s][A
+Read video idx=17: 834frame [00:01, 804.87frame/s][A
+Read video idx=17: 915frame [00:01, 797.92frame/s][A
+Read video idx=17: 998frame [00:01, 806.49frame/s][A
+Read video idx=17: 1079frame [00:01, 800.17frame/s][A
+Read video idx=17: 1160frame [00:01, 801.75frame/s][A
+                                                   [A
+Preprocess idx=17:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=17:   3%|▎         | 22/801 [00:00<00:03, 219.36img/s][A
+Preprocess idx=17:   9%|▉         | 71/801 [00:00<00:01, 377.33img/s][A
+Preprocess idx=17:  15%|█▌        | 124/801 [00:00<00:01, 443.49img/s][A
+Preprocess idx=17:  22%|██▏       | 176/801 [00:00<00:01, 471.79img/s][A
+Preprocess idx=17:  28%|██▊       | 227/801 [00:00<00:01, 482.84img/s][A
+Preprocess idx=17:  35%|███▍      | 278/801 [00:00<00:01, 490.64img/s][A
+Preprocess idx=17:  41%|████      | 329/801 [00:00<00:00, 494.25img/s][A
+Preprocess idx=17:  47%|████▋     | 379/801 [00:00<00:00, 495.93img/s][A
+Preprocess idx=17:  54%|█████▎    | 429/801 [00:00<00:00, 490.80img/s][A
+Preprocess idx=17:  60%|█████▉    | 479/801 [00:01<00:00, 448.81img/s][A
+Preprocess idx=17:  66%|██████▌   | 525/801 [00:01<00:01, 269.98img/s][A
+Preprocess idx=17:  70%|███████   | 561/801 [00:01<00:00, 249.88img/s][A
+Preprocess idx=17:  74%|███████▍  | 593/801 [00:01<00:00, 256.62img/s][A
+Preprocess idx=17:  78%|███████▊  | 624/801 [00:01<00:00, 253.07img/s][A
+Preprocess idx=17:  82%|████████▏ | 653/801 [00:01<00:00, 252.16img/s][A
+Preprocess idx=17:  85%|████████▌ | 681/801 [00:02<00:00, 244.56img/s][A
+Preprocess idx=17:  88%|████████▊ | 707/801 [00:02<00:00, 239.36img/s][A
+Preprocess idx=17:  91%|█████████▏| 732/801 [00:02<00:00, 236.83img/s][A
+Preprocess idx=17:  95%|█████████▍| 757/801 [00:02<00:00, 236.57img/s][A
+Preprocess idx=17:  98%|█████████▊| 785/801 [00:02<00:00, 246.66img/s][A
+                                                                      [A
+Interpolate pose idx=17:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=17:  58%|█████▊    | 461/800 [00:00<00:00, 4604.84step/s][A
+                                                                              [ACaching val batches:  28%|██▊       | 18/64 [01:10<03:08,  4.10s/batch]
+Read video idx=18: 0frame [00:00, ?frame/s][A
+Read video idx=18: 31frame [00:00, 306.40frame/s][A
+Read video idx=18: 97frame [00:00, 511.53frame/s][A
+Read video idx=18: 149frame [00:00, 418.77frame/s][A
+Read video idx=18: 193frame [00:00, 384.87frame/s][A
+Read video idx=18: 233frame [00:00, 366.84frame/s][A
+Read video idx=18: 271frame [00:00, 355.79frame/s][A
+Read video idx=18: 307frame [00:00, 351.22frame/s][A
+Read video idx=18: 374frame [00:00, 442.39frame/s][A
+Read video idx=18: 452frame [00:01, 537.45frame/s][A
+Read video idx=18: 520frame [00:01, 576.80frame/s][A
+Read video idx=18: 579frame [00:01, 528.83frame/s][A
+Read video idx=18: 634frame [00:01, 524.35frame/s][A
+Read video idx=18: 688frame [00:01, 488.58frame/s][A
+Read video idx=18: 750frame [00:01, 522.35frame/s][A
+Read video idx=18: 832frame [00:01, 603.51frame/s][A
+Read video idx=18: 909frame [00:01, 650.14frame/s][A
+Read video idx=18: 986frame [00:01, 684.37frame/s][A
+Read video idx=18: 1062frame [00:02, 705.35frame/s][A
+Read video idx=18: 1139frame [00:02, 723.63frame/s][A
+                                                   [A
+Preprocess idx=18:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=18:   4%|▍         | 33/801 [00:00<00:02, 324.50img/s][A
+Preprocess idx=18:  10%|▉         | 80/801 [00:00<00:01, 409.49img/s][A
+Preprocess idx=18:  15%|█▌        | 124/801 [00:00<00:01, 422.45img/s][A
+Preprocess idx=18:  21%|██        | 167/801 [00:00<00:01, 417.95img/s][A
+Preprocess idx=18:  27%|██▋       | 218/801 [00:00<00:01, 447.84img/s][A
+Preprocess idx=18:  34%|███▎      | 270/801 [00:00<00:01, 467.24img/s][A
+Preprocess idx=18:  40%|███▉      | 317/801 [00:00<00:01, 439.28img/s][A
+Preprocess idx=18:  45%|████▌     | 362/801 [00:00<00:01, 429.93img/s][A
+Preprocess idx=18:  52%|█████▏    | 413/801 [00:00<00:00, 451.26img/s][A
+Preprocess idx=18:  57%|█████▋    | 459/801 [00:01<00:00, 449.71img/s][A
+Preprocess idx=18:  63%|██████▎   | 505/801 [00:01<00:00, 445.07img/s][A
+Preprocess idx=18:  69%|██████▊   | 550/801 [00:01<00:00, 436.13img/s][A
+Preprocess idx=18:  74%|███████▍  | 596/801 [00:01<00:00, 440.64img/s][A
+Preprocess idx=18:  80%|████████  | 643/801 [00:01<00:00, 446.98img/s][A
+Preprocess idx=18:  86%|████████▌ | 689/801 [00:01<00:00, 448.91img/s][A
+Preprocess idx=18:  93%|█████████▎| 741/801 [00:01<00:00, 468.07img/s][A
+Preprocess idx=18:  99%|█████████▊| 790/801 [00:01<00:00, 473.72img/s][A
+                                                                      [A
+Interpolate pose idx=18:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=18:  58%|█████▊    | 464/800 [00:00<00:00, 4636.70step/s][A
+                                                                              [ACaching val batches:  30%|██▉       | 19/64 [01:15<03:08,  4.18s/batch]
+Read video idx=19: 0frame [00:00, ?frame/s][A
+Read video idx=19: 38frame [00:00, 374.53frame/s][A
+Read video idx=19: 111frame [00:00, 581.77frame/s][A
+Read video idx=19: 172frame [00:00, 594.04frame/s][A
+Read video idx=19: 250frame [00:00, 666.16frame/s][A
+Read video idx=19: 325frame [00:00, 693.00frame/s][A
+Read video idx=19: 403frame [00:00, 718.07frame/s][A
+Read video idx=19: 479frame [00:00, 731.50frame/s][A
+Read video idx=19: 553frame [00:00, 694.59frame/s][A
+Read video idx=19: 627frame [00:00, 705.88frame/s][A
+Read video idx=19: 704frame [00:01, 724.28frame/s][A
+Read video idx=19: 780frame [00:01, 734.22frame/s][A
+Read video idx=19: 858frame [00:01, 745.64frame/s][A
+Read video idx=19: 933frame [00:01, 737.88frame/s][A
+Read video idx=19: 1008frame [00:01, 738.85frame/s][A
+Read video idx=19: 1082frame [00:01, 737.88frame/s][A
+Read video idx=19: 1161frame [00:01, 752.41frame/s][A
+                                                   [A
+Preprocess idx=19:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=19:   6%|▌         | 45/801 [00:00<00:01, 444.53img/s][A
+Preprocess idx=19:  12%|█▏        | 96/801 [00:00<00:01, 481.68img/s][A
+Preprocess idx=19:  18%|█▊        | 145/801 [00:00<00:01, 478.60img/s][A
+Preprocess idx=19:  24%|██▍       | 195/801 [00:00<00:01, 485.93img/s][A
+Preprocess idx=19:  30%|███       | 244/801 [00:00<00:01, 477.80img/s][A
+Preprocess idx=19:  37%|███▋      | 296/801 [00:00<00:01, 490.70img/s][A
+Preprocess idx=19:  43%|████▎     | 346/801 [00:00<00:00, 473.50img/s][A
+Preprocess idx=19:  49%|████▉     | 394/801 [00:00<00:01, 388.06img/s][A
+Preprocess idx=19:  55%|█████▌    | 443/801 [00:00<00:00, 414.18img/s][A
+Preprocess idx=19:  61%|██████    | 489/801 [00:01<00:00, 426.26img/s][A
+Preprocess idx=19:  67%|██████▋   | 534/801 [00:01<00:00, 422.39img/s][A
+Preprocess idx=19:  72%|███████▏  | 578/801 [00:01<00:00, 412.94img/s][A
+Preprocess idx=19:  78%|███████▊  | 621/801 [00:01<00:00, 382.77img/s][A
+Preprocess idx=19:  83%|████████▎ | 661/801 [00:01<00:00, 355.26img/s][A
+Preprocess idx=19:  87%|████████▋ | 698/801 [00:01<00:00, 336.63img/s][A
+Preprocess idx=19:  92%|█████████▏| 733/801 [00:01<00:00, 327.74img/s][A
+Preprocess idx=19:  96%|█████████▌| 767/801 [00:01<00:00, 327.55img/s][A
+Preprocess idx=19: 100%|██████████| 801/801 [00:02<00:00, 327.08img/s][A
+                                                                      [A
+Interpolate pose idx=19:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=19:  59%|█████▊    | 469/800 [00:00<00:00, 4682.65step/s][A
+                                                                              [ACaching val batches:  31%|███▏      | 20/64 [01:19<03:04,  4.18s/batch]
+Read video idx=20: 0frame [00:00, ?frame/s][A
+Read video idx=20: 43frame [00:00, 428.72frame/s][A
+Read video idx=20: 126frame [00:00, 661.21frame/s][A
+Read video idx=20: 203frame [00:00, 708.21frame/s][A
+Read video idx=20: 285frame [00:00, 746.91frame/s][A
+Read video idx=20: 367frame [00:00, 772.81frame/s][A
+Read video idx=20: 449frame [00:00, 785.27frame/s][A
+Read video idx=20: 533frame [00:00, 802.19frame/s][A
+Read video idx=20: 614frame [00:00, 767.33frame/s][A
+Read video idx=20: 692frame [00:00, 756.74frame/s][A
+Read video idx=20: 774frame [00:01, 771.41frame/s][A
+Read video idx=20: 855frame [00:01, 779.01frame/s][A
+Read video idx=20: 934frame [00:01, 773.49frame/s][A
+Read video idx=20: 1017frame [00:01, 788.19frame/s][A
+Read video idx=20: 1096frame [00:01, 785.25frame/s][A
+Read video idx=20: 1178frame [00:01, 793.99frame/s][A
+                                                   [A
+Preprocess idx=20:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=20:   0%|          | 2/801 [00:00<00:40, 19.74img/s][A
+Preprocess idx=20:   0%|          | 4/801 [00:00<00:40, 19.89img/s][A
+Preprocess idx=20:   1%|▏         | 12/801 [00:00<00:18, 42.57img/s][A
+Preprocess idx=20:   4%|▍         | 34/801 [00:00<00:07, 107.48img/s][A
+Preprocess idx=20:   9%|▊         | 69/801 [00:00<00:03, 189.33img/s][A
+Preprocess idx=20:  13%|█▎        | 105/801 [00:00<00:02, 243.81img/s][A
+Preprocess idx=20:  17%|█▋        | 140/801 [00:00<00:02, 277.18img/s][A
+Preprocess idx=20:  21%|██▏       | 171/801 [00:00<00:02, 284.03img/s][A
+Preprocess idx=20:  25%|██▍       | 200/801 [00:00<00:02, 258.73img/s][A
+Preprocess idx=20:  31%|███       | 249/801 [00:01<00:01, 322.65img/s][A
+Preprocess idx=20:  36%|███▌      | 290/801 [00:01<00:01, 345.25img/s][A
+Preprocess idx=20:  41%|████      | 327/801 [00:01<00:01, 350.82img/s][A
+Preprocess idx=20:  46%|████▌     | 369/801 [00:01<00:01, 369.49img/s][A
+Preprocess idx=20:  51%|█████     | 407/801 [00:01<00:01, 356.54img/s][A
+Preprocess idx=20:  55%|█████▌    | 444/801 [00:01<00:01, 351.35img/s][A
+Preprocess idx=20:  60%|█████▉    | 480/801 [00:01<00:01, 316.49img/s][A
+Preprocess idx=20:  64%|██████▍   | 513/801 [00:01<00:00, 298.55img/s][A
+Preprocess idx=20:  69%|██████▉   | 551/801 [00:01<00:00, 319.72img/s][A
+Preprocess idx=20:  75%|███████▌  | 602/801 [00:02<00:00, 370.38img/s][A
+Preprocess idx=20:  82%|████████▏ | 653/801 [00:02<00:00, 407.42img/s][A
+Preprocess idx=20:  88%|████████▊ | 706/801 [00:02<00:00, 440.71img/s][A
+Preprocess idx=20:  95%|█████████▍| 759/801 [00:02<00:00, 462.58img/s][A
+                                                                      [A
+Interpolate pose idx=20:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=20:  58%|█████▊    | 467/800 [00:00<00:00, 4669.00step/s][A
+                                                                              [ACaching val batches:  33%|███▎      | 21/64 [01:23<03:06,  4.34s/batch]
+Read video idx=21: 0frame [00:00, ?frame/s][A
+Read video idx=21: 38frame [00:00, 373.94frame/s][A
+Read video idx=21: 102frame [00:00, 526.91frame/s][A
+Read video idx=21: 155frame [00:00, 447.67frame/s][A
+Read video idx=21: 221frame [00:00, 520.01frame/s][A
+Read video idx=21: 278frame [00:00, 534.55frame/s][A
+Read video idx=21: 333frame [00:00, 426.72frame/s][A
+Read video idx=21: 380frame [00:00, 396.35frame/s][A
+Read video idx=21: 458frame [00:00, 493.94frame/s][A
+Read video idx=21: 533frame [00:01, 556.04frame/s][A
+Read video idx=21: 593frame [00:01, 511.43frame/s][A
+Read video idx=21: 649frame [00:01, 517.93frame/s][A
+Read video idx=21: 703frame [00:01, 494.89frame/s][A
+Read video idx=21: 785frame [00:01, 580.36frame/s][A
+Read video idx=21: 859frame [00:01, 623.91frame/s][A
+Read video idx=21: 935frame [00:01, 660.71frame/s][A
+Read video idx=21: 1009frame [00:01, 682.55frame/s][A
+Read video idx=21: 1089frame [00:01, 715.01frame/s][A
+Read video idx=21: 1168frame [00:02, 734.37frame/s][A
+                                                   [A
+Preprocess idx=21:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=21:   2%|▏         | 18/801 [00:00<00:04, 176.62img/s][A
+Preprocess idx=21:   5%|▌         | 44/801 [00:00<00:03, 223.64img/s][A
+Preprocess idx=21:  10%|█         | 81/801 [00:00<00:02, 287.47img/s][A
+Preprocess idx=21:  14%|█▎        | 110/801 [00:00<00:02, 285.30img/s][A
+Preprocess idx=21:  19%|█▉        | 153/801 [00:00<00:01, 335.69img/s][A
+Preprocess idx=21:  25%|██▍       | 199/801 [00:00<00:01, 375.55img/s][A
+Preprocess idx=21:  30%|██▉       | 237/801 [00:00<00:01, 363.68img/s][A
+Preprocess idx=21:  34%|███▍      | 274/801 [00:00<00:01, 266.46img/s][A
+Preprocess idx=21:  40%|███▉      | 318/801 [00:01<00:01, 307.46img/s][A
+Preprocess idx=21:  45%|████▌     | 364/801 [00:01<00:01, 345.61img/s][A
+Preprocess idx=21:  52%|█████▏    | 413/801 [00:01<00:01, 384.13img/s][A
+Preprocess idx=21:  58%|█████▊    | 462/801 [00:01<00:00, 412.09img/s][A
+Preprocess idx=21:  64%|██████▍   | 513/801 [00:01<00:00, 437.28img/s][A
+Preprocess idx=21:  70%|███████   | 563/801 [00:01<00:00, 454.73img/s][A
+Preprocess idx=21:  76%|███████▌  | 610/801 [00:01<00:00, 421.13img/s][A
+Preprocess idx=21:  82%|████████▏ | 654/801 [00:01<00:00, 414.05img/s][A
+Preprocess idx=21:  88%|████████▊ | 704/801 [00:01<00:00, 437.63img/s][A
+Preprocess idx=21:  94%|█████████▍| 753/801 [00:01<00:00, 449.58img/s][A
+Preprocess idx=21: 100%|█████████▉| 799/801 [00:02<00:00, 445.50img/s][A
+                                                                      [A
+Interpolate pose idx=21:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=21:  58%|█████▊    | 467/800 [00:00<00:00, 4666.30step/s][A
+                                                                              [ACaching val batches:  34%|███▍      | 22/64 [01:28<03:06,  4.43s/batch]
+Read video idx=22: 0frame [00:00, ?frame/s][A
+Read video idx=22: 39frame [00:00, 387.95frame/s][A
+Read video idx=22: 118frame [00:00, 623.02frame/s][A
+Read video idx=22: 184frame [00:00, 633.73frame/s][A
+Read video idx=22: 248frame [00:00, 586.32frame/s][A
+Read video idx=22: 315frame [00:00, 610.93frame/s][A
+Read video idx=22: 394frame [00:00, 668.90frame/s][A
+Read video idx=22: 464frame [00:00, 677.23frame/s][A
+Read video idx=22: 536frame [00:00, 687.44frame/s][A
+Read video idx=22: 606frame [00:00, 673.42frame/s][A
+Read video idx=22: 681frame [00:01, 696.22frame/s][A
+Read video idx=22: 757frame [00:01, 714.94frame/s][A
+Read video idx=22: 833frame [00:01, 727.66frame/s][A
+Read video idx=22: 909frame [00:01, 733.97frame/s][A
+Read video idx=22: 984frame [00:01, 735.62frame/s][A
+Read video idx=22: 1058frame [00:01, 734.84frame/s][A
+Read video idx=22: 1133frame [00:01, 738.17frame/s][A
+                                                   [A
+Preprocess idx=22:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=22:   4%|▍         | 36/801 [00:00<00:02, 356.00img/s][A
+Preprocess idx=22:  11%|█         | 87/801 [00:00<00:01, 442.81img/s][A
+Preprocess idx=22:  17%|█▋        | 138/801 [00:00<00:01, 472.94img/s][A
+Preprocess idx=22:  23%|██▎       | 186/801 [00:00<00:01, 450.72img/s][A
+Preprocess idx=22:  29%|██▉       | 236/801 [00:00<00:01, 465.47img/s][A
+Preprocess idx=22:  36%|███▌      | 286/801 [00:00<00:01, 475.56img/s][A
+Preprocess idx=22:  42%|████▏     | 339/801 [00:00<00:00, 490.20img/s][A
+Preprocess idx=22:  49%|████▊     | 389/801 [00:00<00:00, 490.63img/s][A
+Preprocess idx=22:  55%|█████▍    | 439/801 [00:00<00:00, 491.24img/s][A
+Preprocess idx=22:  61%|██████    | 489/801 [00:01<00:00, 489.65img/s][A
+Preprocess idx=22:  68%|██████▊   | 542/801 [00:01<00:00, 499.76img/s][A
+Preprocess idx=22:  74%|███████▍  | 595/801 [00:01<00:00, 505.82img/s][A
+Preprocess idx=22:  81%|████████  | 646/801 [00:01<00:00, 503.08img/s][A
+Preprocess idx=22:  87%|████████▋ | 697/801 [00:01<00:00, 502.04img/s][A
+Preprocess idx=22:  93%|█████████▎| 748/801 [00:01<00:00, 467.79img/s][A
+Preprocess idx=22: 100%|█████████▉| 800/801 [00:01<00:00, 480.17img/s][A
+                                                                      [A
+Interpolate pose idx=22:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=22:  58%|█████▊    | 467/800 [00:00<00:00, 4668.96step/s][A
+                                                                              [ACaching val batches:  36%|███▌      | 23/64 [01:32<02:54,  4.26s/batch]
+Read video idx=23: 0frame [00:00, ?frame/s][A
+Read video idx=23: 38frame [00:00, 377.67frame/s][A
+Read video idx=23: 114frame [00:00, 600.10frame/s][A
+Read video idx=23: 175frame [00:00, 596.69frame/s][A
+Read video idx=23: 235frame [00:00, 572.12frame/s][A
+Read video idx=23: 315frame [00:00, 650.81frame/s][A
+Read video idx=23: 397frame [00:00, 702.92frame/s][A
+Read video idx=23: 478frame [00:00, 735.19frame/s][A
+Read video idx=23: 560frame [00:00, 760.40frame/s][A
+Read video idx=23: 642frame [00:00, 775.99frame/s][A
+Read video idx=23: 727frame [00:01, 796.32frame/s][A
+Read video idx=23: 809frame [00:01, 800.84frame/s][A
+Read video idx=23: 890frame [00:01, 797.68frame/s][A
+Read video idx=23: 972frame [00:01, 801.30frame/s][A
+Read video idx=23: 1055frame [00:01, 808.22frame/s][A
+Read video idx=23: 1137frame [00:01, 809.74frame/s][A
+                                                   [A
+Preprocess idx=23:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=23:   6%|▌         | 47/801 [00:00<00:01, 467.46img/s][A
+Preprocess idx=23:  12%|█▏        | 94/801 [00:00<00:01, 460.91img/s][A
+Preprocess idx=23:  18%|█▊        | 142/801 [00:00<00:01, 465.34img/s][A
+Preprocess idx=23:  24%|██▎       | 189/801 [00:00<00:01, 459.18img/s][A
+Preprocess idx=23:  30%|██▉       | 237/801 [00:00<00:01, 465.85img/s][A
+Preprocess idx=23:  36%|███▌      | 287/801 [00:00<00:01, 477.23img/s][A
+Preprocess idx=23:  42%|████▏     | 335/801 [00:00<00:00, 470.44img/s][A
+Preprocess idx=23:  48%|████▊     | 383/801 [00:00<00:00, 465.19img/s][A
+Preprocess idx=23:  54%|█████▎    | 430/801 [00:00<00:00, 432.58img/s][A
+Preprocess idx=23:  59%|█████▉    | 476/801 [00:01<00:00, 440.00img/s][A
+Preprocess idx=23:  66%|██████▌   | 525/801 [00:01<00:00, 454.43img/s][A
+Preprocess idx=23:  72%|███████▏  | 575/801 [00:01<00:00, 465.17img/s][A
+Preprocess idx=23:  78%|███████▊  | 622/801 [00:01<00:00, 466.31img/s][A
+Preprocess idx=23:  84%|████████▎ | 670/801 [00:01<00:00, 468.92img/s][A
+Preprocess idx=23:  90%|████████▉ | 718/801 [00:01<00:00, 452.44img/s][A
+Preprocess idx=23:  95%|█████████▌| 764/801 [00:01<00:00, 412.61img/s][A
+                                                                      [A
+Interpolate pose idx=23:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=23:  58%|█████▊    | 462/800 [00:00<00:00, 4612.19step/s][A
+                                                                              [ACaching val batches:  38%|███▊      | 24/64 [01:36<02:44,  4.12s/batch]
+Read video idx=24: 0frame [00:00, ?frame/s][A
+Read video idx=24: 38frame [00:00, 376.19frame/s][A
+Read video idx=24: 105frame [00:00, 546.50frame/s][A
+Read video idx=24: 179frame [00:00, 633.09frame/s][A
+Read video idx=24: 247frame [00:00, 651.09frame/s][A
+Read video idx=24: 328frame [00:00, 708.08frame/s][A
+Read video idx=24: 412frame [00:00, 749.20frame/s][A
+Read video idx=24: 493frame [00:00, 767.66frame/s][A
+Read video idx=24: 573frame [00:00, 777.34frame/s][A
+Read video idx=24: 653frame [00:00, 781.97frame/s][A
+Read video idx=24: 736frame [00:01, 794.71frame/s][A
+Read video idx=24: 816frame [00:01, 765.34frame/s][A
+Read video idx=24: 893frame [00:01, 748.13frame/s][A
+Read video idx=24: 974frame [00:01, 765.60frame/s][A
+Read video idx=24: 1055frame [00:01, 777.62frame/s][A
+Read video idx=24: 1137frame [00:01, 787.84frame/s][A
+                                                   [A
+Preprocess idx=24:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=24:   6%|▋         | 52/801 [00:00<00:01, 513.78img/s][A
+Preprocess idx=24:  13%|█▎        | 104/801 [00:00<00:01, 514.85img/s][A
+Preprocess idx=24:  19%|█▉        | 156/801 [00:00<00:01, 515.77img/s][A
+Preprocess idx=24:  26%|██▌       | 208/801 [00:00<00:01, 514.34img/s][A
+Preprocess idx=24:  32%|███▏      | 260/801 [00:00<00:01, 501.11img/s][A
+Preprocess idx=24:  39%|███▉      | 311/801 [00:00<00:01, 486.88img/s][A
+Preprocess idx=24:  45%|████▌     | 362/801 [00:00<00:00, 493.42img/s][A
+Preprocess idx=24:  52%|█████▏    | 413/801 [00:00<00:00, 496.93img/s][A
+Preprocess idx=24:  58%|█████▊    | 463/801 [00:00<00:00, 473.62img/s][A
+Preprocess idx=24:  64%|██████▍   | 513/801 [00:01<00:00, 480.29img/s][A
+Preprocess idx=24:  70%|███████   | 562/801 [00:01<00:00, 482.86img/s][A
+Preprocess idx=24:  77%|███████▋  | 613/801 [00:01<00:00, 488.27img/s][A
+Preprocess idx=24:  83%|████████▎ | 664/801 [00:01<00:00, 494.07img/s][A
+Preprocess idx=24:  89%|████████▉ | 714/801 [00:01<00:00, 490.17img/s][A
+Preprocess idx=24:  95%|█████████▌| 764/801 [00:01<00:00, 490.59img/s][A
+                                                                      [A
+Interpolate pose idx=24:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=24:  59%|█████▉    | 470/800 [00:00<00:00, 4699.71step/s][A
+                                                                              [ACaching val batches:  39%|███▉      | 25/64 [01:39<02:35,  3.98s/batch]
+Read video idx=25: 0frame [00:00, ?frame/s][A
+Read video idx=25: 39frame [00:00, 388.34frame/s][A
+Read video idx=25: 116frame [00:00, 612.12frame/s][A
+Read video idx=25: 194frame [00:00, 685.67frame/s][A
+Read video idx=25: 278frame [00:00, 744.45frame/s][A
+Read video idx=25: 358frame [00:00, 762.88frame/s][A
+Read video idx=25: 437frame [00:00, 771.21frame/s][A
+Read video idx=25: 519frame [00:00, 787.08frame/s][A
+Read video idx=25: 598frame [00:00, 778.99frame/s][A
+Read video idx=25: 676frame [00:00, 768.14frame/s][A
+Read video idx=25: 754frame [00:01, 770.99frame/s][A
+Read video idx=25: 832frame [00:01, 772.25frame/s][A
+Read video idx=25: 911frame [00:01, 777.08frame/s][A
+Read video idx=25: 992frame [00:01, 785.62frame/s][A
+Read video idx=25: 1072frame [00:01, 788.38frame/s][A
+Read video idx=25: 1151frame [00:01, 788.24frame/s][A
+                                                   [A
+Preprocess idx=25:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=25:   6%|▌         | 47/801 [00:00<00:01, 464.83img/s][A
+Preprocess idx=25:  12%|█▏        | 94/801 [00:00<00:01, 459.94img/s][A
+Preprocess idx=25:  18%|█▊        | 144/801 [00:00<00:01, 475.52img/s][A
+Preprocess idx=25:  24%|██▍       | 194/801 [00:00<00:01, 484.05img/s][A
+Preprocess idx=25:  31%|███       | 247/801 [00:00<00:01, 497.51img/s][A
+Preprocess idx=25:  37%|███▋      | 300/801 [00:00<00:00, 505.65img/s][A
+Preprocess idx=25:  44%|████▍     | 352/801 [00:00<00:00, 508.22img/s][A
+Preprocess idx=25:  50%|█████     | 404/801 [00:00<00:00, 510.87img/s][A
+Preprocess idx=25:  57%|█████▋    | 456/801 [00:00<00:00, 511.70img/s][A
+Preprocess idx=25:  63%|██████▎   | 508/801 [00:01<00:00, 512.61img/s][A
+Preprocess idx=25:  70%|██████▉   | 560/801 [00:01<00:00, 514.77img/s][A
+Preprocess idx=25:  77%|███████▋  | 613/801 [00:01<00:00, 517.46img/s][A
+Preprocess idx=25:  83%|████████▎ | 665/801 [00:01<00:00, 517.93img/s][A
+Preprocess idx=25:  90%|████████▉ | 717/801 [00:01<00:00, 518.39img/s][A
+Preprocess idx=25:  96%|█████████▌| 769/801 [00:01<00:00, 518.56img/s][A
+                                                                      [A
+Interpolate pose idx=25:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=25:  58%|█████▊    | 467/800 [00:00<00:00, 4662.33step/s][A
+                                                                              [ACaching val batches:  41%|████      | 26/64 [01:43<02:26,  3.86s/batch]
+Read video idx=26: 0frame [00:00, ?frame/s][A
+Read video idx=26: 44frame [00:00, 435.92frame/s][A
+Read video idx=26: 102frame [00:00, 517.19frame/s][A
+Read video idx=26: 162frame [00:00, 554.52frame/s][A
+Read video idx=26: 224frame [00:00, 576.82frame/s][A
+Read video idx=26: 287frame [00:00, 595.21frame/s][A
+Read video idx=26: 349frame [00:00, 602.12frame/s][A
+Read video idx=26: 411frame [00:00, 604.55frame/s][A
+Read video idx=26: 473frame [00:00, 608.56frame/s][A
+Read video idx=26: 534frame [00:00, 574.19frame/s][A
+Read video idx=26: 592frame [00:01, 511.72frame/s][A
+Read video idx=26: 645frame [00:01, 450.35frame/s][A
+Read video idx=26: 692frame [00:01, 425.37frame/s][A
+Read video idx=26: 736frame [00:01, 404.78frame/s][A
+Read video idx=26: 806frame [00:01, 477.87frame/s][A
+Read video idx=26: 867frame [00:01, 509.89frame/s][A
+Read video idx=26: 930frame [00:01, 540.51frame/s][A
+Read video idx=26: 989frame [00:01, 553.38frame/s][A
+Read video idx=26: 1049frame [00:01, 563.86frame/s][A
+Read video idx=26: 1108frame [00:02, 570.87frame/s][A
+Read video idx=26: 1172frame [00:02, 590.81frame/s][A
+                                                   [A
+Preprocess idx=26:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=26:   5%|▍         | 37/801 [00:00<00:02, 364.73img/s][A
+Preprocess idx=26:  11%|█         | 88/801 [00:00<00:01, 449.27img/s][A
+Preprocess idx=26:  17%|█▋        | 140/801 [00:00<00:01, 477.75img/s][A
+Preprocess idx=26:  24%|██▍       | 191/801 [00:00<00:01, 489.82img/s][A
+Preprocess idx=26:  30%|██▉       | 240/801 [00:00<00:01, 443.98img/s][A
+Preprocess idx=26:  36%|███▌      | 286/801 [00:00<00:01, 345.38img/s][A
+Preprocess idx=26:  41%|████      | 328/801 [00:00<00:01, 362.16img/s][A
+Preprocess idx=26:  46%|████▌     | 367/801 [00:00<00:01, 312.91img/s][A
+Preprocess idx=26:  51%|█████     | 405/801 [00:01<00:01, 328.48img/s][A
+Preprocess idx=26:  57%|█████▋    | 454/801 [00:01<00:00, 369.27img/s][A
+Preprocess idx=26:  63%|██████▎   | 505/801 [00:01<00:00, 407.01img/s][A
+Preprocess idx=26:  69%|██████▊   | 549/801 [00:01<00:00, 414.42img/s][A
+Preprocess idx=26:  74%|███████▍  | 592/801 [00:01<00:00, 415.21img/s][A
+Preprocess idx=26:  79%|███████▉  | 635/801 [00:01<00:00, 413.74img/s][A
+Preprocess idx=26:  85%|████████▌ | 683/801 [00:01<00:00, 430.42img/s][A
+Preprocess idx=26:  91%|█████████ | 727/801 [00:01<00:00, 431.93img/s][A
+Preprocess idx=26:  97%|█████████▋| 777/801 [00:01<00:00, 449.41img/s][A
+                                                                      [A
+Interpolate pose idx=26:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=26:  59%|█████▊    | 469/800 [00:00<00:00, 4689.09step/s][A
+                                                                              [ACaching val batches:  42%|████▏     | 27/64 [01:48<02:31,  4.09s/batch]
+Read video idx=27: 0frame [00:00, ?frame/s][A
+Read video idx=27: 60frame [00:00, 593.41frame/s][A
+Read video idx=27: 132frame [00:00, 661.07frame/s][A
+Read video idx=27: 205frame [00:00, 690.61frame/s][A
+Read video idx=27: 275frame [00:00, 663.37frame/s][A
+Read video idx=27: 342frame [00:00, 652.24frame/s][A
+Read video idx=27: 410frame [00:00, 660.82frame/s][A
+Read video idx=27: 477frame [00:00, 661.09frame/s][A
+Read video idx=27: 544frame [00:00, 643.09frame/s][A
+Read video idx=27: 609frame [00:00, 630.77frame/s][A
+Read video idx=27: 673frame [00:01, 614.84frame/s][A
+Read video idx=27: 735frame [00:01, 609.87frame/s][A
+Read video idx=27: 802frame [00:01, 626.31frame/s][A
+Read video idx=27: 865frame [00:01, 617.78frame/s][A
+Read video idx=27: 927frame [00:01, 610.69frame/s][A
+Read video idx=27: 989frame [00:01, 596.73frame/s][A
+Read video idx=27: 1053frame [00:01, 608.06frame/s][A
+Read video idx=27: 1114frame [00:01, 604.00frame/s][A
+Read video idx=27: 1178frame [00:01, 612.90frame/s][A
+                                                   [A
+Preprocess idx=27:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=27:   6%|▌         | 50/801 [00:00<00:01, 499.95img/s][A
+Preprocess idx=27:  13%|█▎        | 103/801 [00:00<00:01, 512.25img/s][A
+Preprocess idx=27:  19%|█▉        | 155/801 [00:00<00:01, 511.86img/s][A
+Preprocess idx=27:  26%|██▌       | 207/801 [00:00<00:01, 449.86img/s][A
+Preprocess idx=27:  32%|███▏      | 256/801 [00:00<00:01, 463.03img/s][A
+Preprocess idx=27:  38%|███▊      | 305/801 [00:00<00:01, 471.35img/s][A
+Preprocess idx=27:  44%|████▍     | 354/801 [00:00<00:00, 474.38img/s][A
+Preprocess idx=27:  50%|█████     | 402/801 [00:00<00:00, 469.08img/s][A
+Preprocess idx=27:  56%|█████▌    | 450/801 [00:00<00:00, 448.86img/s][A
+Preprocess idx=27:  62%|██████▏   | 496/801 [00:01<00:00, 426.01img/s][A
+Preprocess idx=27:  68%|██████▊   | 541/801 [00:01<00:00, 432.06img/s][A
+Preprocess idx=27:  74%|███████▎  | 589/801 [00:01<00:00, 443.10img/s][A
+Preprocess idx=27:  79%|███████▉  | 634/801 [00:01<00:00, 438.71img/s][A
+Preprocess idx=27:  85%|████████▍ | 679/801 [00:01<00:00, 438.94img/s][A
+Preprocess idx=27:  90%|█████████ | 724/801 [00:01<00:00, 422.35img/s][A
+Preprocess idx=27:  96%|█████████▌| 767/801 [00:01<00:00, 420.07img/s][A
+                                                                      [A
+Interpolate pose idx=27:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=27:  58%|█████▊    | 466/800 [00:00<00:00, 4659.72step/s][A
+                                                                              [ACaching val batches:  44%|████▍     | 28/64 [01:52<02:27,  4.10s/batch]
+Read video idx=28: 0frame [00:00, ?frame/s][A
+Read video idx=28: 56frame [00:00, 554.85frame/s][A
+Read video idx=28: 121frame [00:00, 608.48frame/s][A
+Read video idx=28: 186frame [00:00, 613.41frame/s][A
+Read video idx=28: 253frame [00:00, 633.73frame/s][A
+Read video idx=28: 317frame [00:00, 618.01frame/s][A
+Read video idx=28: 385frame [00:00, 633.69frame/s][A
+Read video idx=28: 449frame [00:00, 632.04frame/s][A
+Read video idx=28: 513frame [00:00, 629.70frame/s][A
+Read video idx=28: 576frame [00:00, 625.72frame/s][A
+Read video idx=28: 639frame [00:01, 618.84frame/s][A
+Read video idx=28: 701frame [00:01, 616.61frame/s][A
+Read video idx=28: 764frame [00:01, 612.61frame/s][A
+Read video idx=28: 827frame [00:01, 617.37frame/s][A
+Read video idx=28: 893frame [00:01, 629.94frame/s][A
+Read video idx=28: 958frame [00:01, 633.66frame/s][A
+Read video idx=28: 1022frame [00:01, 629.48frame/s][A
+Read video idx=28: 1085frame [00:01, 613.48frame/s][A
+Read video idx=28: 1147frame [00:01, 614.96frame/s][A
+                                                   [A
+Preprocess idx=28:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=28:   3%|▎         | 27/801 [00:00<00:02, 267.38img/s][A
+Preprocess idx=28:  10%|▉         | 79/801 [00:00<00:01, 411.39img/s][A
+Preprocess idx=28:  16%|█▌        | 126/801 [00:00<00:01, 434.19img/s][A
+Preprocess idx=28:  21%|██        | 170/801 [00:00<00:01, 421.18img/s][A
+Preprocess idx=28:  27%|██▋       | 213/801 [00:00<00:01, 330.30img/s][A
+Preprocess idx=28:  31%|███       | 249/801 [00:00<00:01, 327.97img/s][A
+Preprocess idx=28:  35%|███▌      | 284/801 [00:00<00:01, 328.20img/s][A
+Preprocess idx=28:  42%|████▏     | 334/801 [00:00<00:01, 375.26img/s][A
+Preprocess idx=28:  47%|████▋     | 377/801 [00:01<00:01, 390.03img/s][A
+Preprocess idx=28:  53%|█████▎    | 426/801 [00:01<00:00, 417.83img/s][A
+Preprocess idx=28:  59%|█████▉    | 476/801 [00:01<00:00, 439.02img/s][A
+Preprocess idx=28:  65%|██████▌   | 521/801 [00:01<00:00, 425.27img/s][A
+Preprocess idx=28:  71%|███████   | 565/801 [00:01<00:00, 390.00img/s][A
+Preprocess idx=28:  76%|███████▌  | 605/801 [00:01<00:00, 381.56img/s][A
+Preprocess idx=28:  80%|████████  | 644/801 [00:01<00:00, 352.85img/s][A
+Preprocess idx=28:  85%|████████▍ | 680/801 [00:01<00:00, 343.03img/s][A
+Preprocess idx=28:  89%|████████▉ | 715/801 [00:01<00:00, 327.38img/s][A
+Preprocess idx=28:  95%|█████████▍| 758/801 [00:02<00:00, 354.28img/s][A
+                                                                      [A
+Interpolate pose idx=28:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=28:  58%|█████▊    | 468/800 [00:00<00:00, 4677.89step/s][A
+                                                                              [ACaching val batches:  45%|████▌     | 29/64 [01:56<02:27,  4.21s/batch]
+Read video idx=29: 0frame [00:00, ?frame/s][A
+Read video idx=29: 57frame [00:00, 567.55frame/s][A
+Read video idx=29: 123frame [00:00, 618.38frame/s][A
+Read video idx=29: 186frame [00:00, 622.64frame/s][A
+Read video idx=29: 249frame [00:00, 614.17frame/s][A
+Read video idx=29: 315frame [00:00, 623.23frame/s][A
+Read video idx=29: 383frame [00:00, 640.60frame/s][A
+Read video idx=29: 448frame [00:00, 625.36frame/s][A
+Read video idx=29: 511frame [00:00, 589.56frame/s][A
+Read video idx=29: 571frame [00:00, 582.62frame/s][A
+Read video idx=29: 630frame [00:01, 514.97frame/s][A
+Read video idx=29: 683frame [00:01, 507.76frame/s][A
+Read video idx=29: 749frame [00:01, 545.97frame/s][A
+Read video idx=29: 817frame [00:01, 582.36frame/s][A
+Read video idx=29: 882frame [00:01, 597.46frame/s][A
+Read video idx=29: 943frame [00:01, 595.66frame/s][A
+Read video idx=29: 1014frame [00:01, 628.46frame/s][A
+Read video idx=29: 1078frame [00:01, 631.66frame/s][A
+Read video idx=29: 1142frame [00:01, 633.37frame/s][A
+                                                   [A
+Preprocess idx=29:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=29:   6%|▌         | 46/801 [00:00<00:01, 452.49img/s][A
+Preprocess idx=29:  12%|█▏        | 93/801 [00:00<00:01, 457.58img/s][A
+Preprocess idx=29:  18%|█▊        | 142/801 [00:00<00:01, 467.34img/s][A
+Preprocess idx=29:  24%|██▎       | 190/801 [00:00<00:01, 471.30img/s][A
+Preprocess idx=29:  30%|██▉       | 239/801 [00:00<00:01, 477.85img/s][A
+Preprocess idx=29:  36%|███▌      | 287/801 [00:00<00:01, 474.99img/s][A
+Preprocess idx=29:  42%|████▏     | 337/801 [00:00<00:00, 482.30img/s][A
+Preprocess idx=29:  48%|████▊     | 386/801 [00:00<00:00, 470.34img/s][A
+Preprocess idx=29:  55%|█████▍    | 437/801 [00:00<00:00, 481.41img/s][A
+Preprocess idx=29:  61%|██████    | 486/801 [00:01<00:00, 483.04img/s][A
+Preprocess idx=29:  67%|██████▋   | 536/801 [00:01<00:00, 485.52img/s][A
+Preprocess idx=29:  73%|███████▎  | 587/801 [00:01<00:00, 491.23img/s][A
+Preprocess idx=29:  80%|███████▉  | 639/801 [00:01<00:00, 498.03img/s][A
+Preprocess idx=29:  86%|████████▋ | 691/801 [00:01<00:00, 502.64img/s][A
+Preprocess idx=29:  93%|█████████▎| 742/801 [00:01<00:00, 502.10img/s][A
+Preprocess idx=29:  99%|█████████▉| 793/801 [00:01<00:00, 459.81img/s][A
+                                                                      [A
+Interpolate pose idx=29:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=29:  58%|█████▊    | 463/800 [00:00<00:00, 4629.85step/s][A
+                                                                              [ACaching val batches:  47%|████▋     | 30/64 [02:00<02:21,  4.17s/batch]
+Read video idx=30: 0frame [00:00, ?frame/s][A
+Read video idx=30: 44frame [00:00, 439.27frame/s][A
+Read video idx=30: 113frame [00:00, 585.27frame/s][A
+Read video idx=30: 180frame [00:00, 622.37frame/s][A
+Read video idx=30: 243frame [00:00, 614.23frame/s][A
+Read video idx=30: 309frame [00:00, 628.61frame/s][A
+Read video idx=30: 377frame [00:00, 645.59frame/s][A
+Read video idx=30: 442frame [00:00, 646.79frame/s][A
+Read video idx=30: 509frame [00:00, 653.69frame/s][A
+Read video idx=30: 575frame [00:00, 628.63frame/s][A
+Read video idx=30: 639frame [00:01, 620.85frame/s][A
+Read video idx=30: 702frame [00:01, 601.79frame/s][A
+Read video idx=30: 763frame [00:01, 559.93frame/s][A
+Read video idx=30: 822frame [00:01, 568.23frame/s][A
+Read video idx=30: 880frame [00:01, 548.17frame/s][A
+Read video idx=30: 945frame [00:01, 575.93frame/s][A
+Read video idx=30: 1013frame [00:01, 604.19frame/s][A
+Read video idx=30: 1077frame [00:01, 613.91frame/s][A
+Read video idx=30: 1144frame [00:01, 629.44frame/s][A
+                                                   [A
+Preprocess idx=30:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=30:   6%|▌         | 50/801 [00:00<00:01, 493.95img/s][A
+Preprocess idx=30:  13%|█▎        | 102/801 [00:00<00:01, 504.92img/s][A
+Preprocess idx=30:  19%|█▉        | 153/801 [00:00<00:01, 500.94img/s][A
+Preprocess idx=30:  25%|██▌       | 204/801 [00:00<00:01, 504.24img/s][A
+Preprocess idx=30:  32%|███▏      | 256/801 [00:00<00:01, 506.65img/s][A
+Preprocess idx=30:  39%|███▊      | 309/801 [00:00<00:00, 513.08img/s][A
+Preprocess idx=30:  45%|████▌     | 361/801 [00:00<00:00, 508.73img/s][A
+Preprocess idx=30:  51%|█████▏    | 412/801 [00:00<00:00, 503.67img/s][A
+Preprocess idx=30:  58%|█████▊    | 463/801 [00:00<00:00, 499.66img/s][A
+Preprocess idx=30:  64%|██████▍   | 513/801 [00:01<00:00, 495.04img/s][A
+Preprocess idx=30:  70%|███████   | 564/801 [00:01<00:00, 495.42img/s][A
+Preprocess idx=30:  77%|███████▋  | 616/801 [00:01<00:00, 502.14img/s][A
+Preprocess idx=30:  83%|████████▎ | 668/801 [00:01<00:00, 506.88img/s][A
+Preprocess idx=30:  90%|█████████ | 721/801 [00:01<00:00, 511.59img/s][A
+Preprocess idx=30:  97%|█████████▋| 773/801 [00:01<00:00, 508.76img/s][A
+                                                                      [A
+Interpolate pose idx=30:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=30:  59%|█████▊    | 469/800 [00:00<00:00, 4680.17step/s][A
+                                                                              [ACaching val batches:  48%|████▊     | 31/64 [02:04<02:15,  4.09s/batch]
+Read video idx=31: 0frame [00:00, ?frame/s][A
+Read video idx=31: 55frame [00:00, 544.66frame/s][A
+Read video idx=31: 121frame [00:00, 609.15frame/s][A
+Read video idx=31: 188frame [00:00, 633.80frame/s][A
+Read video idx=31: 254frame [00:00, 641.39frame/s][A
+Read video idx=31: 319frame [00:00, 567.91frame/s][A
+Read video idx=31: 378frame [00:00, 531.14frame/s][A
+Read video idx=31: 433frame [00:00, 471.81frame/s][A
+Read video idx=31: 482frame [00:00, 433.51frame/s][A
+Read video idx=31: 537frame [00:01, 462.73frame/s][A
+Read video idx=31: 611frame [00:01, 537.02frame/s][A
+Read video idx=31: 682frame [00:01, 582.01frame/s][A
+Read video idx=31: 743frame [00:01, 587.62frame/s][A
+Read video idx=31: 804frame [00:01, 586.47frame/s][A
+Read video idx=31: 868frame [00:01, 601.16frame/s][A
+Read video idx=31: 929frame [00:01, 546.07frame/s][A
+Read video idx=31: 998frame [00:01, 583.86frame/s][A
+Read video idx=31: 1061frame [00:01, 595.40frame/s][A
+Read video idx=31: 1124frame [00:02, 602.82frame/s][A
+Read video idx=31: 1189frame [00:02, 615.89frame/s][A
+                                                   [A
+Preprocess idx=31:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=31:   4%|▍         | 34/801 [00:00<00:02, 338.13img/s][A
+Preprocess idx=31:  10%|▉         | 80/801 [00:00<00:01, 403.96img/s][A
+Preprocess idx=31:  15%|█▌        | 121/801 [00:00<00:01, 405.12img/s][A
+Preprocess idx=31:  21%|██        | 166/801 [00:00<00:01, 420.04img/s][A
+Preprocess idx=31:  26%|██▌       | 208/801 [00:00<00:01, 419.35img/s][A
+Preprocess idx=31:  31%|███▏      | 251/801 [00:00<00:01, 420.08img/s][A
+Preprocess idx=31:  37%|███▋      | 293/801 [00:00<00:01, 412.56img/s][A
+Preprocess idx=31:  42%|████▏     | 335/801 [00:00<00:01, 403.27img/s][A
+Preprocess idx=31:  48%|████▊     | 383/801 [00:00<00:00, 424.89img/s][A
+Preprocess idx=31:  54%|█████▍    | 435/801 [00:01<00:00, 451.64img/s][A
+Preprocess idx=31:  60%|██████    | 481/801 [00:01<00:00, 449.01img/s][A
+Preprocess idx=31:  66%|██████▌   | 526/801 [00:01<00:00, 441.99img/s][A
+Preprocess idx=31:  72%|███████▏  | 579/801 [00:01<00:00, 465.60img/s][A
+Preprocess idx=31:  79%|███████▉  | 631/801 [00:01<00:00, 478.92img/s][A
+Preprocess idx=31:  85%|████████▌ | 684/801 [00:01<00:00, 491.31img/s][A
+Preprocess idx=31:  92%|█████████▏| 734/801 [00:01<00:00, 485.58img/s][A
+Preprocess idx=31:  98%|█████████▊| 783/801 [00:01<00:00, 482.57img/s][A
+                                                                      [A
+Interpolate pose idx=31:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=31:  59%|█████▊    | 469/800 [00:00<00:00, 4680.80step/s][A
+                                                                              [ACaching val batches:  50%|█████     | 32/64 [02:08<02:12,  4.15s/batch]
+Read video idx=32: 0frame [00:00, ?frame/s][A
+Read video idx=32: 52frame [00:00, 513.43frame/s][A
+Read video idx=32: 118frame [00:00, 598.67frame/s][A
+Read video idx=32: 181frame [00:00, 610.10frame/s][A
+Read video idx=32: 245frame [00:00, 620.78frame/s][A
+Read video idx=32: 309frame [00:00, 627.41frame/s][A
+Read video idx=32: 372frame [00:00, 627.81frame/s][A
+Read video idx=32: 435frame [00:00, 624.68frame/s][A
+Read video idx=32: 498frame [00:00, 611.63frame/s][A
+Read video idx=32: 562frame [00:00, 616.31frame/s][A
+Read video idx=32: 626frame [00:01, 622.21frame/s][A
+Read video idx=32: 689frame [00:01, 616.70frame/s][A
+Read video idx=32: 754frame [00:01, 625.60frame/s][A
+Read video idx=32: 823frame [00:01, 644.17frame/s][A
+Read video idx=32: 888frame [00:01, 643.58frame/s][A
+Read video idx=32: 953frame [00:01, 613.17frame/s][A
+Read video idx=32: 1015frame [00:01, 589.44frame/s][A
+Read video idx=32: 1075frame [00:01, 581.06frame/s][A
+Read video idx=32: 1134frame [00:01, 583.09frame/s][A
+                                                   [A
+Preprocess idx=32:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=32:   3%|▎         | 21/801 [00:00<00:03, 209.78img/s][A
+Preprocess idx=32:   8%|▊         | 65/801 [00:00<00:02, 343.80img/s][A
+Preprocess idx=32:  14%|█▍        | 116/801 [00:00<00:01, 417.37img/s][A
+Preprocess idx=32:  21%|██        | 165/801 [00:00<00:01, 444.41img/s][A
+Preprocess idx=32:  26%|██▌       | 210/801 [00:00<00:01, 434.37img/s][A
+Preprocess idx=32:  32%|███▏      | 254/801 [00:00<00:01, 360.96img/s][A
+Preprocess idx=32:  37%|███▋      | 293/801 [00:00<00:01, 367.72img/s][A
+Preprocess idx=32:  43%|████▎     | 344/801 [00:00<00:01, 406.60img/s][A
+Preprocess idx=32:  49%|████▉     | 396/801 [00:00<00:00, 439.09img/s][A
+Preprocess idx=32:  56%|█████▌    | 445/801 [00:01<00:00, 452.84img/s][A
+Preprocess idx=32:  62%|██████▏   | 497/801 [00:01<00:00, 470.11img/s][A
+Preprocess idx=32:  68%|██████▊   | 545/801 [00:01<00:00, 460.79img/s][A
+Preprocess idx=32:  74%|███████▍  | 593/801 [00:01<00:00, 466.35img/s][A
+Preprocess idx=32:  81%|████████  | 646/801 [00:01<00:00, 482.85img/s][A
+Preprocess idx=32:  87%|████████▋ | 698/801 [00:01<00:00, 492.48img/s][A
+Preprocess idx=32:  94%|█████████▍| 751/801 [00:01<00:00, 501.62img/s][A
+                                                                      [A
+Interpolate pose idx=32:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=32:  58%|█████▊    | 466/800 [00:00<00:00, 4652.42step/s][A
+                                                                              [ACaching val batches:  52%|█████▏    | 33/64 [02:13<02:08,  4.14s/batch]
+Read video idx=33: 0frame [00:00, ?frame/s][A
+Read video idx=33: 48frame [00:00, 478.97frame/s][A
+Read video idx=33: 107frame [00:00, 542.82frame/s][A
+Read video idx=33: 175frame [00:00, 605.17frame/s][A
+Read video idx=33: 237frame [00:00, 600.33frame/s][A
+Read video idx=33: 299frame [00:00, 602.20frame/s][A
+Read video idx=33: 360frame [00:00, 602.58frame/s][A
+Read video idx=33: 430frame [00:00, 625.68frame/s][A
+Read video idx=33: 493frame [00:00, 620.86frame/s][A
+Read video idx=33: 557frame [00:00, 625.22frame/s][A
+Read video idx=33: 622frame [00:01, 632.72frame/s][A
+Read video idx=33: 686frame [00:01, 619.44frame/s][A
+Read video idx=33: 749frame [00:01, 608.80frame/s][A
+Read video idx=33: 813frame [00:01, 617.81frame/s][A
+Read video idx=33: 876frame [00:01, 620.54frame/s][A
+Read video idx=33: 939frame [00:01, 613.75frame/s][A
+Read video idx=33: 1001frame [00:01, 614.30frame/s][A
+Read video idx=33: 1063frame [00:01, 613.87frame/s][A
+Read video idx=33: 1125frame [00:01, 614.73frame/s][A
+Read video idx=33: 1191frame [00:01, 621.51frame/s][A
+                                                   [A
+Preprocess idx=33:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=33:   6%|▌         | 46/801 [00:00<00:01, 452.13img/s][A
+Preprocess idx=33:  12%|█▏        | 97/801 [00:00<00:01, 481.22img/s][A
+Preprocess idx=33:  19%|█▊        | 149/801 [00:00<00:01, 498.39img/s][A
+Preprocess idx=33:  25%|██▌       | 202/801 [00:00<00:01, 507.20img/s][A
+Preprocess idx=33:  32%|███▏      | 255/801 [00:00<00:01, 512.58img/s][A
+Preprocess idx=33:  38%|███▊      | 307/801 [00:00<00:00, 508.10img/s][A
+Preprocess idx=33:  45%|████▍     | 358/801 [00:00<00:00, 502.00img/s][A
+Preprocess idx=33:  51%|█████     | 409/801 [00:00<00:00, 503.17img/s][A
+Preprocess idx=33:  58%|█████▊    | 461/801 [00:00<00:00, 508.05img/s][A
+Preprocess idx=33:  64%|██████▍   | 515/801 [00:01<00:00, 514.97img/s][A
+Preprocess idx=33:  71%|███████   | 569/801 [00:01<00:00, 519.87img/s][A
+Preprocess idx=33:  78%|███████▊  | 622/801 [00:01<00:00, 522.77img/s][A
+Preprocess idx=33:  84%|████████▍ | 675/801 [00:01<00:00, 524.94img/s][A
+Preprocess idx=33:  91%|█████████ | 728/801 [00:01<00:00, 516.84img/s][A
+Preprocess idx=33:  97%|█████████▋| 780/801 [00:01<00:00, 515.42img/s][A
+                                                                      [A
+Interpolate pose idx=33:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=33:  58%|█████▊    | 468/800 [00:00<00:00, 4679.71step/s][A
+                                                                              [ACaching val batches:  53%|█████▎    | 34/64 [02:17<02:02,  4.07s/batch]
+Read video idx=34: 0frame [00:00, ?frame/s][A
+Read video idx=34: 49frame [00:00, 488.70frame/s][A
+Read video idx=34: 120frame [00:00, 609.90frame/s][A
+Read video idx=34: 193frame [00:00, 654.57frame/s][A
+Read video idx=34: 259frame [00:00, 655.15frame/s][A
+Read video idx=34: 326frame [00:00, 657.11frame/s][A
+Read video idx=34: 392frame [00:00, 655.81frame/s][A
+Read video idx=34: 460frame [00:00, 663.48frame/s][A
+Read video idx=34: 529frame [00:00, 671.07frame/s][A
+Read video idx=34: 598frame [00:00, 672.74frame/s][A
+Read video idx=34: 670frame [00:01, 683.84frame/s][A
+Read video idx=34: 739frame [00:01, 675.40frame/s][A
+Read video idx=34: 808frame [00:01, 676.71frame/s][A
+Read video idx=34: 876frame [00:01, 657.30frame/s][A
+Read video idx=34: 942frame [00:01, 653.27frame/s][A
+Read video idx=34: 1015frame [00:01, 673.19frame/s][A
+Read video idx=34: 1083frame [00:01, 660.37frame/s][A
+Read video idx=34: 1150frame [00:01, 641.33frame/s][A
+                                                   [A
+Preprocess idx=34:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=34:   6%|▌         | 48/801 [00:00<00:01, 470.95img/s][A
+Preprocess idx=34:  12%|█▏        | 97/801 [00:00<00:01, 476.66img/s][A
+Preprocess idx=34:  18%|█▊        | 147/801 [00:00<00:01, 483.37img/s][A
+Preprocess idx=34:  24%|██▍       | 196/801 [00:00<00:01, 472.72img/s][A
+Preprocess idx=34:  30%|███       | 244/801 [00:00<00:01, 462.07img/s][A
+Preprocess idx=34:  36%|███▋      | 292/801 [00:00<00:01, 467.36img/s][A
+Preprocess idx=34:  42%|████▏     | 339/801 [00:00<00:01, 457.83img/s][A
+Preprocess idx=34:  49%|████▊     | 389/801 [00:00<00:00, 469.98img/s][A
+Preprocess idx=34:  55%|█████▌    | 441/801 [00:00<00:00, 485.16img/s][A
+Preprocess idx=34:  62%|██████▏   | 494/801 [00:01<00:00, 496.99img/s][A
+Preprocess idx=34:  68%|██████▊   | 547/801 [00:01<00:00, 505.41img/s][A
+Preprocess idx=34:  75%|███████▍  | 598/801 [00:01<00:00, 470.44img/s][A
+Preprocess idx=34:  81%|████████▏ | 651/801 [00:01<00:00, 485.34img/s][A
+Preprocess idx=34:  88%|████████▊ | 704/801 [00:01<00:00, 496.75img/s][A
+Preprocess idx=34:  95%|█████████▍| 757/801 [00:01<00:00, 505.77img/s][A
+                                                                      [A
+Interpolate pose idx=34:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=34:  58%|█████▊    | 462/800 [00:00<00:00, 4612.71step/s][A
+                                                                              [ACaching val batches:  55%|█████▍    | 35/64 [02:20<01:56,  4.00s/batch]
+Read video idx=35: 0frame [00:00, ?frame/s][A
+Read video idx=35: 40frame [00:00, 397.26frame/s][A
+Read video idx=35: 104frame [00:00, 531.17frame/s][A
+Read video idx=35: 161frame [00:00, 537.90frame/s][A
+Read video idx=35: 216frame [00:00, 538.57frame/s][A
+Read video idx=35: 283frame [00:00, 583.09frame/s][A
+Read video idx=35: 342frame [00:00, 585.34frame/s][A
+Read video idx=35: 409frame [00:00, 611.33frame/s][A
+Read video idx=35: 474frame [00:00, 622.69frame/s][A
+Read video idx=35: 537frame [00:00, 623.86frame/s][A
+Read video idx=35: 602frame [00:01, 631.82frame/s][A
+Read video idx=35: 670frame [00:01, 645.80frame/s][A
+Read video idx=35: 735frame [00:01, 635.10frame/s][A
+Read video idx=35: 805frame [00:01, 653.79frame/s][A
+Read video idx=35: 879frame [00:01, 676.43frame/s][A
+Read video idx=35: 947frame [00:01, 674.70frame/s][A
+Read video idx=35: 1016frame [00:01, 676.52frame/s][A
+Read video idx=35: 1086frame [00:01, 682.23frame/s][A
+Read video idx=35: 1156frame [00:01, 686.66frame/s][A
+                                                   [A
+Preprocess idx=35:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=35:   0%|          | 3/801 [00:00<00:39, 20.12img/s][A
+Preprocess idx=35:   1%|          | 6/801 [00:00<00:40, 19.71img/s][A
+Preprocess idx=35:   1%|          | 8/801 [00:00<00:40, 19.60img/s][A
+Preprocess idx=35:   4%|▍         | 34/801 [00:00<00:07, 99.65img/s][A
+Preprocess idx=35:  10%|▉         | 80/801 [00:00<00:03, 215.70img/s][A
+Preprocess idx=35:  16%|█▋        | 132/801 [00:00<00:02, 311.16img/s][A
+Preprocess idx=35:  23%|██▎       | 182/801 [00:00<00:01, 368.04img/s][A
+Preprocess idx=35:  29%|██▉       | 232/801 [00:00<00:01, 408.24img/s][A
+Preprocess idx=35:  35%|███▌      | 283/801 [00:01<00:01, 436.96img/s][A
+Preprocess idx=35:  41%|████      | 330/801 [00:01<00:01, 445.16img/s][A
+Preprocess idx=35:  47%|████▋     | 376/801 [00:01<00:00, 435.02img/s][A
+Preprocess idx=35:  53%|█████▎    | 421/801 [00:01<00:00, 430.53img/s][A
+Preprocess idx=35:  58%|█████▊    | 465/801 [00:01<00:00, 428.13img/s][A
+Preprocess idx=35:  64%|██████▍   | 511/801 [00:01<00:00, 435.30img/s][A
+Preprocess idx=35:  70%|███████   | 562/801 [00:01<00:00, 455.06img/s][A
+Preprocess idx=35:  76%|███████▋  | 612/801 [00:01<00:00, 466.64img/s][A
+Preprocess idx=35:  83%|████████▎ | 663/801 [00:01<00:00, 477.06img/s][A
+Preprocess idx=35:  89%|████████▉ | 713/801 [00:01<00:00, 481.88img/s][A
+Preprocess idx=35:  95%|█████████▌| 763/801 [00:02<00:00, 484.99img/s][A
+                                                                      [A
+Interpolate pose idx=35:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=35:  58%|█████▊    | 468/800 [00:00<00:00, 4677.95step/s][A
+                                                                              [ACaching val batches:  56%|█████▋    | 36/64 [02:25<01:56,  4.14s/batch]
+Read video idx=36: 0frame [00:00, ?frame/s][A
+Read video idx=36: 54frame [00:00, 534.98frame/s][A
+Read video idx=36: 116frame [00:00, 584.73frame/s][A
+Read video idx=36: 179frame [00:00, 598.98frame/s][A
+Read video idx=36: 246frame [00:00, 625.18frame/s][A
+Read video idx=36: 309frame [00:00, 600.53frame/s][A
+Read video idx=36: 370frame [00:00, 559.57frame/s][A
+Read video idx=36: 427frame [00:00, 524.06frame/s][A
+Read video idx=36: 481frame [00:00, 471.33frame/s][A
+Read video idx=36: 547frame [00:01, 520.12frame/s][A
+Read video idx=36: 607frame [00:01, 540.88frame/s][A
+Read video idx=36: 670frame [00:01, 564.37frame/s][A
+Read video idx=36: 733frame [00:01, 582.91frame/s][A
+Read video idx=36: 797frame [00:01, 598.91frame/s][A
+Read video idx=36: 862frame [00:01, 613.56frame/s][A
+Read video idx=36: 927frame [00:01, 621.98frame/s][A
+Read video idx=36: 993frame [00:01, 631.60frame/s][A
+Read video idx=36: 1064frame [00:01, 652.01frame/s][A
+Read video idx=36: 1141frame [00:01, 680.63frame/s][A
+                                                   [A
+Preprocess idx=36:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=36:   5%|▌         | 44/801 [00:00<00:01, 435.94img/s][A
+Preprocess idx=36:  11%|█         | 88/801 [00:00<00:01, 398.10img/s][A
+Preprocess idx=36:  16%|█▋        | 132/801 [00:00<00:01, 413.58img/s][A
+Preprocess idx=36:  22%|██▏       | 174/801 [00:00<00:01, 401.78img/s][A
+Preprocess idx=36:  27%|██▋       | 219/801 [00:00<00:01, 417.17img/s][A
+Preprocess idx=36:  33%|███▎      | 266/801 [00:00<00:01, 433.48img/s][A
+Preprocess idx=36:  39%|███▊      | 310/801 [00:00<00:01, 417.85img/s][A
+Preprocess idx=36:  44%|████▍     | 352/801 [00:00<00:01, 408.00img/s][A
+Preprocess idx=36:  49%|████▉     | 396/801 [00:00<00:00, 415.91img/s][A
+Preprocess idx=36:  56%|█████▌    | 449/801 [00:01<00:00, 448.24img/s][A
+Preprocess idx=36:  63%|██████▎   | 502/801 [00:01<00:00, 468.48img/s][A
+Preprocess idx=36:  69%|██████▊   | 549/801 [00:01<00:00, 454.72img/s][A
+Preprocess idx=36:  74%|███████▍  | 595/801 [00:01<00:00, 453.68img/s][A
+Preprocess idx=36:  80%|████████  | 641/801 [00:01<00:00, 443.12img/s][A
+Preprocess idx=36:  86%|████████▌ | 686/801 [00:01<00:00, 429.84img/s][A
+Preprocess idx=36:  91%|█████████ | 730/801 [00:01<00:00, 432.16img/s][A
+Preprocess idx=36:  98%|█████████▊| 783/801 [00:01<00:00, 459.37img/s][A
+                                                                      [A
+Interpolate pose idx=36:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=36:  59%|█████▉    | 470/800 [00:00<00:00, 4692.33step/s][A
+                                                                              [ACaching val batches:  58%|█████▊    | 37/64 [02:29<01:52,  4.16s/batch]
+Read video idx=37: 0frame [00:00, ?frame/s][A
+Read video idx=37: 44frame [00:00, 438.91frame/s][A
+Read video idx=37: 110frame [00:00, 567.04frame/s][A
+Read video idx=37: 180frame [00:00, 615.11frame/s][A
+Read video idx=37: 242frame [00:00, 505.13frame/s][A
+Read video idx=37: 295frame [00:00, 452.60frame/s][A
+Read video idx=37: 361frame [00:00, 507.02frame/s][A
+Read video idx=37: 426frame [00:00, 544.22frame/s][A
+Read video idx=37: 493frame [00:00, 579.71frame/s][A
+Read video idx=37: 571frame [00:01, 631.49frame/s][A
+Read video idx=37: 641frame [00:01, 651.19frame/s][A
+Read video idx=37: 708frame [00:01, 638.32frame/s][A
+Read video idx=37: 773frame [00:01, 623.62frame/s][A
+Read video idx=37: 836frame [00:01, 596.07frame/s][A
+Read video idx=37: 897frame [00:01, 585.20frame/s][A
+Read video idx=37: 956frame [00:01, 582.14frame/s][A
+Read video idx=37: 1017frame [00:01, 589.30frame/s][A
+Read video idx=37: 1077frame [00:01, 582.26frame/s][A
+Read video idx=37: 1139frame [00:01, 590.66frame/s][A
+Read video idx=37: 1199frame [00:02, 580.71frame/s][A
+                                                   [A
+Preprocess idx=37:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=37:   3%|▎         | 25/801 [00:00<00:03, 243.98img/s][A
+Preprocess idx=37:   9%|▊         | 70/801 [00:00<00:02, 360.48img/s][A
+Preprocess idx=37:  15%|█▍        | 119/801 [00:00<00:01, 416.46img/s][A
+Preprocess idx=37:  20%|██        | 162/801 [00:00<00:01, 421.19img/s][A
+Preprocess idx=37:  26%|██▌       | 205/801 [00:00<00:01, 416.38img/s][A
+Preprocess idx=37:  32%|███▏      | 257/801 [00:00<00:01, 448.22img/s][A
+Preprocess idx=37:  38%|███▊      | 306/801 [00:00<00:01, 459.59img/s][A
+Preprocess idx=37:  45%|████▍     | 358/801 [00:00<00:00, 471.84img/s][A
+Preprocess idx=37:  51%|█████     | 406/801 [00:00<00:00, 436.73img/s][A
+Preprocess idx=37:  56%|█████▋    | 451/801 [00:01<00:00, 411.01img/s][A
+Preprocess idx=37:  62%|██████▏   | 493/801 [00:01<00:00, 409.28img/s][A
+Preprocess idx=37:  67%|██████▋   | 535/801 [00:01<00:00, 411.09img/s][A
+Preprocess idx=37:  72%|███████▏  | 577/801 [00:01<00:00, 403.42img/s][A
+Preprocess idx=37:  77%|███████▋  | 618/801 [00:01<00:00, 389.38img/s][A
+Preprocess idx=37:  82%|████████▏ | 658/801 [00:01<00:00, 375.18img/s][A
+Preprocess idx=37:  87%|████████▋ | 696/801 [00:01<00:00, 369.60img/s][A
+Preprocess idx=37:  92%|█████████▏| 734/801 [00:01<00:00, 347.71img/s][A
+Preprocess idx=37:  96%|█████████▌| 770/801 [00:01<00:00, 338.32img/s][A
+                                                                      [A
+Interpolate pose idx=37:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=37:  58%|█████▊    | 465/800 [00:00<00:00, 4644.08step/s][A
+                                                                              [ACaching val batches:  59%|█████▉    | 38/64 [02:33<01:50,  4.26s/batch]
+Read video idx=38: 0frame [00:00, ?frame/s][A
+Read video idx=38: 40frame [00:00, 398.72frame/s][A
+Read video idx=38: 115frame [00:00, 602.88frame/s][A
+Read video idx=38: 190frame [00:00, 669.23frame/s][A
+Read video idx=38: 268frame [00:00, 711.99frame/s][A
+Read video idx=38: 351frame [00:00, 752.87frame/s][A
+Read video idx=38: 430frame [00:00, 764.35frame/s][A
+Read video idx=38: 507frame [00:00, 727.68frame/s][A
+Read video idx=38: 585frame [00:00, 740.30frame/s][A
+Read video idx=38: 668frame [00:00, 763.16frame/s][A
+Read video idx=38: 750frame [00:01, 777.48frame/s][A
+Read video idx=38: 830frame [00:01, 783.15frame/s][A
+Read video idx=38: 910frame [00:01, 783.67frame/s][A
+Read video idx=38: 990frame [00:01, 786.00frame/s][A
+Read video idx=38: 1070frame [00:01, 788.43frame/s][A
+Read video idx=38: 1153frame [00:01, 799.03frame/s][A
+                                                   [A
+Preprocess idx=38:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=38:   6%|▌         | 49/801 [00:00<00:01, 484.26img/s][A
+Preprocess idx=38:  13%|█▎        | 101/801 [00:00<00:01, 500.01img/s][A
+Preprocess idx=38:  19%|█▉        | 151/801 [00:00<00:01, 492.85img/s][A
+Preprocess idx=38:  25%|██▌       | 201/801 [00:00<00:01, 474.10img/s][A
+Preprocess idx=38:  31%|███▏      | 251/801 [00:00<00:01, 482.81img/s][A
+Preprocess idx=38:  37%|███▋      | 300/801 [00:00<00:01, 478.81img/s][A
+Preprocess idx=38:  44%|████▍     | 351/801 [00:00<00:00, 486.18img/s][A
+Preprocess idx=38:  50%|█████     | 403/801 [00:00<00:00, 496.45img/s][A
+Preprocess idx=38:  57%|█████▋    | 455/801 [00:00<00:00, 502.04img/s][A
+Preprocess idx=38:  63%|██████▎   | 507/801 [00:01<00:00, 504.55img/s][A
+Preprocess idx=38:  70%|██████▉   | 559/801 [00:01<00:00, 506.44img/s][A
+Preprocess idx=38:  76%|███████▌  | 610/801 [00:01<00:00, 482.09img/s][A
+Preprocess idx=38:  82%|████████▏ | 659/801 [00:01<00:00, 478.16img/s][A
+Preprocess idx=38:  89%|████████▉ | 711/801 [00:01<00:00, 488.53img/s][A
+Preprocess idx=38:  95%|█████████▌| 764/801 [00:01<00:00, 498.04img/s][A
+                                                                      [A
+Interpolate pose idx=38:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=38:  58%|█████▊    | 468/800 [00:00<00:00, 4677.60step/s][A
+                                                                              [ACaching val batches:  61%|██████    | 39/64 [02:37<01:41,  4.06s/batch]
+Read video idx=39: 0frame [00:00, ?frame/s][A
+Read video idx=39: 42frame [00:00, 418.33frame/s][A
+Read video idx=39: 125frame [00:00, 654.47frame/s][A
+                                                  [AThe length of sequence /home/xzha135/work/comma2k19/Chunk_10/99c94dc769b5d96e|2018-11-15--01-02-09/3 is too short (194 < 1000)
+
+Read video idx=40: 0frame [00:00, ?frame/s][A
+Read video idx=40: 44frame [00:00, 436.59frame/s][A
+Read video idx=40: 114frame [00:00, 586.77frame/s][A
+Read video idx=40: 181frame [00:00, 624.36frame/s][A
+Read video idx=40: 251frame [00:00, 653.69frame/s][A
+Read video idx=40: 321frame [00:00, 669.87frame/s][A
+Read video idx=40: 388frame [00:00, 668.36frame/s][A
+Read video idx=40: 460frame [00:00, 681.21frame/s][A
+Read video idx=40: 531frame [00:00, 689.57frame/s][A
+Read video idx=40: 600frame [00:00, 686.49frame/s][A
+Read video idx=40: 669frame [00:01, 683.09frame/s][A
+Read video idx=40: 738frame [00:01, 681.64frame/s][A
+Read video idx=40: 808frame [00:01, 685.43frame/s][A
+Read video idx=40: 877frame [00:01, 683.68frame/s][A
+Read video idx=40: 946frame [00:01, 684.04frame/s][A
+Read video idx=40: 1016frame [00:01, 686.02frame/s][A
+Read video idx=40: 1086frame [00:01, 689.09frame/s][A
+Read video idx=40: 1162frame [00:01, 710.16frame/s][A
+                                                   [A
+Preprocess idx=40:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=40:   6%|▌         | 49/801 [00:00<00:01, 485.51img/s][A
+Preprocess idx=40:  12%|█▏        | 98/801 [00:00<00:01, 484.16img/s][A
+Preprocess idx=40:  18%|█▊        | 147/801 [00:00<00:01, 480.54img/s][A
+Preprocess idx=40:  24%|██▍       | 196/801 [00:00<00:01, 453.74img/s][A
+Preprocess idx=40:  30%|███       | 242/801 [00:00<00:01, 443.95img/s][A
+Preprocess idx=40:  37%|███▋      | 295/801 [00:00<00:01, 470.19img/s][A
+Preprocess idx=40:  43%|████▎     | 343/801 [00:00<00:00, 462.93img/s][A
+Preprocess idx=40:  49%|████▊     | 390/801 [00:00<00:00, 430.20img/s][A
+Preprocess idx=40:  54%|█████▍    | 434/801 [00:00<00:00, 411.04img/s][A
+Preprocess idx=40:  59%|█████▉    | 476/801 [00:01<00:00, 403.58img/s][A
+Preprocess idx=40:  65%|██████▍   | 517/801 [00:01<00:00, 390.33img/s][A
+Preprocess idx=40:  70%|██████▉   | 557/801 [00:01<00:00, 376.92img/s][A
+Preprocess idx=40:  74%|███████▍  | 595/801 [00:01<00:00, 358.50img/s][A
+Preprocess idx=40:  79%|███████▉  | 632/801 [00:01<00:00, 344.08img/s][A
+Preprocess idx=40:  84%|████████▍ | 671/801 [00:01<00:00, 356.42img/s][A
+Preprocess idx=40:  90%|█████████ | 723/801 [00:01<00:00, 400.07img/s][A
+Preprocess idx=40:  97%|█████████▋| 774/801 [00:01<00:00, 430.12img/s][A
+                                                                      [A
+Interpolate pose idx=40:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=40:  58%|█████▊    | 468/800 [00:00<00:00, 4675.67step/s][A
+                                                                              [ACaching val batches:  62%|██████▎   | 40/64 [02:41<01:39,  4.16s/batch]
+Read video idx=40: 0frame [00:00, ?frame/s][A
+Read video idx=40: 44frame [00:00, 433.03frame/s][A
+Read video idx=40: 109frame [00:00, 559.27frame/s][A
+Read video idx=40: 183frame [00:00, 638.24frame/s][A
+Read video idx=40: 247frame [00:00, 584.50frame/s][A
+Read video idx=40: 313frame [00:00, 606.95frame/s][A
+Read video idx=40: 382frame [00:00, 631.44frame/s][A
+Read video idx=40: 448frame [00:00, 637.36frame/s][A
+Read video idx=40: 522frame [00:00, 668.05frame/s][A
+Read video idx=40: 593frame [00:00, 677.07frame/s][A
+Read video idx=40: 663frame [00:01, 684.01frame/s][A
+Read video idx=40: 734frame [00:01, 690.01frame/s][A
+Read video idx=40: 805frame [00:01, 695.05frame/s][A
+Read video idx=40: 875frame [00:01, 695.39frame/s][A
+Read video idx=40: 945frame [00:01, 691.62frame/s][A
+Read video idx=40: 1015frame [00:01, 690.12frame/s][A
+Read video idx=40: 1085frame [00:01, 691.84frame/s][A
+Read video idx=40: 1163frame [00:01, 715.32frame/s][A
+                                                   [A
+Preprocess idx=40:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=40:   0%|          | 2/801 [00:00<00:42, 18.70img/s][A
+Preprocess idx=40:   4%|▎         | 29/801 [00:00<00:04, 161.32img/s][A
+Preprocess idx=40:   9%|▉         | 73/801 [00:00<00:02, 282.93img/s][A
+Preprocess idx=40:  15%|█▍        | 120/801 [00:00<00:01, 353.77img/s][A
+Preprocess idx=40:  21%|██        | 169/801 [00:00<00:01, 400.14img/s][A
+Preprocess idx=40:  27%|██▋       | 214/801 [00:00<00:01, 415.06img/s][A
+Preprocess idx=40:  33%|███▎      | 263/801 [00:00<00:01, 438.57img/s][A
+Preprocess idx=40:  39%|███▉      | 311/801 [00:00<00:01, 448.59img/s][A
+Preprocess idx=40:  45%|████▌     | 364/801 [00:00<00:00, 471.97img/s][A
+Preprocess idx=40:  52%|█████▏    | 418/801 [00:01<00:00, 490.42img/s][A
+Preprocess idx=40:  59%|█████▊    | 469/801 [00:01<00:00, 494.70img/s][A
+Preprocess idx=40:  65%|██████▍   | 519/801 [00:01<00:00, 439.62img/s][A
+Preprocess idx=40:  71%|███████   | 565/801 [00:01<00:00, 441.35img/s][A
+Preprocess idx=40:  76%|███████▋  | 612/801 [00:01<00:00, 448.53img/s][A
+Preprocess idx=40:  83%|████████▎ | 664/801 [00:01<00:00, 468.76img/s][A
+Preprocess idx=40:  90%|████████▉ | 717/801 [00:01<00:00, 485.55img/s][A
+Preprocess idx=40:  96%|█████████▌| 770/801 [00:01<00:00, 495.98img/s][A
+                                                                      [A
+Interpolate pose idx=40:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=40:  57%|█████▊    | 460/800 [00:00<00:00, 4593.89step/s][A
+                                                                              [ACaching val batches:  64%|██████▍   | 41/64 [02:45<01:34,  4.11s/batch]
+Read video idx=41: 0frame [00:00, ?frame/s][A
+Read video idx=41: 44frame [00:00, 435.70frame/s][A
+Read video idx=41: 123frame [00:00, 641.42frame/s][A
+Read video idx=41: 193frame [00:00, 664.38frame/s][A
+Read video idx=41: 272frame [00:00, 712.18frame/s][A
+Read video idx=41: 344frame [00:00, 712.39frame/s][A
+Read video idx=41: 416frame [00:00, 519.22frame/s][A
+Read video idx=41: 475frame [00:00, 455.36frame/s][A
+Read video idx=41: 526frame [00:01, 430.01frame/s][A
+Read video idx=41: 573frame [00:01, 403.42frame/s][A
+Read video idx=41: 616frame [00:01, 393.00frame/s][A
+Read video idx=41: 668frame [00:01, 423.82frame/s][A
+Read video idx=41: 739frame [00:01, 497.80frame/s][A
+Read video idx=41: 814frame [00:01, 565.01frame/s][A
+Read video idx=41: 873frame [00:01, 560.14frame/s][A
+Read video idx=41: 938frame [00:01, 583.97frame/s][A
+Read video idx=41: 1016frame [00:01, 638.93frame/s][A
+Read video idx=41: 1096frame [00:01, 684.26frame/s][A
+Read video idx=41: 1174frame [00:02, 712.03frame/s][A
+                                                   [A
+Preprocess idx=41:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=41:   4%|▎         | 29/801 [00:00<00:02, 283.63img/s][A
+Preprocess idx=41:   8%|▊         | 68/801 [00:00<00:02, 340.58img/s][A
+Preprocess idx=41:  13%|█▎        | 103/801 [00:00<00:02, 293.96img/s][A
+Preprocess idx=41:  17%|█▋        | 135/801 [00:00<00:02, 300.87img/s][A
+Preprocess idx=41:  22%|██▏       | 173/801 [00:00<00:01, 327.32img/s][A
+Preprocess idx=41:  27%|██▋       | 218/801 [00:00<00:01, 366.35img/s][A
+Preprocess idx=41:  33%|███▎      | 262/801 [00:00<00:01, 387.55img/s][A
+Preprocess idx=41:  38%|███▊      | 306/801 [00:00<00:01, 402.66img/s][A
+Preprocess idx=41:  44%|████▎     | 350/801 [00:00<00:01, 412.67img/s][A
+Preprocess idx=41:  49%|████▉     | 392/801 [00:01<00:01, 402.73img/s][A
+Preprocess idx=41:  54%|█████▍    | 433/801 [00:01<00:00, 402.19img/s][A
+Preprocess idx=41:  60%|█████▉    | 479/801 [00:01<00:00, 417.65img/s][A
+Preprocess idx=41:  66%|██████▌   | 529/801 [00:01<00:00, 440.59img/s][A
+Preprocess idx=41:  72%|███████▏  | 577/801 [00:01<00:00, 450.48img/s][A
+Preprocess idx=41:  78%|███████▊  | 623/801 [00:01<00:00, 449.33img/s][A
+Preprocess idx=41:  83%|████████▎ | 668/801 [00:01<00:00, 420.97img/s][A
+Preprocess idx=41:  89%|████████▉ | 711/801 [00:01<00:00, 414.51img/s][A
+Preprocess idx=41:  95%|█████████▌| 761/801 [00:01<00:00, 436.63img/s][A
+                                                                      [A
+Interpolate pose idx=41:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=41:  58%|█████▊    | 467/800 [00:00<00:00, 4669.51step/s][A
+                                                                              [ACaching val batches:  66%|██████▌   | 42/64 [02:50<01:32,  4.23s/batch]
+Read video idx=42: 0frame [00:00, ?frame/s][A
+Read video idx=42: 50frame [00:00, 497.36frame/s][A
+Read video idx=42: 102frame [00:00, 506.72frame/s][A
+Read video idx=42: 157frame [00:00, 520.09frame/s][A
+Read video idx=42: 209frame [00:00, 462.03frame/s][A
+Read video idx=42: 269frame [00:00, 503.31frame/s][A
+Read video idx=42: 329frame [00:00, 533.00frame/s][A
+Read video idx=42: 393frame [00:00, 565.50frame/s][A
+Read video idx=42: 464frame [00:00, 609.78frame/s][A
+Read video idx=42: 526frame [00:00, 581.74frame/s][A
+Read video idx=42: 588frame [00:01, 592.31frame/s][A
+Read video idx=42: 648frame [00:01, 578.14frame/s][A
+Read video idx=42: 707frame [00:01, 503.30frame/s][A
+Read video idx=42: 760frame [00:01, 464.56frame/s][A
+Read video idx=42: 809frame [00:01, 423.01frame/s][A
+Read video idx=42: 853frame [00:01, 409.91frame/s][A
+Read video idx=42: 913frame [00:01, 457.64frame/s][A
+Read video idx=42: 980frame [00:01, 513.29frame/s][A
+Read video idx=42: 1048frame [00:02, 555.87frame/s][A
+Read video idx=42: 1109frame [00:02, 567.45frame/s][A
+Read video idx=42: 1176frame [00:02, 595.34frame/s][A
+                                                   [A
+Preprocess idx=42:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=42:   5%|▌         | 42/801 [00:00<00:01, 413.60img/s][A
+Preprocess idx=42:  10%|█         | 84/801 [00:00<00:01, 401.24img/s][A
+Preprocess idx=42:  16%|█▌        | 125/801 [00:00<00:01, 401.59img/s][A
+Preprocess idx=42:  21%|██        | 170/801 [00:00<00:01, 419.04img/s][A
+Preprocess idx=42:  27%|██▋       | 219/801 [00:00<00:01, 440.64img/s][A
+Preprocess idx=42:  33%|███▎      | 265/801 [00:00<00:01, 444.07img/s][A
+Preprocess idx=42:  39%|███▊      | 310/801 [00:00<00:01, 413.60img/s][A
+Preprocess idx=42:  44%|████▍     | 352/801 [00:00<00:01, 400.45img/s][A
+Preprocess idx=42:  49%|████▉     | 395/801 [00:00<00:00, 407.51img/s][A
+Preprocess idx=42:  55%|█████▍    | 439/801 [00:01<00:00, 415.28img/s][A
+Preprocess idx=42:  61%|██████    | 490/801 [00:01<00:00, 441.30img/s][A
+Preprocess idx=42:  68%|██████▊   | 543/801 [00:01<00:00, 466.10img/s][A
+Preprocess idx=42:  74%|███████▍  | 596/801 [00:01<00:00, 483.96img/s][A
+Preprocess idx=42:  81%|████████  | 649/801 [00:01<00:00, 496.01img/s][A
+Preprocess idx=42:  88%|████████▊ | 702/801 [00:01<00:00, 504.93img/s][A
+Preprocess idx=42:  94%|█████████▍| 755/801 [00:01<00:00, 511.91img/s][A
+                                                                      [A
+Interpolate pose idx=42:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=42:  59%|█████▊    | 469/800 [00:00<00:00, 4683.37step/s][A
+                                                                              [ACaching val batches:  67%|██████▋   | 43/64 [02:54<01:29,  4.27s/batch]
+Read video idx=43: 0frame [00:00, ?frame/s][A
+Read video idx=43: 54frame [00:00, 534.37frame/s][A
+Read video idx=43: 121frame [00:00, 581.14frame/s][A
+Read video idx=43: 188frame [00:00, 618.99frame/s][A
+Read video idx=43: 255frame [00:00, 637.43frame/s][A
+Read video idx=43: 323frame [00:00, 651.33frame/s][A
+Read video idx=43: 391frame [00:00, 646.26frame/s][A
+Read video idx=43: 460frame [00:00, 660.11frame/s][A
+Read video idx=43: 531frame [00:00, 674.63frame/s][A
+Read video idx=43: 601frame [00:00, 679.68frame/s][A
+Read video idx=43: 673frame [00:01, 689.55frame/s][A
+Read video idx=43: 742frame [00:01, 676.21frame/s][A
+Read video idx=43: 810frame [00:01, 635.17frame/s][A
+Read video idx=43: 875frame [00:01, 638.98frame/s][A
+Read video idx=43: 940frame [00:01, 634.80frame/s][A
+Read video idx=43: 1009frame [00:01, 648.53frame/s][A
+Read video idx=43: 1076frame [00:01, 651.90frame/s][A
+Read video idx=43: 1142frame [00:01, 649.92frame/s][A
+                                                   [A
+Preprocess idx=43:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=43:   6%|▌         | 49/801 [00:00<00:01, 488.36img/s][A
+Preprocess idx=43:  12%|█▏        | 99/801 [00:00<00:01, 491.93img/s][A
+Preprocess idx=43:  19%|█▉        | 151/801 [00:00<00:01, 501.15img/s][A
+Preprocess idx=43:  25%|██▌       | 202/801 [00:00<00:01, 500.45img/s][A
+Preprocess idx=43:  32%|███▏      | 253/801 [00:00<00:01, 495.45img/s][A
+Preprocess idx=43:  38%|███▊      | 306/801 [00:00<00:00, 504.95img/s][A
+Preprocess idx=43:  45%|████▍     | 357/801 [00:00<00:00, 504.14img/s][A
+Preprocess idx=43:  51%|█████     | 408/801 [00:00<00:00, 504.60img/s][A
+Preprocess idx=43:  57%|█████▋    | 459/801 [00:00<00:00, 500.05img/s][A
+Preprocess idx=43:  64%|██████▎   | 510/801 [00:01<00:00, 476.76img/s][A
+Preprocess idx=43:  70%|██████▉   | 558/801 [00:01<00:00, 439.13img/s][A
+Preprocess idx=43:  75%|███████▌  | 603/801 [00:01<00:00, 408.32img/s][A
+Preprocess idx=43:  81%|████████  | 645/801 [00:01<00:00, 381.08img/s][A
+Preprocess idx=43:  86%|████████▌ | 687/801 [00:01<00:00, 389.69img/s][A
+Preprocess idx=43:  92%|█████████▏| 738/801 [00:01<00:00, 421.27img/s][A
+Preprocess idx=43:  99%|█████████▊| 790/801 [00:01<00:00, 448.32img/s][A
+                                                                      [A
+Interpolate pose idx=43:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=43:  57%|█████▋    | 453/800 [00:00<00:00, 4524.31step/s][A
+                                                                              [ACaching val batches:  69%|██████▉   | 44/64 [02:58<01:23,  4.19s/batch]
+Read video idx=44: 0frame [00:00, ?frame/s][A
+Read video idx=44: 52frame [00:00, 516.96frame/s][A
+Read video idx=44: 121frame [00:00, 615.70frame/s][A
+Read video idx=44: 187frame [00:00, 630.39frame/s][A
+Read video idx=44: 251frame [00:00, 584.63frame/s][A
+Read video idx=44: 312frame [00:00, 591.66frame/s][A
+Read video idx=44: 372frame [00:00, 571.04frame/s][A
+Read video idx=44: 430frame [00:00, 507.19frame/s][A
+Read video idx=44: 482frame [00:00, 448.85frame/s][A
+Read video idx=44: 545frame [00:01, 494.48frame/s][A
+Read video idx=44: 608frame [00:01, 527.97frame/s][A
+Read video idx=44: 671frame [00:01, 553.12frame/s][A
+Read video idx=44: 735frame [00:01, 574.59frame/s][A
+Read video idx=44: 805frame [00:01, 607.55frame/s][A
+Read video idx=44: 868frame [00:01, 610.54frame/s][A
+Read video idx=44: 930frame [00:01, 610.74frame/s][A
+Read video idx=44: 993frame [00:01, 614.99frame/s][A
+Read video idx=44: 1063frame [00:01, 636.15frame/s][A
+Read video idx=44: 1131frame [00:01, 648.18frame/s][A
+Read video idx=44: 1199frame [00:02, 654.01frame/s][A
+                                                   [A
+Preprocess idx=44:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=44:   1%|          | 9/801 [00:00<00:08, 88.67img/s][A
+Preprocess idx=44:   7%|▋         | 53/801 [00:00<00:02, 291.00img/s][A
+Preprocess idx=44:  12%|█▏        | 99/801 [00:00<00:01, 365.24img/s][A
+Preprocess idx=44:  19%|█▊        | 149/801 [00:00<00:01, 417.12img/s][A
+Preprocess idx=44:  25%|██▍       | 197/801 [00:00<00:01, 436.89img/s][A
+Preprocess idx=44:  31%|███       | 245/801 [00:00<00:01, 451.14img/s][A
+Preprocess idx=44:  36%|███▋      | 291/801 [00:00<00:01, 436.49img/s][A
+Preprocess idx=44:  42%|████▏     | 337/801 [00:00<00:01, 442.40img/s][A
+Preprocess idx=44:  48%|████▊     | 385/801 [00:00<00:00, 452.73img/s][A
+Preprocess idx=44:  54%|█████▍    | 433/801 [00:01<00:00, 458.41img/s][A
+Preprocess idx=44:  60%|██████    | 481/801 [00:01<00:00, 462.45img/s][A
+Preprocess idx=44:  66%|██████▌   | 530/801 [00:01<00:00, 468.53img/s][A
+Preprocess idx=44:  73%|███████▎  | 581/801 [00:01<00:00, 479.50img/s][A
+Preprocess idx=44:  79%|███████▊  | 629/801 [00:01<00:00, 471.56img/s][A
+Preprocess idx=44:  85%|████████▍ | 680/801 [00:01<00:00, 480.18img/s][A
+Preprocess idx=44:  91%|█████████ | 729/801 [00:01<00:00, 474.89img/s][A
+Preprocess idx=44:  97%|█████████▋| 777/801 [00:01<00:00, 465.41img/s][A
+                                                                      [A
+Interpolate pose idx=44:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=44:  58%|█████▊    | 461/800 [00:00<00:00, 4606.02step/s][A
+                                                                              [ACaching val batches:  70%|███████   | 45/64 [03:03<01:19,  4.20s/batch]
+Read video idx=45: 0frame [00:00, ?frame/s][A
+Read video idx=45: 51frame [00:00, 507.18frame/s][A
+Read video idx=45: 125frame [00:00, 641.48frame/s][A
+Read video idx=45: 190frame [00:00, 479.78frame/s][A
+Read video idx=45: 258frame [00:00, 544.99frame/s][A
+Read video idx=45: 324frame [00:00, 581.26frame/s][A
+Read video idx=45: 391frame [00:00, 608.71frame/s][A
+Read video idx=45: 464frame [00:00, 644.60frame/s][A
+Read video idx=45: 531frame [00:00, 527.26frame/s][A
+Read video idx=45: 603frame [00:01, 576.97frame/s][A
+Read video idx=45: 665frame [00:01, 586.93frame/s][A
+Read video idx=45: 729frame [00:01, 599.48frame/s][A
+Read video idx=45: 801frame [00:01, 633.57frame/s][A
+Read video idx=45: 868frame [00:01, 643.31frame/s][A
+Read video idx=45: 934frame [00:01, 643.32frame/s][A
+Read video idx=45: 1000frame [00:01, 640.89frame/s][A
+Read video idx=45: 1065frame [00:01, 637.53frame/s][A
+Read video idx=45: 1130frame [00:01, 629.89frame/s][A
+                                                   [A
+Preprocess idx=45:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=45:   6%|▌         | 47/801 [00:00<00:01, 465.88img/s][A
+Preprocess idx=45:  12%|█▏        | 94/801 [00:00<00:01, 444.23img/s][A
+Preprocess idx=45:  18%|█▊        | 143/801 [00:00<00:01, 464.42img/s][A
+Preprocess idx=45:  24%|██▎       | 190/801 [00:00<00:01, 419.12img/s][A
+Preprocess idx=45:  29%|██▉       | 233/801 [00:00<00:01, 316.06img/s][A
+Preprocess idx=45:  33%|███▎      | 268/801 [00:00<00:01, 298.82img/s][A
+Preprocess idx=45:  37%|███▋      | 300/801 [00:00<00:01, 271.88img/s][A
+Preprocess idx=45:  41%|████      | 329/801 [00:01<00:01, 256.14img/s][A
+Preprocess idx=45:  44%|████▍     | 356/801 [00:01<00:01, 241.76img/s][A
+Preprocess idx=45:  48%|████▊     | 381/801 [00:01<00:01, 243.49img/s][A
+Preprocess idx=45:  53%|█████▎    | 426/801 [00:01<00:01, 296.25img/s][A
+Preprocess idx=45:  59%|█████▉    | 472/801 [00:01<00:00, 339.54img/s][A
+Preprocess idx=45:  64%|██████▍   | 515/801 [00:01<00:00, 363.51img/s][A
+Preprocess idx=45:  69%|██████▉   | 553/801 [00:01<00:00, 349.67img/s][A
+Preprocess idx=45:  74%|███████▎  | 589/801 [00:01<00:00, 325.09img/s][A
+Preprocess idx=45:  78%|███████▊  | 623/801 [00:01<00:00, 325.50img/s][A
+Preprocess idx=45:  82%|████████▏ | 660/801 [00:02<00:00, 336.79img/s][A
+Preprocess idx=45:  87%|████████▋ | 695/801 [00:02<00:00, 181.26img/s][A
+Preprocess idx=45:  91%|█████████▏| 732/801 [00:02<00:00, 213.47img/s][A
+Preprocess idx=45:  96%|█████████▌| 768/801 [00:02<00:00, 242.10img/s][A
+                                                                      [A
+Interpolate pose idx=45:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=45:  59%|█████▊    | 469/800 [00:00<00:00, 4686.45step/s][A
+                                                                              [ACaching val batches:  72%|███████▏  | 46/64 [03:08<01:20,  4.47s/batch]
+Read video idx=46: 0frame [00:00, ?frame/s][A
+Read video idx=46: 44frame [00:00, 437.18frame/s][A
+Read video idx=46: 104frame [00:00, 528.67frame/s][A
+Read video idx=46: 169frame [00:00, 583.64frame/s][A
+Read video idx=46: 228frame [00:00, 568.21frame/s][A
+Read video idx=46: 290frame [00:00, 584.92frame/s][A
+Read video idx=46: 354frame [00:00, 601.97frame/s][A
+Read video idx=46: 415frame [00:00, 602.71frame/s][A
+Read video idx=46: 476frame [00:00, 600.73frame/s][A
+Read video idx=46: 538frame [00:00, 599.91frame/s][A
+Read video idx=46: 599frame [00:01, 540.74frame/s][A
+Read video idx=46: 655frame [00:01, 488.90frame/s][A
+Read video idx=46: 706frame [00:01, 466.61frame/s][A
+Read video idx=46: 756frame [00:01, 474.89frame/s][A
+Read video idx=46: 817frame [00:01, 509.93frame/s][A
+Read video idx=46: 879frame [00:01, 538.65frame/s][A
+Read video idx=46: 942frame [00:01, 561.50frame/s][A
+Read video idx=46: 1004frame [00:01, 575.08frame/s][A
+Read video idx=46: 1065frame [00:01, 584.12frame/s][A
+Read video idx=46: 1129frame [00:02, 599.24frame/s][A
+Read video idx=46: 1195frame [00:02, 614.75frame/s][A
+                                                   [A
+Preprocess idx=46:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=46:   6%|▌         | 50/801 [00:00<00:01, 493.40img/s][A
+Preprocess idx=46:  12%|█▏        | 100/801 [00:00<00:01, 480.61img/s][A
+Preprocess idx=46:  19%|█▉        | 151/801 [00:00<00:01, 492.65img/s][A
+Preprocess idx=46:  25%|██▌       | 202/801 [00:00<00:01, 497.51img/s][A
+Preprocess idx=46:  32%|███▏      | 254/801 [00:00<00:01, 504.43img/s][A
+Preprocess idx=46:  38%|███▊      | 307/801 [00:00<00:00, 511.25img/s][A
+Preprocess idx=46:  45%|████▍     | 359/801 [00:00<00:00, 508.62img/s][A
+Preprocess idx=46:  51%|█████     | 410/801 [00:00<00:00, 492.25img/s][A
+Preprocess idx=46:  57%|█████▋    | 460/801 [00:00<00:00, 489.84img/s][A
+Preprocess idx=46:  64%|██████▎   | 510/801 [00:01<00:00, 481.44img/s][A
+Preprocess idx=46:  70%|██████▉   | 559/801 [00:01<00:00, 476.10img/s][A
+Preprocess idx=46:  76%|███████▌  | 607/801 [00:01<00:00, 463.39img/s][A
+Preprocess idx=46:  82%|████████▏ | 654/801 [00:01<00:00, 452.98img/s][A
+Preprocess idx=46:  87%|████████▋ | 700/801 [00:01<00:00, 445.22img/s][A
+Preprocess idx=46:  93%|█████████▎| 745/801 [00:01<00:00, 440.06img/s][A
+Preprocess idx=46:  99%|█████████▊| 790/801 [00:01<00:00, 438.57img/s][A
+                                                                      [A
+Interpolate pose idx=46:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=46:  58%|█████▊    | 462/800 [00:00<00:00, 4615.50step/s][A
+                                                                              [ACaching val batches:  73%|███████▎  | 47/64 [03:12<01:14,  4.39s/batch]
+Read video idx=47: 0frame [00:00, ?frame/s][A
+Read video idx=47: 58frame [00:00, 573.66frame/s][A
+Read video idx=47: 116frame [00:00, 575.16frame/s][A
+Read video idx=47: 187frame [00:00, 633.16frame/s][A
+Read video idx=47: 251frame [00:00, 590.89frame/s][A
+Read video idx=47: 315frame [00:00, 604.75frame/s][A
+Read video idx=47: 383frame [00:00, 628.65frame/s][A
+Read video idx=47: 447frame [00:00, 631.75frame/s][A
+Read video idx=47: 513frame [00:00, 640.30frame/s][A
+Read video idx=47: 578frame [00:00, 635.53frame/s][A
+Read video idx=47: 642frame [00:01, 541.62frame/s][A
+Read video idx=47: 701frame [00:01, 553.64frame/s][A
+Read video idx=47: 765frame [00:01, 576.34frame/s][A
+Read video idx=47: 831frame [00:01, 597.18frame/s][A
+Read video idx=47: 894frame [00:01, 605.68frame/s][A
+Read video idx=47: 959frame [00:01, 616.84frame/s][A
+Read video idx=47: 1027frame [00:01, 634.02frame/s][A
+Read video idx=47: 1093frame [00:01, 641.43frame/s][A
+Read video idx=47: 1158frame [00:01, 640.83frame/s][A
+                                                   [A
+Preprocess idx=47:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=47:   5%|▌         | 44/801 [00:00<00:01, 429.72img/s][A
+Preprocess idx=47:  11%|█         | 90/801 [00:00<00:01, 439.70img/s][A
+Preprocess idx=47:  17%|█▋        | 135/801 [00:00<00:01, 442.47img/s][A
+Preprocess idx=47:  23%|██▎       | 182/801 [00:00<00:01, 450.62img/s][A
+Preprocess idx=47:  29%|██▉       | 231/801 [00:00<00:01, 464.08img/s][A
+Preprocess idx=47:  35%|███▌      | 283/801 [00:00<00:01, 480.25img/s][A
+Preprocess idx=47:  42%|████▏     | 333/801 [00:00<00:00, 485.31img/s][A
+Preprocess idx=47:  48%|████▊     | 382/801 [00:00<00:00, 473.19img/s][A
+Preprocess idx=47:  54%|█████▍    | 431/801 [00:00<00:00, 478.02img/s][A
+Preprocess idx=47:  60%|██████    | 482/801 [00:01<00:00, 487.22img/s][A
+Preprocess idx=47:  67%|██████▋   | 534/801 [00:01<00:00, 494.28img/s][A
+Preprocess idx=47:  73%|███████▎  | 584/801 [00:01<00:00, 487.45img/s][A
+Preprocess idx=47:  79%|███████▉  | 634/801 [00:01<00:00, 489.62img/s][A
+Preprocess idx=47:  85%|████████▌ | 683/801 [00:01<00:00, 482.26img/s][A
+Preprocess idx=47:  91%|█████████▏| 732/801 [00:01<00:00, 480.15img/s][A
+Preprocess idx=47:  98%|█████████▊| 781/801 [00:01<00:00, 480.00img/s][A
+                                                                      [A
+Interpolate pose idx=47:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=47:  58%|█████▊    | 462/800 [00:00<00:00, 4617.36step/s][A
+                                                                              [ACaching val batches:  75%|███████▌  | 48/64 [03:16<01:08,  4.28s/batch]
+Read video idx=48: 0frame [00:00, ?frame/s][A
+Read video idx=48: 52frame [00:00, 519.31frame/s][A
+Read video idx=48: 120frame [00:00, 611.76frame/s][A
+Read video idx=48: 188frame [00:00, 638.36frame/s][A
+Read video idx=48: 253frame [00:00, 642.39frame/s][A
+Read video idx=48: 320frame [00:00, 651.30frame/s][A
+Read video idx=48: 386frame [00:00, 641.29frame/s][A
+Read video idx=48: 455frame [00:00, 653.89frame/s][A
+Read video idx=48: 521frame [00:00, 652.33frame/s][A
+Read video idx=48: 587frame [00:00, 652.57frame/s][A
+Read video idx=48: 656frame [00:01, 663.65frame/s][A
+Read video idx=48: 723frame [00:01, 660.58frame/s][A
+Read video idx=48: 792frame [00:01, 668.12frame/s][A
+Read video idx=48: 859frame [00:01, 662.41frame/s][A
+Read video idx=48: 926frame [00:01, 640.96frame/s][A
+Read video idx=48: 991frame [00:01, 640.99frame/s][A
+Read video idx=48: 1057frame [00:01, 644.99frame/s][A
+Read video idx=48: 1122frame [00:01, 646.10frame/s][A
+Read video idx=48: 1187frame [00:01, 636.98frame/s][A
+                                                   [A
+Preprocess idx=48:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=48:   6%|▌         | 45/801 [00:00<00:01, 446.53img/s][A
+Preprocess idx=48:  12%|█▏        | 95/801 [00:00<00:01, 476.43img/s][A
+Preprocess idx=48:  18%|█▊        | 145/801 [00:00<00:01, 486.27img/s][A
+Preprocess idx=48:  24%|██▍       | 194/801 [00:00<00:01, 481.57img/s][A
+Preprocess idx=48:  30%|███       | 243/801 [00:00<00:01, 481.93img/s][A
+Preprocess idx=48:  36%|███▋      | 292/801 [00:00<00:01, 482.58img/s][A
+Preprocess idx=48:  43%|████▎     | 341/801 [00:00<00:00, 477.41img/s][A
+Preprocess idx=48:  49%|████▉     | 392/801 [00:00<00:00, 487.52img/s][A
+Preprocess idx=48:  55%|█████▌    | 443/801 [00:00<00:00, 492.38img/s][A
+Preprocess idx=48:  62%|██████▏   | 493/801 [00:01<00:00, 488.71img/s][A
+Preprocess idx=48:  68%|██████▊   | 546/801 [00:01<00:00, 498.49img/s][A
+Preprocess idx=48:  74%|███████▍  | 596/801 [00:01<00:00, 495.63img/s][A
+Preprocess idx=48:  81%|████████  | 650/801 [00:01<00:00, 507.42img/s][A
+Preprocess idx=48:  88%|████████▊ | 702/801 [00:01<00:00, 510.70img/s][A
+Preprocess idx=48:  94%|█████████▍| 754/801 [00:01<00:00, 504.38img/s][A
+                                                                      [A
+Interpolate pose idx=48:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=48:  58%|█████▊    | 466/800 [00:00<00:00, 4658.48step/s][A
+                                                                              [ACaching val batches:  77%|███████▋  | 49/64 [03:20<01:02,  4.15s/batch]
+Read video idx=49: 0frame [00:00, ?frame/s][A
+Read video idx=49: 58frame [00:00, 578.82frame/s][A
+Read video idx=49: 122frame [00:00, 613.95frame/s][A
+Read video idx=49: 186frame [00:00, 623.66frame/s][A
+Read video idx=49: 249frame [00:00, 625.15frame/s][A
+Read video idx=49: 312frame [00:00, 617.46frame/s][A
+Read video idx=49: 374frame [00:00, 609.79frame/s][A
+Read video idx=49: 436frame [00:00, 611.79frame/s][A
+Read video idx=49: 507frame [00:00, 639.22frame/s][A
+Read video idx=49: 571frame [00:00, 637.34frame/s][A
+Read video idx=49: 635frame [00:01, 636.22frame/s][A
+Read video idx=49: 705frame [00:01, 655.53frame/s][A
+Read video idx=49: 781frame [00:01, 672.65frame/s][A
+Read video idx=49: 849frame [00:01, 660.03frame/s][A
+Read video idx=49: 917frame [00:01, 664.02frame/s][A
+Read video idx=49: 989frame [00:01, 676.51frame/s][A
+Read video idx=49: 1058frame [00:01, 678.97frame/s][A
+Read video idx=49: 1126frame [00:01, 656.77frame/s][A
+Read video idx=49: 1192frame [00:01, 657.36frame/s][A
+                                                   [A
+Preprocess idx=49:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=49:   6%|▋         | 51/801 [00:00<00:01, 507.92img/s][A
+Preprocess idx=49:  13%|█▎        | 103/801 [00:00<00:01, 511.20img/s][A
+Preprocess idx=49:  19%|█▉        | 155/801 [00:00<00:01, 514.01img/s][A
+Preprocess idx=49:  26%|██▌       | 208/801 [00:00<00:01, 516.93img/s][A
+Preprocess idx=49:  33%|███▎      | 261/801 [00:00<00:01, 518.79img/s][A
+Preprocess idx=49:  39%|███▉      | 313/801 [00:00<00:00, 508.94img/s][A
+Preprocess idx=49:  46%|████▌     | 366/801 [00:00<00:00, 514.09img/s][A
+Preprocess idx=49:  52%|█████▏    | 418/801 [00:00<00:00, 511.52img/s][A
+Preprocess idx=49:  59%|█████▊    | 470/801 [00:00<00:00, 510.55img/s][A
+Preprocess idx=49:  65%|██████▌   | 522/801 [00:01<00:00, 508.04img/s][A
+Preprocess idx=49:  72%|███████▏  | 573/801 [00:01<00:00, 506.81img/s][A
+Preprocess idx=49:  78%|███████▊  | 624/801 [00:01<00:00, 505.70img/s][A
+Preprocess idx=49:  84%|████████▍ | 675/801 [00:01<00:00, 505.43img/s][A
+Preprocess idx=49:  91%|█████████ | 726/801 [00:01<00:00, 504.03img/s][A
+Preprocess idx=49:  97%|█████████▋| 777/801 [00:01<00:00, 486.31img/s][A
+                                                                      [A
+Interpolate pose idx=49:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=49:  58%|█████▊    | 461/800 [00:00<00:00, 4607.23step/s][A
+                                                                              [ACaching val batches:  78%|███████▊  | 50/64 [03:24<00:56,  4.04s/batch]
+Read video idx=50: 0frame [00:00, ?frame/s][A
+Read video idx=50: 52frame [00:00, 504.39frame/s][A
+Read video idx=50: 116frame [00:00, 579.36frame/s][A
+Read video idx=50: 178frame [00:00, 596.45frame/s][A
+Read video idx=50: 240frame [00:00, 603.18frame/s][A
+Read video idx=50: 309frame [00:00, 633.70frame/s][A
+Read video idx=50: 376frame [00:00, 644.00frame/s][A
+Read video idx=50: 451frame [00:00, 674.96frame/s][A
+Read video idx=50: 520frame [00:00, 676.02frame/s][A
+Read video idx=50: 588frame [00:00, 669.43frame/s][A
+Read video idx=50: 659frame [00:01, 676.66frame/s][A
+Read video idx=50: 730frame [00:01, 685.02frame/s][A
+Read video idx=50: 799frame [00:01, 684.00frame/s][A
+Read video idx=50: 869frame [00:01, 687.41frame/s][A
+Read video idx=50: 939frame [00:01, 691.09frame/s][A
+Read video idx=50: 1009frame [00:01, 685.84frame/s][A
+Read video idx=50: 1078frame [00:01, 679.56frame/s][A
+Read video idx=50: 1147frame [00:01, 681.62frame/s][A
+                                                   [A
+Preprocess idx=50:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=50:   0%|          | 2/801 [00:00<00:40, 19.71img/s][A
+Preprocess idx=50:   1%|▏         | 11/801 [00:00<00:13, 60.23img/s][A
+Preprocess idx=50:   7%|▋         | 60/801 [00:00<00:02, 254.70img/s][A
+Preprocess idx=50:  14%|█▎        | 110/801 [00:00<00:01, 349.33img/s][A
+Preprocess idx=50:  20%|█▉        | 160/801 [00:00<00:01, 402.55img/s][A
+Preprocess idx=50:  26%|██▌       | 209/801 [00:00<00:01, 431.63img/s][A
+Preprocess idx=50:  32%|███▏      | 260/801 [00:00<00:01, 455.11img/s][A
+Preprocess idx=50:  38%|███▊      | 306/801 [00:00<00:01, 453.83img/s][A
+Preprocess idx=50:  45%|████▍     | 359/801 [00:00<00:00, 475.19img/s][A
+Preprocess idx=50:  51%|█████▏    | 412/801 [00:01<00:00, 489.83img/s][A
+Preprocess idx=50:  58%|█████▊    | 465/801 [00:01<00:00, 500.66img/s][A
+Preprocess idx=50:  65%|██████▍   | 518/801 [00:01<00:00, 507.98img/s][A
+Preprocess idx=50:  71%|███████▏  | 571/801 [00:01<00:00, 512.11img/s][A
+Preprocess idx=50:  78%|███████▊  | 624/801 [00:01<00:00, 515.76img/s][A
+Preprocess idx=50:  85%|████████▍ | 677/801 [00:01<00:00, 519.22img/s][A
+Preprocess idx=50:  91%|█████████ | 729/801 [00:02<00:00, 145.67img/s][A
+Preprocess idx=50:  96%|█████████▌| 767/801 [00:02<00:00, 165.29img/s][A
+                                                                      [A
+Interpolate pose idx=50:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=50:  59%|█████▊    | 469/800 [00:00<00:00, 4681.59step/s][A
+                                                                              [ACaching val batches:  80%|███████▉  | 51/64 [03:28<00:55,  4.30s/batch]
+Read video idx=51: 0frame [00:00, ?frame/s][A
+Read video idx=51: 52frame [00:00, 518.82frame/s][A
+Read video idx=51: 117frame [00:00, 594.52frame/s][A
+Read video idx=51: 180frame [00:00, 605.14frame/s][A
+Read video idx=51: 246frame [00:00, 625.89frame/s][A
+Read video idx=51: 309frame [00:00, 619.03frame/s][A
+Read video idx=51: 373frame [00:00, 625.38frame/s][A
+Read video idx=51: 444frame [00:00, 651.82frame/s][A
+Read video idx=51: 510frame [00:00, 651.35frame/s][A
+Read video idx=51: 576frame [00:00, 641.64frame/s][A
+Read video idx=51: 641frame [00:01, 640.39frame/s][A
+Read video idx=51: 708frame [00:01, 648.22frame/s][A
+Read video idx=51: 775frame [00:01, 653.41frame/s][A
+Read video idx=51: 841frame [00:01, 653.16frame/s][A
+Read video idx=51: 908frame [00:01, 657.36frame/s][A
+Read video idx=51: 975frame [00:01, 659.21frame/s][A
+Read video idx=51: 1045frame [00:01, 669.01frame/s][A
+Read video idx=51: 1112frame [00:01, 660.70frame/s][A
+Read video idx=51: 1179frame [00:01, 652.95frame/s][A
+                                                   [A
+Preprocess idx=51:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=51:   4%|▍         | 32/801 [00:00<00:02, 316.06img/s][A
+Preprocess idx=51:   9%|▉         | 72/801 [00:00<00:02, 361.01img/s][A
+Preprocess idx=51:  14%|█▍        | 111/801 [00:00<00:01, 372.72img/s][A
+Preprocess idx=51:  19%|█▉        | 155/801 [00:00<00:01, 397.33img/s][A
+Preprocess idx=51:  24%|██▍       | 195/801 [00:00<00:01, 386.42img/s][A
+Preprocess idx=51:  30%|███       | 244/801 [00:00<00:01, 419.86img/s][A
+Preprocess idx=51:  37%|███▋      | 294/801 [00:00<00:01, 444.69img/s][A
+Preprocess idx=51:  42%|████▏     | 340/801 [00:00<00:01, 446.95img/s][A
+Preprocess idx=51:  48%|████▊     | 385/801 [00:00<00:00, 440.78img/s][A
+Preprocess idx=51:  54%|█████▎    | 430/801 [00:01<00:00, 439.43img/s][A
+Preprocess idx=51:  59%|█████▉    | 474/801 [00:01<00:00, 421.63img/s][A
+Preprocess idx=51:  65%|██████▍   | 517/801 [00:01<00:00, 378.55img/s][A
+Preprocess idx=51:  69%|██████▉   | 556/801 [00:01<00:00, 381.27img/s][A
+Preprocess idx=51:  75%|███████▌  | 602/801 [00:01<00:00, 399.03img/s][A
+Preprocess idx=51:  81%|████████  | 648/801 [00:01<00:00, 414.12img/s][A
+Preprocess idx=51:  87%|████████▋ | 694/801 [00:01<00:00, 426.42img/s][A
+Preprocess idx=51:  93%|█████████▎| 741/801 [00:01<00:00, 438.19img/s][A
+Preprocess idx=51:  98%|█████████▊| 786/801 [00:01<00:00, 439.97img/s][A
+                                                                      [A
+Interpolate pose idx=51:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=51:  58%|█████▊    | 464/800 [00:00<00:00, 4639.85step/s][A
+                                                                              [ACaching val batches:  81%|████████▏ | 52/64 [03:33<00:51,  4.27s/batch]
+Read video idx=52: 0frame [00:00, ?frame/s][A
+Read video idx=52: 45frame [00:00, 449.24frame/s][A
+Read video idx=52: 99frame [00:00, 502.44frame/s][A
+Read video idx=52: 164frame [00:00, 564.86frame/s][A
+Read video idx=52: 224frame [00:00, 574.72frame/s][A
+Read video idx=52: 282frame [00:00, 570.55frame/s][A
+Read video idx=52: 344frame [00:00, 586.32frame/s][A
+Read video idx=52: 407frame [00:00, 599.38frame/s][A
+Read video idx=52: 475frame [00:00, 622.87frame/s][A
+Read video idx=52: 540frame [00:00, 627.45frame/s][A
+Read video idx=52: 604frame [00:01, 630.40frame/s][A
+Read video idx=52: 670frame [00:01, 639.22frame/s][A
+Read video idx=52: 734frame [00:01, 636.94frame/s][A
+Read video idx=52: 802frame [00:01, 649.75frame/s][A
+Read video idx=52: 867frame [00:01, 595.09frame/s][A
+Read video idx=52: 930frame [00:01, 601.78frame/s][A
+Read video idx=52: 997frame [00:01, 619.76frame/s][A
+Read video idx=52: 1060frame [00:01, 622.55frame/s][A
+Read video idx=52: 1123frame [00:01, 615.09frame/s][A
+Read video idx=52: 1185frame [00:01, 614.93frame/s][A
+                                                   [A
+Preprocess idx=52:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=52:   0%|          | 2/801 [00:00<00:40, 19.74img/s][A
+Preprocess idx=52:   0%|          | 4/801 [00:00<00:40, 19.53img/s][A
+Preprocess idx=52:   1%|          | 6/801 [00:00<00:40, 19.47img/s][A
+Preprocess idx=52:   1%|          | 8/801 [00:00<00:40, 19.44img/s][A
+Preprocess idx=52:   1%|          | 10/801 [00:00<00:40, 19.43img/s][A
+Preprocess idx=52:   1%|▏         | 12/801 [00:00<00:41, 19.24img/s][A
+Preprocess idx=52:   2%|▏         | 14/801 [00:00<00:40, 19.29img/s][A
+Preprocess idx=52:   2%|▏         | 16/801 [00:00<00:40, 19.32img/s][A
+Preprocess idx=52:   2%|▏         | 18/801 [00:00<00:40, 19.34img/s][A
+Preprocess idx=52:   2%|▏         | 20/801 [00:01<00:40, 19.36img/s][A
+Preprocess idx=52:   3%|▎         | 22/801 [00:01<00:40, 19.37img/s][A
+Preprocess idx=52:   3%|▎         | 24/801 [00:01<00:40, 19.38img/s][A
+Preprocess idx=52:   3%|▎         | 26/801 [00:01<00:39, 19.38img/s][A
+Preprocess idx=52:   3%|▎         | 28/801 [00:01<00:39, 19.37img/s][A
+Preprocess idx=52:   6%|▋         | 52/801 [00:01<00:08, 84.01img/s][A
+Preprocess idx=52:  13%|█▎        | 103/801 [00:01<00:03, 209.16img/s][A
+Preprocess idx=52:  17%|█▋        | 138/801 [00:01<00:02, 250.21img/s][A
+Preprocess idx=52:  23%|██▎       | 183/801 [00:01<00:02, 307.89img/s][A
+Preprocess idx=52:  29%|██▉       | 236/801 [00:01<00:01, 371.95img/s][A
+Preprocess idx=52:  36%|███▌      | 287/801 [00:02<00:01, 411.51img/s][A
+Preprocess idx=52:  42%|████▏     | 340/801 [00:02<00:01, 446.61img/s][A
+Preprocess idx=52:  49%|████▉     | 393/801 [00:02<00:00, 469.65img/s][A
+Preprocess idx=52:  55%|█████▌    | 441/801 [00:02<00:00, 471.81img/s][A
+Preprocess idx=52:  62%|██████▏   | 495/801 [00:02<00:00, 490.61img/s][A
+Preprocess idx=52:  68%|██████▊   | 548/801 [00:02<00:00, 500.57img/s][A
+Preprocess idx=52:  75%|███████▌  | 602/801 [00:02<00:00, 509.84img/s][A
+Preprocess idx=52:  82%|████████▏ | 656/801 [00:02<00:00, 516.82img/s][A
+Preprocess idx=52:  89%|████████▊ | 709/801 [00:02<00:00, 520.68img/s][A
+Preprocess idx=52:  95%|█████████▌| 763/801 [00:02<00:00, 523.90img/s][A
+                                                                      [A
+Interpolate pose idx=52:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=52:  58%|█████▊    | 463/800 [00:00<00:00, 4621.31step/s][A
+                                                                              [ACaching val batches:  83%|████████▎ | 53/64 [03:38<00:50,  4.60s/batch]
+Read video idx=53: 0frame [00:00, ?frame/s][A
+Read video idx=53: 55frame [00:00, 548.83frame/s][A
+Read video idx=53: 119frame [00:00, 599.86frame/s][A
+Read video idx=53: 179frame [00:00, 563.76frame/s][A
+Read video idx=53: 247frame [00:00, 605.15frame/s][A
+Read video idx=53: 313frame [00:00, 622.46frame/s][A
+Read video idx=53: 383frame [00:00, 646.04frame/s][A
+Read video idx=53: 449frame [00:00, 648.95frame/s][A
+Read video idx=53: 516frame [00:00, 653.45frame/s][A
+Read video idx=53: 582frame [00:00, 642.37frame/s][A
+Read video idx=53: 647frame [00:01, 644.19frame/s][A
+Read video idx=53: 715frame [00:01, 653.11frame/s][A
+Read video idx=53: 784frame [00:01, 662.30frame/s][A
+Read video idx=53: 851frame [00:01, 648.27frame/s][A
+Read video idx=53: 916frame [00:01, 632.42frame/s][A
+Read video idx=53: 986frame [00:01, 650.15frame/s][A
+Read video idx=53: 1052frame [00:01, 650.50frame/s][A
+Read video idx=53: 1118frame [00:01, 641.44frame/s][A
+Read video idx=53: 1183frame [00:01, 636.84frame/s][A
+                                                   [A
+Preprocess idx=53:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=53:   6%|▋         | 52/801 [00:00<00:01, 512.95img/s][A
+Preprocess idx=53:  13%|█▎        | 104/801 [00:00<00:01, 513.96img/s][A
+Preprocess idx=53:  19%|█▉        | 156/801 [00:00<00:01, 504.56img/s][A
+Preprocess idx=53:  26%|██▌       | 207/801 [00:00<00:01, 506.04img/s][A
+Preprocess idx=53:  32%|███▏      | 259/801 [00:00<00:01, 508.85img/s][A
+Preprocess idx=53:  39%|███▊      | 310/801 [00:00<00:01, 478.39img/s][A
+Preprocess idx=53:  45%|████▌     | 361/801 [00:00<00:00, 485.67img/s][A
+Preprocess idx=53:  51%|█████▏    | 412/801 [00:00<00:00, 492.24img/s][A
+Preprocess idx=53:  58%|█████▊    | 462/801 [00:00<00:00, 494.00img/s][A
+Preprocess idx=53:  64%|██████▍   | 512/801 [00:01<00:00, 493.52img/s][A
+Preprocess idx=53:  70%|███████   | 562/801 [00:01<00:00, 495.38img/s][A
+Preprocess idx=53:  77%|███████▋  | 613/801 [00:01<00:00, 498.67img/s][A
+Preprocess idx=53:  83%|████████▎ | 665/801 [00:01<00:00, 503.00img/s][A
+Preprocess idx=53:  90%|████████▉ | 717/801 [00:01<00:00, 507.09img/s][A
+Preprocess idx=53:  96%|█████████▌| 770/801 [00:01<00:00, 511.93img/s][A
+                                                                      [A
+Interpolate pose idx=53:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=53:  59%|█████▊    | 469/800 [00:00<00:00, 4680.50step/s][A
+                                                                              [ACaching val batches:  84%|████████▍ | 54/64 [03:42<00:43,  4.37s/batch]
+Read video idx=54: 0frame [00:00, ?frame/s][A
+Read video idx=54: 57frame [00:00, 566.74frame/s][A
+Read video idx=54: 121frame [00:00, 609.27frame/s][A
+Read video idx=54: 187frame [00:00, 627.91frame/s][A
+Read video idx=54: 254frame [00:00, 642.40frame/s][A
+Read video idx=54: 319frame [00:00, 640.43frame/s][A
+Read video idx=54: 387frame [00:00, 649.13frame/s][A
+Read video idx=54: 452frame [00:00, 642.65frame/s][A
+Read video idx=54: 522frame [00:00, 660.25frame/s][A
+Read video idx=54: 589frame [00:00, 658.86frame/s][A
+Read video idx=54: 657frame [00:01, 665.05frame/s][A
+Read video idx=54: 724frame [00:01, 663.64frame/s][A
+Read video idx=54: 796frame [00:01, 678.90frame/s][A
+Read video idx=54: 864frame [00:01, 668.75frame/s][A
+Read video idx=54: 931frame [00:01, 653.28frame/s][A
+Read video idx=54: 997frame [00:01, 651.63frame/s][A
+Read video idx=54: 1068frame [00:01, 668.44frame/s][A
+Read video idx=54: 1135frame [00:01, 666.35frame/s][A
+                                                   [A
+Preprocess idx=54:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=54:   5%|▌         | 43/801 [00:00<00:01, 422.67img/s][A
+Preprocess idx=54:  11%|█         | 86/801 [00:00<00:01, 398.82img/s][A
+Preprocess idx=54:  17%|█▋        | 139/801 [00:00<00:01, 453.88img/s][A
+Preprocess idx=54:  24%|██▎       | 189/801 [00:00<00:01, 470.16img/s][A
+Preprocess idx=54:  30%|██▉       | 238/801 [00:00<00:01, 474.67img/s][A
+Preprocess idx=54:  36%|███▌      | 286/801 [00:00<00:01, 463.81img/s][A
+Preprocess idx=54:  42%|████▏     | 333/801 [00:00<00:01, 447.62img/s][A
+Preprocess idx=54:  48%|████▊     | 383/801 [00:00<00:00, 460.82img/s][A
+Preprocess idx=54:  54%|█████▎    | 430/801 [00:00<00:00, 418.46img/s][A
+Preprocess idx=54:  59%|█████▉    | 473/801 [00:01<00:00, 402.30img/s][A
+Preprocess idx=54:  64%|██████▍   | 514/801 [00:01<00:00, 403.09img/s][A
+Preprocess idx=54:  69%|██████▉   | 555/801 [00:01<00:00, 398.91img/s][A
+Preprocess idx=54:  75%|███████▍  | 599/801 [00:01<00:00, 410.07img/s][A
+Preprocess idx=54:  81%|████████  | 649/801 [00:01<00:00, 434.77img/s][A
+Preprocess idx=54:  87%|████████▋ | 693/801 [00:01<00:00, 427.54img/s][A
+Preprocess idx=54:  92%|█████████▏| 736/801 [00:01<00:00, 424.61img/s][A
+Preprocess idx=54:  97%|█████████▋| 779/801 [00:01<00:00, 423.61img/s][A
+                                                                      [A
+Interpolate pose idx=54:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=54:  58%|█████▊    | 468/800 [00:00<00:00, 4677.74step/s][A
+                                                                              [ACaching val batches:  86%|████████▌ | 55/64 [03:46<00:38,  4.30s/batch]
+Read video idx=55: 0frame [00:00, ?frame/s][A
+Read video idx=55: 44frame [00:00, 439.58frame/s][A
+Read video idx=55: 105frame [00:00, 536.03frame/s][A
+Read video idx=55: 162frame [00:00, 549.85frame/s][A
+Read video idx=55: 221frame [00:00, 565.23frame/s][A
+Read video idx=55: 283frame [00:00, 583.28frame/s][A
+Read video idx=55: 345frame [00:00, 595.68frame/s][A
+Read video idx=55: 411frame [00:00, 609.26frame/s][A
+Read video idx=55: 478frame [00:00, 625.53frame/s][A
+Read video idx=55: 549frame [00:00, 649.74frame/s][A
+Read video idx=55: 614frame [00:01, 629.85frame/s][A
+Read video idx=55: 684frame [00:01, 650.21frame/s][A
+Read video idx=55: 750frame [00:01, 647.86frame/s][A
+Read video idx=55: 817frame [00:01, 650.66frame/s][A
+Read video idx=55: 883frame [00:01, 613.65frame/s][A
+Read video idx=55: 945frame [00:01, 606.04frame/s][A
+Read video idx=55: 1009frame [00:01, 614.51frame/s][A
+Read video idx=55: 1071frame [00:01, 611.67frame/s][A
+Read video idx=55: 1133frame [00:01, 611.50frame/s][A
+Read video idx=55: 1199frame [00:01, 625.18frame/s][A
+                                                   [A
+Preprocess idx=55:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=55:   6%|▌         | 49/801 [00:00<00:01, 480.27img/s][A
+Preprocess idx=55:  12%|█▏        | 99/801 [00:00<00:01, 491.43img/s][A
+Preprocess idx=55:  19%|█▉        | 151/801 [00:00<00:01, 502.49img/s][A
+Preprocess idx=55:  25%|██▌       | 204/801 [00:00<00:01, 509.50img/s][A
+Preprocess idx=55:  32%|███▏      | 255/801 [00:00<00:01, 502.64img/s][A
+Preprocess idx=55:  38%|███▊      | 306/801 [00:00<00:00, 499.61img/s][A
+Preprocess idx=55:  44%|████▍     | 356/801 [00:00<00:00, 499.49img/s][A
+Preprocess idx=55:  51%|█████     | 407/801 [00:00<00:00, 502.29img/s][A
+Preprocess idx=55:  57%|█████▋    | 458/801 [00:00<00:00, 503.57img/s][A
+Preprocess idx=55:  64%|██████▎   | 509/801 [00:01<00:00, 501.76img/s][A
+Preprocess idx=55:  70%|██████▉   | 560/801 [00:01<00:00, 503.54img/s][A
+Preprocess idx=55:  76%|███████▋  | 611/801 [00:01<00:00, 504.37img/s][A
+Preprocess idx=55:  83%|████████▎ | 662/801 [00:01<00:00, 500.55img/s][A
+Preprocess idx=55:  89%|████████▉ | 713/801 [00:01<00:00, 499.61img/s][A
+Preprocess idx=55:  96%|█████████▌| 765/801 [00:01<00:00, 505.10img/s][A
+                                                                      [A
+Interpolate pose idx=55:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=55:  58%|█████▊    | 461/800 [00:00<00:00, 4605.91step/s][A
+                                                                              [ACaching val batches:  88%|████████▊ | 56/64 [03:50<00:33,  4.18s/batch]
+Read video idx=56: 0frame [00:00, ?frame/s][A
+Read video idx=56: 48frame [00:00, 476.87frame/s][A
+Read video idx=56: 111frame [00:00, 566.18frame/s][A
+Read video idx=56: 177frame [00:00, 607.11frame/s][A
+Read video idx=56: 243frame [00:00, 624.83frame/s][A
+Read video idx=56: 308frame [00:00, 633.33frame/s][A
+Read video idx=56: 374frame [00:00, 638.06frame/s][A
+Read video idx=56: 442frame [00:00, 650.95frame/s][A
+Read video idx=56: 508frame [00:00, 635.18frame/s][A
+Read video idx=56: 572frame [00:00, 617.35frame/s][A
+Read video idx=56: 643frame [00:01, 642.74frame/s][A
+Read video idx=56: 708frame [00:01, 644.39frame/s][A
+Read video idx=56: 774frame [00:01, 647.24frame/s][A
+Read video idx=56: 840frame [00:01, 648.52frame/s][A
+Read video idx=56: 910frame [00:01, 662.49frame/s][A
+Read video idx=56: 977frame [00:01, 663.04frame/s][A
+Read video idx=56: 1044frame [00:01, 662.22frame/s][A
+Read video idx=56: 1111frame [00:01, 649.21frame/s][A
+Read video idx=56: 1181frame [00:01, 662.53frame/s][A
+                                                   [A
+Preprocess idx=56:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=56:   6%|▋         | 52/801 [00:00<00:01, 519.61img/s][A
+Preprocess idx=56:  13%|█▎        | 104/801 [00:00<00:01, 516.96img/s][A
+Preprocess idx=56:  20%|█▉        | 157/801 [00:00<00:01, 518.75img/s][A
+Preprocess idx=56:  26%|██▌       | 210/801 [00:00<00:01, 520.61img/s][A
+Preprocess idx=56:  33%|███▎      | 263/801 [00:00<00:01, 519.24img/s][A
+Preprocess idx=56:  39%|███▉      | 316/801 [00:00<00:00, 520.54img/s][A
+Preprocess idx=56:  46%|████▌     | 369/801 [00:00<00:00, 521.52img/s][A
+Preprocess idx=56:  53%|█████▎    | 422/801 [00:00<00:00, 522.22img/s][A
+Preprocess idx=56:  59%|█████▉    | 475/801 [00:00<00:00, 523.15img/s][A
+Preprocess idx=56:  66%|██████▌   | 528/801 [00:01<00:00, 520.72img/s][A
+Preprocess idx=56:  73%|███████▎  | 581/801 [00:01<00:00, 522.13img/s][A
+Preprocess idx=56:  79%|███████▉  | 634/801 [00:01<00:00, 522.76img/s][A
+Preprocess idx=56:  86%|████████▌ | 687/801 [00:01<00:00, 521.55img/s][A
+Preprocess idx=56:  92%|█████████▏| 740/801 [00:01<00:00, 517.42img/s][A
+Preprocess idx=56:  99%|█████████▉| 792/801 [00:01<00:00, 512.76img/s][A
+                                                                      [A
+Interpolate pose idx=56:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=56:  59%|█████▉    | 470/800 [00:00<00:00, 4692.24step/s][A
+                                                                              [ACaching val batches:  89%|████████▉ | 57/64 [03:54<00:28,  4.06s/batch]
+Read video idx=57: 0frame [00:00, ?frame/s][A
+Read video idx=57: 53frame [00:00, 529.39frame/s][A
+Read video idx=57: 121frame [00:00, 616.54frame/s][A
+Read video idx=57: 184frame [00:00, 619.60frame/s][A
+Read video idx=57: 249frame [00:00, 628.29frame/s][A
+Read video idx=57: 313frame [00:00, 630.33frame/s][A
+Read video idx=57: 377frame [00:00, 631.08frame/s][A
+Read video idx=57: 449frame [00:00, 656.51frame/s][A
+Read video idx=57: 515frame [00:00, 650.01frame/s][A
+Read video idx=57: 581frame [00:00, 635.11frame/s][A
+Read video idx=57: 645frame [00:01, 622.59frame/s][A
+Read video idx=57: 708frame [00:01, 623.52frame/s][A
+Read video idx=57: 771frame [00:01, 620.54frame/s][A
+Read video idx=57: 836frame [00:01, 625.10frame/s][A
+Read video idx=57: 899frame [00:01, 623.15frame/s][A
+Read video idx=57: 962frame [00:01, 611.43frame/s][A
+Read video idx=57: 1027frame [00:01, 621.77frame/s][A
+Read video idx=57: 1090frame [00:01, 611.78frame/s][A
+Read video idx=57: 1152frame [00:01, 603.41frame/s][A
+                                                   [A
+Preprocess idx=57:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=57:   6%|▌         | 49/801 [00:00<00:01, 484.66img/s][A
+Preprocess idx=57:  12%|█▏        | 99/801 [00:00<00:01, 489.78img/s][A
+Preprocess idx=57:  18%|█▊        | 148/801 [00:00<00:01, 480.62img/s][A
+Preprocess idx=57:  25%|██▍       | 197/801 [00:00<00:01, 484.20img/s][A
+Preprocess idx=57:  31%|███       | 246/801 [00:00<00:01, 474.88img/s][A
+Preprocess idx=57:  37%|███▋      | 295/801 [00:00<00:01, 477.25img/s][A
+Preprocess idx=57:  43%|████▎     | 344/801 [00:00<00:00, 478.57img/s][A
+Preprocess idx=57:  49%|████▉     | 394/801 [00:00<00:00, 484.45img/s][A
+Preprocess idx=57:  56%|█████▌    | 447/801 [00:00<00:00, 495.58img/s][A
+Preprocess idx=57:  62%|██████▏   | 498/801 [00:01<00:00, 497.77img/s][A
+Preprocess idx=57:  69%|██████▊   | 550/801 [00:01<00:00, 503.11img/s][A
+Preprocess idx=57:  75%|███████▌  | 602/801 [00:01<00:00, 507.02img/s][A
+Preprocess idx=57:  82%|████████▏ | 654/801 [00:01<00:00, 510.21img/s][A
+Preprocess idx=57:  88%|████████▊ | 706/801 [00:01<00:00, 512.26img/s][A
+Preprocess idx=57:  95%|█████████▍| 758/801 [00:01<00:00, 513.89img/s][A
+                                                                      [A
+Interpolate pose idx=57:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=57:  58%|█████▊    | 466/800 [00:00<00:00, 4651.32step/s][A
+                                                                              [ACaching val batches:  91%|█████████ | 58/64 [03:58<00:24,  4.02s/batch]
+Read video idx=58: 0frame [00:00, ?frame/s][A
+Read video idx=58: 54frame [00:00, 523.77frame/s][A
+Read video idx=58: 114frame [00:00, 556.72frame/s][A
+Read video idx=58: 170frame [00:00, 480.48frame/s][A
+Read video idx=58: 220frame [00:00, 424.67frame/s][A
+Read video idx=58: 264frame [00:00, 400.77frame/s][A
+Read video idx=58: 305frame [00:00, 389.50frame/s][A
+Read video idx=58: 345frame [00:00, 375.89frame/s][A
+Read video idx=58: 405frame [00:00, 436.93frame/s][A
+Read video idx=58: 472frame [00:01, 499.16frame/s][A
+Read video idx=58: 529frame [00:01, 516.76frame/s][A
+Read video idx=58: 582frame [00:01, 456.14frame/s][A
+Read video idx=58: 630frame [00:01, 394.87frame/s][A
+Read video idx=58: 672frame [00:01, 399.61frame/s][A
+Read video idx=58: 730frame [00:01, 445.71frame/s][A
+Read video idx=58: 777frame [00:01, 442.07frame/s][A
+Read video idx=58: 832frame [00:01, 470.22frame/s][A
+Read video idx=58: 896frame [00:01, 510.84frame/s][A
+Read video idx=58: 961frame [00:02, 546.16frame/s][A
+Read video idx=58: 1026frame [00:02, 574.33frame/s][A
+Read video idx=58: 1091frame [00:02, 595.21frame/s][A
+Read video idx=58: 1158frame [00:02, 615.52frame/s][A
+                                                   [A
+Preprocess idx=58:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=58:   3%|▎         | 21/801 [00:00<00:03, 203.84img/s][A
+Preprocess idx=58:   5%|▌         | 44/801 [00:00<00:03, 214.35img/s][A
+Preprocess idx=58:   9%|▉         | 74/801 [00:00<00:02, 250.78img/s][A
+Preprocess idx=58:  14%|█▍        | 111/801 [00:00<00:02, 295.09img/s][A
+Preprocess idx=58:  19%|█▊        | 150/801 [00:00<00:01, 327.82img/s][A
+Preprocess idx=58:  23%|██▎       | 183/801 [00:00<00:02, 273.91img/s][A
+Preprocess idx=58:  26%|██▋       | 212/801 [00:00<00:02, 216.13img/s][A
+Preprocess idx=58:  32%|███▏      | 253/801 [00:00<00:02, 261.49img/s][A
+Preprocess idx=58:  36%|███▌      | 290/801 [00:01<00:01, 289.04img/s][A
+Preprocess idx=58:  41%|████      | 329/801 [00:01<00:01, 315.58img/s][A
+Preprocess idx=58:  46%|████▌     | 369/801 [00:01<00:01, 337.98img/s][A
+Preprocess idx=58:  51%|█████     | 405/801 [00:01<00:01, 317.49img/s][A
+Preprocess idx=58:  56%|█████▌    | 448/801 [00:01<00:01, 346.25img/s][A
+Preprocess idx=58:  62%|██████▏   | 497/801 [00:01<00:00, 385.56img/s][A
+Preprocess idx=58:  69%|██████▊   | 550/801 [00:01<00:00, 424.37img/s][A
+Preprocess idx=58:  75%|███████▌  | 603/801 [00:01<00:00, 452.40img/s][A
+Preprocess idx=58:  82%|████████▏ | 654/801 [00:01<00:00, 466.58img/s][A
+Preprocess idx=58:  88%|████████▊ | 702/801 [00:02<00:00, 428.83img/s][A
+Preprocess idx=58:  93%|█████████▎| 746/801 [00:02<00:00, 404.44img/s][A
+Preprocess idx=58:  99%|█████████▉| 794/801 [00:02<00:00, 424.02img/s][A
+                                                                      [A
+Interpolate pose idx=58:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=58:  57%|█████▋    | 455/800 [00:00<00:00, 4542.72step/s][A
+                                                                              [ACaching val batches:  92%|█████████▏| 59/64 [04:03<00:21,  4.37s/batch]
+Read video idx=59: 0frame [00:00, ?frame/s][A
+Read video idx=59: 44frame [00:00, 435.93frame/s][A
+Read video idx=59: 93frame [00:00, 463.87frame/s][A
+Read video idx=59: 147frame [00:00, 496.56frame/s][A
+Read video idx=59: 197frame [00:00, 489.03frame/s][A
+Read video idx=59: 256frame [00:00, 523.41frame/s][A
+Read video idx=59: 315frame [00:00, 544.98frame/s][A
+Read video idx=59: 374frame [00:00, 555.43frame/s][A
+Read video idx=59: 430frame [00:00, 468.39frame/s][A
+Read video idx=59: 480frame [00:01, 441.02frame/s][A
+Read video idx=59: 526frame [00:01, 425.73frame/s][A
+Read video idx=59: 570frame [00:01, 422.21frame/s][A
+Read video idx=59: 613frame [00:01, 421.88frame/s][A
+Read video idx=59: 656frame [00:01, 419.39frame/s][A
+Read video idx=59: 710frame [00:01, 451.10frame/s][A
+Read video idx=59: 756frame [00:01, 449.78frame/s][A
+Read video idx=59: 826frame [00:01, 511.18frame/s][A
+Read video idx=59: 894frame [00:01, 559.58frame/s][A
+Read video idx=59: 961frame [00:01, 583.26frame/s][A
+Read video idx=59: 1029frame [00:02, 609.72frame/s][A
+Read video idx=59: 1095frame [00:02, 623.37frame/s][A
+Read video idx=59: 1164frame [00:02, 642.17frame/s][A
+                                                   [A
+Preprocess idx=59:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=59:   3%|▎         | 24/801 [00:00<00:03, 237.87img/s][A
+Preprocess idx=59:   9%|▉         | 72/801 [00:00<00:01, 376.05img/s][A
+Preprocess idx=59:  15%|█▍        | 120/801 [00:00<00:01, 422.12img/s][A
+Preprocess idx=59:  21%|██▏       | 171/801 [00:00<00:01, 453.75img/s][A
+Preprocess idx=59:  27%|██▋       | 217/801 [00:00<00:01, 367.72img/s][A
+Preprocess idx=59:  33%|███▎      | 266/801 [00:00<00:01, 401.82img/s][A
+Preprocess idx=59:  39%|███▉      | 314/801 [00:00<00:01, 422.98img/s][A
+Preprocess idx=59:  45%|████▌     | 362/801 [00:00<00:01, 438.24img/s][A
+Preprocess idx=59:  51%|█████     | 407/801 [00:01<00:01, 376.40img/s][A
+Preprocess idx=59:  57%|█████▋    | 460/801 [00:01<00:00, 415.87img/s][A
+Preprocess idx=59:  64%|██████▍   | 512/801 [00:01<00:00, 442.47img/s][A
+Preprocess idx=59:  71%|███████   | 565/801 [00:01<00:00, 465.48img/s][A
+Preprocess idx=59:  77%|███████▋  | 617/801 [00:01<00:00, 480.09img/s][A
+Preprocess idx=59:  84%|████████▎ | 670/801 [00:01<00:00, 493.01img/s][A
+Preprocess idx=59:  90%|█████████ | 723/801 [00:01<00:00, 501.14img/s][A
+Preprocess idx=59:  97%|█████████▋| 776/801 [00:01<00:00, 507.69img/s][A
+                                                                      [A
+Interpolate pose idx=59:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=59:  58%|█████▊    | 466/800 [00:00<00:00, 4659.69step/s][A
+                                                                              [ACaching val batches:  94%|█████████▍| 60/64 [04:07<00:17,  4.40s/batch]
+Read video idx=60: 0frame [00:00, ?frame/s][A
+Read video idx=60: 53frame [00:00, 527.99frame/s][A
+Read video idx=60: 117frame [00:00, 592.83frame/s][A
+Read video idx=60: 184frame [00:00, 625.24frame/s][A
+Read video idx=60: 247frame [00:00, 618.05frame/s][A
+Read video idx=60: 310frame [00:00, 622.11frame/s][A
+Read video idx=60: 374frame [00:00, 626.48frame/s][A
+Read video idx=60: 437frame [00:00, 625.00frame/s][A
+Read video idx=60: 500frame [00:00, 621.35frame/s][A
+Read video idx=60: 568frame [00:00, 637.68frame/s][A
+Read video idx=60: 632frame [00:01, 488.26frame/s][A
+Read video idx=60: 686frame [00:01, 455.85frame/s][A
+Read video idx=60: 750frame [00:01, 500.65frame/s][A
+Read video idx=60: 816frame [00:01, 541.89frame/s][A
+Read video idx=60: 880frame [00:01, 566.98frame/s][A
+Read video idx=60: 943frame [00:01, 584.28frame/s][A
+Read video idx=60: 1012frame [00:01, 613.73frame/s][A
+Read video idx=60: 1078frame [00:01, 625.23frame/s][A
+Read video idx=60: 1143frame [00:01, 631.17frame/s][A
+                                                   [A
+Preprocess idx=60:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=60:   4%|▍         | 31/801 [00:00<00:02, 308.73img/s][A
+Preprocess idx=60:   8%|▊         | 65/801 [00:00<00:02, 325.60img/s][A
+Preprocess idx=60:  14%|█▍        | 111/801 [00:00<00:01, 383.59img/s][A
+Preprocess idx=60:  19%|█▉        | 154/801 [00:00<00:01, 398.84img/s][A
+Preprocess idx=60:  24%|██▍       | 194/801 [00:00<00:02, 279.89img/s][A
+Preprocess idx=60:  28%|██▊       | 227/801 [00:00<00:02, 247.44img/s][A
+Preprocess idx=60:  32%|███▏      | 256/801 [00:00<00:02, 257.32img/s][A
+Preprocess idx=60:  36%|███▌      | 285/801 [00:01<00:02, 243.81img/s][A
+Preprocess idx=60:  41%|████      | 329/801 [00:01<00:01, 292.67img/s][A
+Preprocess idx=60:  46%|████▌     | 367/801 [00:01<00:01, 315.25img/s][A
+Preprocess idx=60:  51%|█████     | 409/801 [00:01<00:01, 342.39img/s][A
+Preprocess idx=60:  56%|█████▌    | 450/801 [00:01<00:00, 359.51img/s][A
+Preprocess idx=60:  61%|██████    | 488/801 [00:01<00:00, 364.09img/s][A
+Preprocess idx=60:  66%|██████▌   | 530/801 [00:01<00:00, 379.62img/s][A
+Preprocess idx=60:  71%|███████▏  | 572/801 [00:01<00:00, 390.58img/s][A
+Preprocess idx=60:  76%|███████▋  | 612/801 [00:01<00:00, 382.86img/s][A
+Preprocess idx=60:  81%|████████▏ | 651/801 [00:01<00:00, 371.30img/s][A
+Preprocess idx=60:  87%|████████▋ | 699/801 [00:02<00:00, 401.15img/s][A
+Preprocess idx=60:  93%|█████████▎| 747/801 [00:02<00:00, 423.72img/s][A
+Preprocess idx=60:  99%|█████████▉| 795/801 [00:02<00:00, 437.96img/s][A
+                                                                      [A
+Interpolate pose idx=60:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=60:  58%|█████▊    | 465/800 [00:00<00:00, 4647.01step/s][A
+                                                                              [ACaching val batches:  95%|█████████▌| 61/64 [04:12<00:13,  4.49s/batch]
+Read video idx=61: 0frame [00:00, ?frame/s][A
+Read video idx=61: 52frame [00:00, 516.29frame/s][A
+Read video idx=61: 111frame [00:00, 553.64frame/s][A
+Read video idx=61: 177frame [00:00, 601.55frame/s][A
+Read video idx=61: 244frame [00:00, 627.43frame/s][A
+Read video idx=61: 310frame [00:00, 633.60frame/s][A
+Read video idx=61: 375frame [00:00, 637.61frame/s][A
+Read video idx=61: 446frame [00:00, 660.35frame/s][A
+Read video idx=61: 513frame [00:00, 655.60frame/s][A
+Read video idx=61: 579frame [00:00, 648.13frame/s][A
+Read video idx=61: 644frame [00:01, 623.62frame/s][A
+Read video idx=61: 707frame [00:01, 579.92frame/s][A
+Read video idx=61: 770frame [00:01, 593.74frame/s][A
+Read video idx=61: 833frame [00:01, 604.10frame/s][A
+Read video idx=61: 894frame [00:01, 581.72frame/s][A
+Read video idx=61: 956frame [00:01, 586.72frame/s][A
+Read video idx=61: 1019frame [00:01, 594.05frame/s][A
+Read video idx=61: 1083frame [00:01, 607.03frame/s][A
+Read video idx=61: 1150frame [00:01, 625.07frame/s][A
+                                                   [A
+Preprocess idx=61:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=61:   5%|▍         | 40/801 [00:00<00:01, 397.61img/s][A
+Preprocess idx=61:  11%|█         | 88/801 [00:00<00:01, 443.13img/s][A
+Preprocess idx=61:  17%|█▋        | 136/801 [00:00<00:01, 456.27img/s][A
+Preprocess idx=61:  23%|██▎       | 182/801 [00:00<00:01, 452.36img/s][A
+Preprocess idx=61:  29%|██▊       | 230/801 [00:00<00:01, 461.67img/s][A
+Preprocess idx=61:  35%|███▍      | 277/801 [00:00<00:01, 461.47img/s][A
+Preprocess idx=61:  41%|████      | 325/801 [00:00<00:01, 465.91img/s][A
+Preprocess idx=61:  47%|████▋     | 373/801 [00:00<00:00, 469.35img/s][A
+Preprocess idx=61:  53%|█████▎    | 422/801 [00:00<00:00, 473.08img/s][A
+Preprocess idx=61:  59%|█████▊    | 470/801 [00:01<00:00, 452.86img/s][A
+Preprocess idx=61:  65%|██████▍   | 520/801 [00:01<00:00, 465.68img/s][A
+Preprocess idx=61:  71%|███████   | 569/801 [00:01<00:00, 471.03img/s][A
+Preprocess idx=61:  77%|███████▋  | 619/801 [00:01<00:00, 477.73img/s][A
+Preprocess idx=61:  83%|████████▎ | 667/801 [00:01<00:00, 442.14img/s][A
+Preprocess idx=61:  89%|████████▉ | 712/801 [00:01<00:00, 432.74img/s][A
+Preprocess idx=61:  94%|█████████▍| 756/801 [00:01<00:00, 426.02img/s][A
+Preprocess idx=61: 100%|█████████▉| 799/801 [00:01<00:00, 410.88img/s][A
+                                                                      [A
+Interpolate pose idx=61:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=61:  57%|█████▊    | 460/800 [00:00<00:00, 4599.65step/s][A
+                                                                              [ACaching val batches:  97%|█████████▋| 62/64 [04:16<00:08,  4.38s/batch]
+Read video idx=62: 0frame [00:00, ?frame/s][A
+Read video idx=62: 51frame [00:00, 506.57frame/s][A
+Read video idx=62: 119frame [00:00, 605.26frame/s][A
+Read video idx=62: 180frame [00:00, 543.57frame/s][A
+Read video idx=62: 248frame [00:00, 592.40frame/s][A
+Read video idx=62: 308frame [00:00, 594.03frame/s][A
+Read video idx=62: 373frame [00:00, 612.22frame/s][A
+Read video idx=62: 444frame [00:00, 642.59frame/s][A
+Read video idx=62: 509frame [00:00, 627.40frame/s][A
+Read video idx=62: 576frame [00:00, 638.37frame/s][A
+Read video idx=62: 641frame [00:01, 639.07frame/s][A
+Read video idx=62: 706frame [00:01, 626.32frame/s][A
+Read video idx=62: 771frame [00:01, 632.29frame/s][A
+Read video idx=62: 835frame [00:01, 626.46frame/s][A
+Read video idx=62: 899frame [00:01, 628.40frame/s][A
+Read video idx=62: 964frame [00:01, 633.66frame/s][A
+Read video idx=62: 1028frame [00:01, 632.55frame/s][A
+Read video idx=62: 1092frame [00:01, 633.36frame/s][A
+Read video idx=62: 1156frame [00:01, 622.00frame/s][A
+                                                   [A
+Preprocess idx=62:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=62:   6%|▌         | 50/801 [00:00<00:01, 495.02img/s][A
+Preprocess idx=62:  13%|█▎        | 101/801 [00:00<00:01, 502.65img/s][A
+Preprocess idx=62:  19%|█▉        | 152/801 [00:00<00:01, 505.29img/s][A
+Preprocess idx=62:  25%|██▌       | 204/801 [00:00<00:01, 510.53img/s][A
+Preprocess idx=62:  32%|███▏      | 256/801 [00:00<00:01, 510.42img/s][A
+Preprocess idx=62:  38%|███▊      | 308/801 [00:00<00:00, 506.17img/s][A
+Preprocess idx=62:  45%|████▍     | 359/801 [00:00<00:00, 500.56img/s][A
+Preprocess idx=62:  51%|█████     | 410/801 [00:00<00:00, 503.12img/s][A
+Preprocess idx=62:  58%|█████▊    | 461/801 [00:00<00:00, 503.12img/s][A
+Preprocess idx=62:  64%|██████▍   | 512/801 [00:01<00:00, 438.94img/s][A
+Preprocess idx=62:  70%|██████▉   | 558/801 [00:01<00:00, 369.30img/s][A
+Preprocess idx=62:  75%|███████▍  | 598/801 [00:01<00:00, 337.90img/s][A
+Preprocess idx=62:  81%|████████  | 647/801 [00:01<00:00, 373.48img/s][A
+Preprocess idx=62:  87%|████████▋ | 700/801 [00:01<00:00, 411.44img/s][A
+Preprocess idx=62:  93%|█████████▎| 747/801 [00:01<00:00, 425.18img/s][A
+Preprocess idx=62:  99%|█████████▉| 796/801 [00:01<00:00, 442.54img/s][A
+                                                                      [A
+Interpolate pose idx=62:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=62:  58%|█████▊    | 468/800 [00:00<00:00, 4671.71step/s][A
+                                                                              [ACaching val batches:  98%|█████████▊| 63/64 [04:20<00:04,  4.30s/batch]
+Read video idx=63: 0frame [00:00, ?frame/s][A
+Read video idx=63: 51frame [00:00, 509.80frame/s][A
+Read video idx=63: 116frame [00:00, 591.38frame/s][A
+Read video idx=63: 179frame [00:00, 604.84frame/s][A
+Read video idx=63: 249frame [00:00, 641.31frame/s][A
+Read video idx=63: 320frame [00:00, 664.16frame/s][A
+Read video idx=63: 387frame [00:00, 642.09frame/s][A
+Read video idx=63: 458frame [00:00, 662.34frame/s][A
+Read video idx=63: 525frame [00:00, 659.67frame/s][A
+Read video idx=63: 592frame [00:00, 650.56frame/s][A
+Read video idx=63: 658frame [00:01, 527.89frame/s][A
+Read video idx=63: 720frame [00:01, 548.99frame/s][A
+Read video idx=63: 788frame [00:01, 581.02frame/s][A
+Read video idx=63: 849frame [00:01, 580.92frame/s][A
+Read video idx=63: 914frame [00:01, 599.39frame/s][A
+Read video idx=63: 984frame [00:01, 626.82frame/s][A
+Read video idx=63: 1048frame [00:01, 624.92frame/s][A
+Read video idx=63: 1113frame [00:01, 630.03frame/s][A
+Read video idx=63: 1177frame [00:01, 624.80frame/s][A
+                                                   [A
+Preprocess idx=63:   0%|          | 0/801 [00:00<?, ?img/s][A
+Preprocess idx=63:   6%|▌         | 47/801 [00:00<00:01, 468.84img/s][A
+Preprocess idx=63:  12%|█▏        | 97/801 [00:00<00:01, 485.43img/s][A
+Preprocess idx=63:  18%|█▊        | 146/801 [00:00<00:01, 389.19img/s][A
+Preprocess idx=63:  24%|██▍       | 196/801 [00:00<00:01, 425.91img/s][A
+Preprocess idx=63:  31%|███       | 246/801 [00:00<00:01, 449.99img/s][A
+Preprocess idx=63:  37%|███▋      | 295/801 [00:00<00:01, 461.83img/s][A
+Preprocess idx=63:  43%|████▎     | 347/801 [00:00<00:00, 477.71img/s][A
+Preprocess idx=63:  50%|████▉     | 399/801 [00:00<00:00, 489.23img/s][A
+Preprocess idx=63:  56%|█████▋    | 451/801 [00:00<00:00, 496.50img/s][A
+Preprocess idx=63:  63%|██████▎   | 504/801 [00:01<00:00, 503.78img/s][A
+Preprocess idx=63:  69%|██████▉   | 556/801 [00:01<00:00, 507.44img/s][A
+Preprocess idx=63:  76%|███████▌  | 608/801 [00:01<00:00, 511.08img/s][A
+Preprocess idx=63:  82%|████████▏ | 660/801 [00:01<00:00, 513.53img/s][A
+Preprocess idx=63:  89%|████████▉ | 712/801 [00:01<00:00, 514.12img/s][A
+Preprocess idx=63:  95%|█████████▌| 764/801 [00:01<00:00, 509.09img/s][A
+                                                                      [A
+Interpolate pose idx=63:   0%|          | 0/800 [00:00<?, ?step/s][A
+Interpolate pose idx=63:  58%|█████▊    | 467/800 [00:00<00:00, 4662.27step/s][A
+                                                                              [ACaching val batches: 100%|██████████| 64/64 [04:24<00:00,  4.20s/batch]Caching val batches: 100%|██████████| 64/64 [04:24<00:00,  4.14s/batch]
+[Weights] Using gradient-based selection (epsilon=0.001, mode=ALL weights)
+[Gradient] backend=pytorch_autograd device=cuda
+[Gradient] Computing baseline loss + backward (dtype=float32)...
+[Gradient] Baseline loss: 23.793022
+[Gradient] Collecting gradients for 313 tensors...
+Computing gradients:   0%|          | 0/313 [00:00<?, ?tensor/s]Computing gradients:  32%|███▏      | 99/313 [00:00<00:00, 988.66tensor/s]Computing gradients:  63%|██████▎   | 198/313 [00:00<00:00, 485.13tensor/s]Computing gradients: 100%|██████████| 313/313 [00:00<00:00, 667.66tensor/s]
+[Gradient] Selected 313 candidates by gradient magnitude
+[Done] Saved 313 weight candidates to: /ddnB/work/xzha135/projects_ws/DAC/STAFI/op_097/out/weights_candidates_097_20260212-212029.json
+
+=========================================
+Test completed successfully!
+=========================================
+
+Results saved in op_097/out/

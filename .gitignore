@@ -1,8 +1,9 @@
-op_097/out/*
+op_097/out/*.json
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+.out
 
 # C extensions
 *.so
