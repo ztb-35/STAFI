@@ -3,7 +3,7 @@ op_097/out/*.json
 __pycache__/
 *.py[cod]
 *$py.class
-.out
+*.out
 
 # C extensions
 *.so

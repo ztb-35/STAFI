@@ -69,7 +69,7 @@ python op_097/important_bits_onnx.py \
     --gradient-torch-dtype auto \
     --top-w 500 \
     --sample-all-weights \
-    --num-val-batches 64 \
+    --num-val-batches 128 \
     --dataloader-inner-progress \
     --eval-seq-len 20 \
     --stage select-weights \
