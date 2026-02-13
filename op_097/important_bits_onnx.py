@@ -55,6 +55,11 @@ def make_session(model_bytes_or_path: Any, providers: Sequence[str]) -> ort.Infe
     return ort.InferenceSession(model_bytes_or_path, sess_options=so, providers=list(providers))
 
 
+def is_cuda_runtime_error(exc: BaseException) -> bool:
+    msg = str(exc).upper()
+    return ("CUDA" in msg) or ("CUBLAS" in msg) or ("CUDNN" in msg)
+
+
 def resolve_providers(provider_mode: str) -> List[str]:
     avail = set(ort.get_available_providers())
     if provider_mode == "cpu":
@@ -377,18 +382,31 @@ def select_weight_candidates_by_gradient(
     Then select top-k weights per tensor by |grad|.
     """
     print("[Gradient] Computing baseline loss...")
-    base_sess = make_session(model.SerializeToString(), providers=providers)
-    base_loss = eval_loss(base_sess, cached_batches, output_slices, input_shapes)
+    active_providers = list(providers)
+    model_bytes = model.SerializeToString()
+    base_sess = make_session(model_bytes, providers=active_providers)
+    try:
+        base_loss = eval_loss(base_sess, cached_batches, output_slices, input_shapes)
+    except Exception as exc:
+        if ("CUDAExecutionProvider" in active_providers) and is_cuda_runtime_error(exc):
+            print(f"[ORT] CUDA runtime error during gradient baseline eval, fallback to CPU: {exc}")
+            active_providers = ["CPUExecutionProvider"]
+            base_sess = make_session(model_bytes, providers=active_providers)
+            base_loss = eval_loss(base_sess, cached_batches, output_slices, input_shapes)
+        else:
+            raise
     print(f"[Gradient] Baseline loss: {base_loss:.6f}")
 
-    base_bytes = model.SerializeToString()
+    base_bytes = model_bytes
     items: List[Tuple[str, int, float]] = []
 
     # Iterate over all fp16 initializers
     tensor_list = list(iter_fp16_initializers(model, allow_bias=allow_bias, restrict=restrict))
     print(f"[Gradient] Computing gradients for {len(tensor_list)} tensors...")
 
-    for tensor_idx, (name, arr) in enumerate(tqdm(tensor_list, desc="Computing gradients", unit="tensor")):
+    for tensor_idx, (name, arr) in enumerate(
+        tqdm(tensor_list, desc="Computing gradients", unit="tensor", dynamic_ncols=True)
+    ):
         flat = arr.reshape(-1)
         n = flat.size
 
@@ -407,7 +425,15 @@ def select_weight_candidates_by_gradient(
         gradients = np.zeros(len(sample_idx), dtype=np.float32)
 
         # Compute numerical gradient for sampled indices
-        for i, flat_idx in enumerate(sample_idx):
+        weight_pbar = tqdm(
+            enumerate(sample_idx),
+            total=len(sample_idx),
+            desc=f"Weights {tensor_idx + 1}/{len(tensor_list)}",
+            unit="weight",
+            leave=False,
+            dynamic_ncols=True,
+        )
+        for i, flat_idx in weight_pbar:
             # Perturb weight by epsilon
             m = onnx.load_from_string(base_bytes)
             for t in m.graph.initializer:
@@ -425,8 +451,17 @@ def select_weight_candidates_by_gradient(
 
             # Compute loss with perturbed weight
             perturbed_bytes = m.SerializeToString()
-            perturbed_sess = make_session(perturbed_bytes, providers=providers)
-            perturbed_loss = eval_loss(perturbed_sess, cached_batches, output_slices, input_shapes)
+            try:
+                perturbed_sess = make_session(perturbed_bytes, providers=active_providers)
+                perturbed_loss = eval_loss(perturbed_sess, cached_batches, output_slices, input_shapes)
+            except Exception as exc:
+                if ("CUDAExecutionProvider" in active_providers) and is_cuda_runtime_error(exc):
+                    print(f"[ORT] CUDA runtime error during perturbed eval, fallback to CPU: {exc}")
+                    active_providers = ["CPUExecutionProvider"]
+                    perturbed_sess = make_session(perturbed_bytes, providers=active_providers)
+                    perturbed_loss = eval_loss(perturbed_sess, cached_batches, output_slices, input_shapes)
+                else:
+                    raise
 
             # Numerical gradient (forward difference)
             grad = (perturbed_loss - base_loss) / epsilon
@@ -498,6 +533,7 @@ def rank_bits_progressive(
     if not pending:
         return records
 
+    active_providers = list(providers)
     total_steps = min(top_b, len(pending))
     skipped_non_finite = 0
     outer = tqdm(total=total_steps, desc="Progressive rank", unit="step", dynamic_ncols=True)
@@ -514,14 +550,29 @@ def rank_bits_progressive(
                 inner.update(1)
                 continue
 
-            sess = make_session(model_bytes, providers=providers)
-            flipped_score = eval_metric_value(
-                sess,
-                cached_batches,
-                output_slices,
-                input_shapes,
-                eval_metric,
-            )
+            try:
+                sess = make_session(model_bytes, providers=active_providers)
+                flipped_score = eval_metric_value(
+                    sess,
+                    cached_batches,
+                    output_slices,
+                    input_shapes,
+                    eval_metric,
+                )
+            except Exception as exc:
+                if ("CUDAExecutionProvider" in active_providers) and is_cuda_runtime_error(exc):
+                    print(f"[ORT] CUDA runtime error during rank scan, fallback to CPU: {exc}")
+                    active_providers = ["CPUExecutionProvider"]
+                    sess = make_session(model_bytes, providers=active_providers)
+                    flipped_score = eval_metric_value(
+                        sess,
+                        cached_batches,
+                        output_slices,
+                        input_shapes,
+                        eval_metric,
+                    )
+                else:
+                    raise
             if not np.isfinite(flipped_score):
                 skipped_non_finite += 1
                 inner.update(1)
@@ -751,19 +802,38 @@ def main() -> None:
     if not cached_batches:
         raise RuntimeError("No validation batches cached. Check dataset path/splits.")
 
-    base_sess = make_session(args.onnx, providers=providers)
+    active_providers = list(providers)
+    base_sess = make_session(args.onnx, providers=active_providers)
+    try:
+        inspect_outputs(base_sess, cached_batches[0], output_slices, input_shapes)
+        base_loss = eval_loss(base_sess, cached_batches, output_slices, input_shapes)
+        original_metric_score = eval_metric_value(
+            base_sess,
+            cached_batches,
+            output_slices,
+            input_shapes,
+            args.eval_metric,
+        )
+    except Exception as exc:
+        if ("CUDAExecutionProvider" in active_providers) and is_cuda_runtime_error(exc):
+            print(f"[ORT] CUDA runtime error during baseline eval, fallback to CPU: {exc}")
+            active_providers = ["CPUExecutionProvider"]
+            base_sess = make_session(args.onnx, providers=active_providers)
+            inspect_outputs(base_sess, cached_batches[0], output_slices, input_shapes)
+            base_loss = eval_loss(base_sess, cached_batches, output_slices, input_shapes)
+            original_metric_score = eval_metric_value(
+                base_sess,
+                cached_batches,
+                output_slices,
+                input_shapes,
+                args.eval_metric,
+            )
+        else:
+            raise
+
     providers = list(base_sess.get_providers())
     print(f"[ORT] active_providers={providers}")
-    inspect_outputs(base_sess, cached_batches[0], output_slices, input_shapes)
-    base_loss = eval_loss(base_sess, cached_batches, output_slices, input_shapes)
     print(f"\n[Eval] Baseline planning loss on cached val batches: {base_loss:.6f}")
-    original_metric_score = eval_metric_value(
-        base_sess,
-        cached_batches,
-        output_slices,
-        input_shapes,
-        args.eval_metric,
-    )
     print(f"[Eval] Baseline {args.eval_metric} score on cached val batches: {original_metric_score:.6f}")
 
     if args.inspect_only:

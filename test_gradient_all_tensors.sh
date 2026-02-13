@@ -4,9 +4,9 @@
 set -e
 
 # Activate conda environment
-echo "Activating conda environment: op97_py311"
-eval "$(/usr/local/packages/python/3.11.5-anaconda/bin/conda shell.bash hook)"
-conda activate op97_py311
+echo "Activating conda environment: op097"
+eval "$(/home/zx/miniconda3/condabin/conda shell.bash hook)"
+conda activate op097
 
 echo ""
 echo "========================================="
@@ -20,7 +20,7 @@ echo ""
 # Test parameters
 ONNX_PATH="op_097/models/supercombo.onnx"
 METADATA_PATH="op_097/models/supercombo_metadata.pkl"
-DATA_ROOT="/home/xzha135/work/comma2k19"
+DATA_ROOT="/home/zx/Projects/comma2k19"
 
 # Check if model files exist
 if [ ! -f "$ONNX_PATH" ]; then
@@ -35,6 +35,18 @@ fi
 
 echo "Starting gradient-based selection on ALL tensors..."
 echo "----------------------------------------------------------------------"
+# python op_097/important_bits_onnx.py \
+#     --onnx "$ONNX_PATH" \
+#     --metadata "$METADATA_PATH" \
+#     --data-root "$DATA_ROOT" \
+#     --weight-selection-method gradient \
+#     --gradient-epsilon 1e-3 \
+#     --top-w 500 \
+#     --sample-all-weights \
+#     --num-val-batches 128 \
+#     --eval-seq-len 20 \
+#     --stage select-weights \
+#     --provider auto
 python op_097/important_bits_onnx.py \
     --onnx "$ONNX_PATH" \
     --metadata "$METADATA_PATH" \
@@ -42,12 +54,11 @@ python op_097/important_bits_onnx.py \
     --weight-selection-method gradient \
     --gradient-epsilon 1e-3 \
     --top-w 500 \
-    --sample-all-weights \
-    --num-val-batches 128 \
-    --eval-seq-len 20 \
+    --per-tensor-k 20\
+    --num-val-batches 1 \
+    --eval-seq-len 2 \
     --stage select-weights \
     --provider auto
-
 echo ""
 echo "========================================="
 echo "Test completed successfully!"
