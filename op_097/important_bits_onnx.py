@@ -162,8 +162,14 @@ def build_loaders(args: argparse.Namespace) -> Tuple[DataLoader, DataLoader]:
     data_root = normalize_data_root(args.data_root)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    train_ds = Comma2k19SequenceDataset(args.train_index, data_root, "train", use_memcache=False)
-    val_ds = Comma2k19SequenceDataset(args.val_index, data_root, "val", use_memcache=False)
+    train_ds = Comma2k19SequenceDataset(args.train_index, data_root, "train", use_memcache=False, inner_progress=False)
+    val_ds = Comma2k19SequenceDataset(
+        args.val_index,
+        data_root,
+        "val",
+        use_memcache=False,
+        inner_progress=bool(args.dataloader_inner_progress),
+    )
     train_ds = SafeDataset(train_ds)
     val_ds = SafeDataset(val_ds)
 
@@ -447,7 +453,12 @@ def collect_cached_batches(
 ) -> List[CachedBatch]:
     cached: List[CachedBatch] = []
     it = iter(val_loader)
-    for _ in range(num_batches):
+    for _ in tqdm(
+        range(num_batches),
+        desc="Caching val batches",
+        unit="batch",
+        dynamic_ncols=True,
+    ):
         try:
             batch = next(it)
         except StopIteration:
@@ -1038,6 +1049,11 @@ def get_args() -> argparse.Namespace:
         help="Torch dtype for autograd gradient backend (auto is recommended; uses fp32 for stability)",
     )
     p.add_argument("--sample-all-weights", action="store_true", help="Compute gradients for ALL weights in each tensor (ignores per-tensor-k)")
+    p.add_argument(
+        "--dataloader-inner-progress",
+        action="store_true",
+        help="Show fine-grained progress inside each val sample loading/preprocess step",
+    )
     return p.parse_args()
 
 

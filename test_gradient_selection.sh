@@ -54,6 +54,7 @@ python op_097/important_bits_onnx.py \
     --top-w 5 \
     --per-tensor-k 1 \
     --num-val-batches 1 \
+    --dataloader-inner-progress \
     --eval-seq-len 5 \
     --stage select-weights \
     --provider cpu \

@@ -12,6 +12,7 @@ cv2.ocl.setUseOpenCL(False)
 from PIL import Image
 from torch.utils.data import Dataset
 from torchvision import transforms
+from tqdm import tqdm
 from utils import warp, generate_random_params_for_warp
 from view_transform import calibration
 
@@ -155,7 +156,7 @@ class SequencePlanningDataset(PlanningDataset):
 
 
 class Comma2k19SequenceDataset(PlanningDataset):
-    def __init__(self, split_txt_path, prefix, mode, use_memcache=True, return_origin=False):
+    def __init__(self, split_txt_path, prefix, mode, use_memcache=True, return_origin=False, inner_progress=False):
         self.split_txt_path = split_txt_path
         self.prefix = prefix
 
@@ -194,6 +195,7 @@ class Comma2k19SequenceDataset(PlanningDataset):
             self._init_mc_()
 
         self.return_origin = return_origin
+        self.inner_progress = bool(inner_progress)
 
         # from OpenPilot
         self.num_pts = 10 * 20  # 10 s * 20 Hz = 200 frames
@@ -227,6 +229,9 @@ class Comma2k19SequenceDataset(PlanningDataset):
             raise RuntimeError
         imgs = []  # <--- all frames here
         origin_imgs = []
+        frame_pbar = None
+        if self.inner_progress:
+            frame_pbar = tqdm(desc=f"Read video idx={idx}", unit="frame", leave=False, dynamic_ncols=True)
         while (cap.isOpened()):
             ret, frame = cap.read()
             if ret == True:
@@ -235,9 +240,13 @@ class Comma2k19SequenceDataset(PlanningDataset):
                 # cv2.waitKey(0)
                 if self.return_origin:
                     origin_imgs.append(frame)
+                if frame_pbar is not None:
+                    frame_pbar.update(1)
             else:
                 break
         cap.release()
+        if frame_pbar is not None:
+            frame_pbar.close()
 
         seq_length = len(imgs)
 
@@ -257,10 +266,20 @@ class Comma2k19SequenceDataset(PlanningDataset):
 
         # seq_input_img
         imgs = imgs[seq_start_idx-1: seq_end_idx]  # contains one more img
-        imgs = [cv2.warpPerspective(src=img, M=self.warp_matrix, dsize=(512,256), flags=cv2.WARP_INVERSE_MAP) for img in imgs]
-        imgs = [cv2.cvtColor(img, cv2.COLOR_BGR2RGB) for img in imgs]
-        imgs = list(Image.fromarray(img) for img in imgs)
-        imgs = list(self.transforms(img)[None] for img in imgs)
+        if self.inner_progress:
+            preproc_imgs = []
+            img_iter = tqdm(imgs, desc=f"Preprocess idx={idx}", unit="img", leave=False, dynamic_ncols=True)
+            for img in img_iter:
+                warped = cv2.warpPerspective(src=img, M=self.warp_matrix, dsize=(512,256), flags=cv2.WARP_INVERSE_MAP)
+                rgb = cv2.cvtColor(warped, cv2.COLOR_BGR2RGB)
+                tensor_img = self.transforms(Image.fromarray(rgb))[None]
+                preproc_imgs.append(tensor_img)
+            imgs = preproc_imgs
+        else:
+            imgs = [cv2.warpPerspective(src=img, M=self.warp_matrix, dsize=(512,256), flags=cv2.WARP_INVERSE_MAP) for img in imgs]
+            imgs = [cv2.cvtColor(img, cv2.COLOR_BGR2RGB) for img in imgs]
+            imgs = list(Image.fromarray(img) for img in imgs)
+            imgs = list(self.transforms(img)[None] for img in imgs)
         input_img = torch.cat(imgs, dim=0)  # [N+1, 3, H, W]
         del imgs
         input_img = torch.cat((input_img[:-1, ...], input_img[1:, ...]), dim=1)
@@ -270,7 +289,10 @@ class Comma2k19SequenceDataset(PlanningDataset):
         frame_orientations = self._get_numpy(self.prefix + self.samples[idx] + '/global_pose/frame_orientations')[seq_start_idx: seq_end_idx+self.num_pts]
 
         future_poses = []
-        for i in range(self.fix_seq_length):
+        pose_iter = range(self.fix_seq_length)
+        if self.inner_progress:
+            pose_iter = tqdm(pose_iter, desc=f"Interpolate pose idx={idx}", unit="step", leave=False, dynamic_ncols=True)
+        for i in pose_iter:
             ecef_from_local = orient.rot_from_quat(frame_orientations[i])
             local_from_ecef = ecef_from_local.T
             frame_positions_local = np.einsum('ij,kj->ki', local_from_ecef, frame_positions - frame_positions[i]).astype(np.float32)

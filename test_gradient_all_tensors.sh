@@ -68,10 +68,12 @@ python op_097/important_bits_onnx.py \
     --gradient-epsilon 1e-3 \
     --gradient-torch-dtype auto \
     --top-w 500 \
-    --per-tensor-k 20 \
-    --num-val-batches 1 \
-    --eval-seq-len 2 \
+    --sample-all-weights \
+    --num-val-batches 64 \
+    --dataloader-inner-progress \
+    --eval-seq-len 20 \
     --stage select-weights \
+    --allow-bias \
     --provider cuda
 echo ""
 echo "========================================="
