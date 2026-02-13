@@ -4,9 +4,23 @@
 set -e
 
 # Activate conda environment
-echo "Activating conda environment: op097"
-eval "$(/home/zx/miniconda3/condabin/conda shell.bash hook)"
-conda activate op097
+USER_NAME="${USER:-$(whoami)}"
+if [ "$USER_NAME" = "zx" ]; then
+    CONDA_BIN="/home/zx/miniconda3/condabin/conda"
+    CONDA_ENV="op097"
+    DATA_ROOT="/home/zx/Projects/comma2k19"
+elif [ "$USER_NAME" = "xzha135" ]; then
+    CONDA_BIN="/usr/local/packages/python/3.11.5-anaconda/bin/conda"
+    CONDA_ENV="op97_py311"
+    DATA_ROOT="/home/xzha135/work/comma2k19"
+else
+    echo "Error: Unsupported user '$USER_NAME'. Please set paths manually."
+    exit 1
+fi
+
+echo "Activating conda environment: $CONDA_ENV"
+eval "$("$CONDA_BIN" shell.bash hook)"
+conda activate "$CONDA_ENV"
 
 echo ""
 echo "========================================="
@@ -20,7 +34,6 @@ echo ""
 # Test parameters
 ONNX_PATH="op_097/models/supercombo.onnx"
 METADATA_PATH="op_097/models/supercombo_metadata.pkl"
-DATA_ROOT="/home/zx/Projects/comma2k19"
 
 # Check if model files exist
 if [ ! -f "$ONNX_PATH" ]; then
@@ -53,12 +66,13 @@ python op_097/important_bits_onnx.py \
     --data-root "$DATA_ROOT" \
     --weight-selection-method gradient \
     --gradient-epsilon 1e-3 \
+    --gradient-torch-dtype auto \
     --top-w 500 \
-    --per-tensor-k 20\
+    --per-tensor-k 20 \
     --num-val-batches 1 \
     --eval-seq-len 2 \
     --stage select-weights \
-    --provider auto
+    --provider cuda
 echo ""
 echo "========================================="
 echo "Test completed successfully!"

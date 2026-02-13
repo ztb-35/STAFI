@@ -13,6 +13,8 @@ Pipeline:
 from __future__ import annotations
 
 import argparse
+import copy
+import hashlib
 import json
 import os
 import sys
@@ -58,6 +60,48 @@ def make_session(model_bytes_or_path: Any, providers: Sequence[str]) -> ort.Infe
 def is_cuda_runtime_error(exc: BaseException) -> bool:
     msg = str(exc).upper()
     return ("CUDA" in msg) or ("CUBLAS" in msg) or ("CUDNN" in msg)
+
+
+def sanitize_onnx_for_onnx2torch(model: onnx.ModelProto) -> onnx.ModelProto:
+    """Fix ONNX optional-input placeholders that break onnx2torch conversion."""
+    m = copy.deepcopy(model)
+    for node in m.graph.node:
+        if node.op_type != "Clip":
+            continue
+        inputs = list(node.input)
+        while inputs and (inputs[-1] == ""):
+            inputs.pop()
+        del node.input[:]
+        node.input.extend(inputs)
+    return m
+
+
+def tensor_hash_key(arr: np.ndarray) -> Tuple[str, Tuple[int, ...], str]:
+    arr_c = np.ascontiguousarray(arr)
+    return str(arr_c.dtype), tuple(arr_c.shape), hashlib.sha1(arr_c.tobytes()).hexdigest()
+
+
+def patch_onnx2torch_cuda_matmul() -> None:
+    """Patch onnx2torch MatMul to avoid cublas strided-batched GEMM failures on some CUDA stacks."""
+    try:
+        from onnx2torch.node_converters.matmul import OnnxMatMul
+    except Exception:
+        return
+
+    if getattr(OnnxMatMul, "_stafi_cuda_patch_applied", False):
+        return
+
+    def safe_forward(self: Any, x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
+        if isinstance(x, torch.Tensor) and isinstance(y, torch.Tensor) and x.is_cuda and y.is_cuda and x.dim() > 2 and y.dim() > 2:
+            x2 = x.contiguous().reshape(-1, x.shape[-2], x.shape[-1])
+            y2 = y.contiguous().reshape(-1, y.shape[-2], y.shape[-1])
+            outs = [x2[i] @ y2[i] for i in range(x2.shape[0])]
+            z = torch.stack(outs, dim=0)
+            return z.reshape(*x.shape[:-2], x.shape[-2], y.shape[-1])
+        return torch.matmul(x, y)
+
+    OnnxMatMul.forward = safe_forward
+    OnnxMatMul._stafi_cuda_patch_applied = True
 
 
 def resolve_providers(provider_mode: str) -> List[str]:
@@ -217,6 +261,113 @@ def decode_plan(raw_outputs: np.ndarray, output_slices: Dict[str, slice], gt: to
     return float((cls + reg).item()), best_traj
 
 
+def decode_plan_torch(raw_outputs: torch.Tensor, output_slices: Dict[str, slice], gt: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+    out = raw_outputs.float()
+    plan_slice = output_slices["plan"]
+    plan = out[:, plan_slice].view(out.shape[0], 5, 991)
+
+    pred_cls = plan[:, :, -1]
+    params_flat = plan[:, :, :-1]
+    pred_traj = params_flat.view(out.shape[0], 5, 2, 33, 15)[:, :, 0, :, :3]
+
+    pred_end = pred_traj[:, :, 32, :]
+    gt_end = gt[:, 32:33, :].expand(-1, 5, -1)
+    distances = 1.0 - F.cosine_similarity(pred_end, gt_end, dim=2)
+    gt_cls = distances.argmin(dim=1)
+    row = torch.arange(gt_cls.shape[0], device=out.device)
+    best_traj = pred_traj[row, gt_cls, :, :]
+
+    cls = F.cross_entropy(pred_cls, gt_cls)
+    reg = F.smooth_l1_loss(best_traj, gt, reduction="mean")
+    return cls + reg, best_traj
+
+
+def build_static_torch_inputs(
+    input_shapes: Dict[str, Tuple[int, ...]],
+    bsz: int,
+    feature_buffer: torch.Tensor,
+    *,
+    device: torch.device,
+    dtype: torch.dtype,
+) -> Dict[str, torch.Tensor]:
+    static_inputs: Dict[str, torch.Tensor] = {}
+    if "desire" in input_shapes:
+        static_inputs["desire"] = torch.zeros((bsz, 100, 8), device=device, dtype=dtype)
+    if "traffic_convention" in input_shapes:
+        static_inputs["traffic_convention"] = torch.tensor([[1.0, 0.0]], device=device, dtype=dtype).repeat(bsz, 1)
+    if "lateral_control_params" in input_shapes:
+        static_inputs["lateral_control_params"] = torch.zeros((bsz, 2), device=device, dtype=dtype)
+    if "prev_desired_curv" in input_shapes:
+        static_inputs["prev_desired_curv"] = torch.zeros((bsz, 100, 1), device=device, dtype=dtype)
+    if "features_buffer" in input_shapes:
+        static_inputs["features_buffer"] = feature_buffer
+    return static_inputs
+
+
+def eval_loss_torch_and_backward(
+    model_torch: torch.nn.Module,
+    cached_batches: Sequence[CachedBatch],
+    output_slices: Dict[str, slice],
+    input_shapes: Dict[str, Tuple[int, ...]],
+    device: torch.device,
+    model_dtype: torch.dtype,
+) -> float:
+    model_torch.zero_grad(set_to_none=True)
+    vals: List[float] = []
+    input_order = [
+        "input_imgs",
+        "big_input_imgs",
+        "desire",
+        "traffic_convention",
+        "lateral_control_params",
+        "prev_desired_curv",
+        "features_buffer",
+    ]
+    dtype = model_dtype
+
+    for cb in cached_batches:
+        imgs = torch.from_numpy(cb.seq_imgs12).to(device=device, dtype=dtype)
+        gt = cb.seq_gt.to(device=device, dtype=torch.float32)
+        bsz, t, _, _, _ = imgs.shape
+
+        feature_buffer = torch.zeros((bsz, 99, 512), device=device, dtype=dtype)
+        per_step_losses: List[torch.Tensor] = []
+
+        for i in range(t):
+            dynamic_inputs = {
+                "input_imgs": imgs[:, i],
+                "big_input_imgs": imgs[:, i],
+            }
+            dynamic_inputs.update(
+                build_static_torch_inputs(
+                    input_shapes,
+                    bsz,
+                    feature_buffer,
+                    device=device,
+                    dtype=dtype,
+                )
+            )
+            feed = [dynamic_inputs[k] for k in input_order if k in dynamic_inputs]
+            raw = model_torch(*feed)
+            if not isinstance(raw, torch.Tensor):
+                raise RuntimeError(f"Unexpected torch output type: {type(raw)}")
+
+            loss_t, _ = decode_plan_torch(raw, output_slices, gt[:, i])
+            per_step_losses.append(loss_t)
+
+            if "features_buffer" in input_shapes:
+                hs = raw[:, output_slices["hidden_state"]].to(dtype)
+                feature_buffer = torch.cat([feature_buffer[:, 1:, :], hs[:, None, :]], dim=1)
+
+        if not per_step_losses:
+            continue
+        batch_loss = torch.stack(per_step_losses).mean()
+        batch_loss.backward()
+        vals.append(float(batch_loss.detach().cpu().item()))
+
+    return float(np.mean(vals)) if vals else float("nan")
+
+
 def eval_loss(
     session: ort.InferenceSession,
     cached_batches: Sequence[CachedBatch],
@@ -373,14 +524,202 @@ def select_weight_candidates_by_gradient(
     providers: Sequence[str] = ("CPUExecutionProvider",),
     epsilon: float = 1e-3,
     sample_all: bool = False,
+    torch_dtype_mode: str = "auto",
 ) -> List[Tuple[str, int, float]]:
-    """Select weight candidates based on gradient magnitude using numerical differentiation.
+    """Select weight candidates based on gradient magnitude.
 
-    For each weight parameter, compute numerical gradient:
-        grad ≈ (loss(w + ε) - loss(w)) / ε
-
-    Then select top-k weights per tensor by |grad|.
+    Preferred backend: PyTorch autograd via onnx2torch (analytic gradient).
+    Fallback backend: numerical differentiation with ONNX Runtime.
     """
+    try:
+        from onnx2torch import convert as onnx2torch_convert
+    except Exception as exc:
+        print(f"[Gradient] onnx2torch unavailable, fallback to numerical gradient: {exc}")
+        return select_weight_candidates_by_gradient_numeric(
+            model=model,
+            cached_batches=cached_batches,
+            output_slices=output_slices,
+            input_shapes=input_shapes,
+            top_w=top_w,
+            per_tensor_k=per_tensor_k,
+            allow_bias=allow_bias,
+            restrict=restrict,
+            providers=providers,
+            epsilon=epsilon,
+            sample_all=sample_all,
+        )
+
+    use_cuda = ("CUDAExecutionProvider" in providers) and torch.cuda.is_available()
+    if use_cuda:
+        patch_onnx2torch_cuda_matmul()
+
+    try:
+        m_torch = onnx2torch_convert(sanitize_onnx_for_onnx2torch(model))
+    except Exception as exc:
+        print(f"[Gradient] onnx2torch convert failed, fallback to numerical gradient: {exc}")
+        return select_weight_candidates_by_gradient_numeric(
+            model=model,
+            cached_batches=cached_batches,
+            output_slices=output_slices,
+            input_shapes=input_shapes,
+            top_w=top_w,
+            per_tensor_k=per_tensor_k,
+            allow_bias=allow_bias,
+            restrict=restrict,
+            providers=providers,
+            epsilon=epsilon,
+            sample_all=sample_all,
+        )
+
+    device = torch.device("cuda" if use_cuda else "cpu")
+    print(f"[Gradient] backend=pytorch_autograd device={device}")
+    m_torch = m_torch.to(device)
+    m_torch.train(False)
+    m_torch.zero_grad(set_to_none=True)
+
+    # Build a 1:1 mapping between ONNX fp16 initializers and converted torch tensors.
+    key_to_locs: Dict[Tuple[str, Tuple[int, ...], str], List[Tuple[str, str]]] = {}
+    param_dict = dict(m_torch.named_parameters())
+    buffer_dict = dict(m_torch.named_buffers())
+    for p_name, p in param_dict.items():
+        arr = p.detach().cpu().numpy()
+        key = tensor_hash_key(arr)
+        key_to_locs.setdefault(key, []).append(("param", p_name))
+    for b_name, b in buffer_dict.items():
+        arr = b.detach().cpu().numpy()
+        key = tensor_hash_key(arr)
+        key_to_locs.setdefault(key, []).append(("buffer", b_name))
+
+    onnx_to_loc: Dict[str, Tuple[str, str]] = {}
+    for t in model.graph.initializer:
+        if t.data_type != TensorProto.FLOAT16:
+            continue
+        arr = numpy_helper.to_array(t)
+        if arr.size == 0:
+            continue
+        key = tensor_hash_key(arr)
+        cands = key_to_locs.get(key, [])
+        if not cands:
+            raise RuntimeError(f"[Gradient] failed to map ONNX initializer to torch tensor: {t.name}")
+        onnx_to_loc[t.name] = cands.pop()
+
+    if torch_dtype_mode == "fp16":
+        model_dtype = torch.float16
+    elif torch_dtype_mode == "fp32":
+        model_dtype = torch.float32
+    else:
+        # "auto": prefer fp32 on CUDA for GEMM stability in autograd path.
+        model_dtype = torch.float32
+
+    if (device.type == "cpu") and (model_dtype == torch.float16):
+        print("[Gradient] fp16 backward on CPU is unsupported on many platforms, switching to fp32.")
+        model_dtype = torch.float32
+
+    if model_dtype == torch.float32:
+        m_torch = m_torch.float()
+
+    tensor_refs: Dict[str, torch.Tensor] = {}
+    def build_tensor_refs(module: torch.nn.Module) -> Dict[str, torch.Tensor]:
+        out: Dict[str, torch.Tensor] = {}
+        p_dict = dict(module.named_parameters())
+        b_dict = dict(module.named_buffers())
+        for onnx_name, (loc_kind, loc_name) in onnx_to_loc.items():
+            if loc_kind == "param":
+                out[onnx_name] = p_dict[loc_name]
+            else:
+                out[onnx_name] = b_dict[loc_name]
+        return out
+
+    tensor_refs = build_tensor_refs(m_torch)
+
+    for tref in tensor_refs.values():
+        tref.requires_grad_(True)
+        tref.grad = None
+
+    print(f"[Gradient] Computing baseline loss + backward (dtype={str(model_dtype).replace('torch.', '')})...")
+    try:
+        base_loss = eval_loss_torch_and_backward(
+            m_torch,
+            cached_batches,
+            output_slices,
+            input_shapes,
+            device=device,
+            model_dtype=model_dtype,
+        )
+    except RuntimeError as exc:
+        if (device.type == "cuda") and (model_dtype == torch.float16) and is_cuda_runtime_error(exc):
+            print(f"[Gradient] CUDA fp16 backward failed, retry with fp32: {exc}")
+            model_dtype = torch.float32
+            m_torch = m_torch.float()
+            tensor_refs = build_tensor_refs(m_torch)
+            for tref in tensor_refs.values():
+                tref.requires_grad_(True)
+                tref.grad = None
+            base_loss = eval_loss_torch_and_backward(
+                m_torch,
+                cached_batches,
+                output_slices,
+                input_shapes,
+                device=device,
+                model_dtype=model_dtype,
+            )
+        else:
+            raise
+    print(f"[Gradient] Baseline loss: {base_loss:.6f}")
+
+    items: List[Tuple[str, int, float]] = []
+    tensor_list = list(iter_fp16_initializers(model, allow_bias=allow_bias, restrict=restrict))
+    print(f"[Gradient] Collecting gradients for {len(tensor_list)} tensors...")
+    for tensor_idx, (name, arr) in enumerate(
+        tqdm(tensor_list, desc="Computing gradients", unit="tensor", dynamic_ncols=True)
+    ):
+        tref = tensor_refs.get(name)
+        if tref is None or tref.grad is None:
+            continue
+
+        grad_abs = np.abs(tref.grad.detach().cpu().numpy().reshape(-1).astype(np.float32))
+        flat = arr.reshape(-1)
+        n = flat.size
+
+        if sample_all:
+            sample_idx = np.arange(n)
+        elif per_tensor_k > 0 and per_tensor_k < n:
+            flat_abs = np.abs(flat.astype(np.float32))
+            sample_k = min(per_tensor_k * 10, n)
+            sample_idx = np.argpartition(flat_abs, -sample_k)[-sample_k:]
+        else:
+            sample_idx = np.arange(n)
+
+        k = min(per_tensor_k, len(sample_idx))
+        if k <= 0:
+            continue
+
+        sample_grad_abs = grad_abs[sample_idx]
+        top_k_local = np.argpartition(sample_grad_abs, -k)[-k:]
+        for local_i in top_k_local:
+            flat_idx = int(sample_idx[local_i])
+            grad_mag = float(sample_grad_abs[local_i])
+            items.append((name, flat_idx, grad_mag))
+
+    items.sort(key=lambda x: x[2], reverse=True)
+    print(f"[Gradient] Selected {len(items[:top_w])} candidates by gradient magnitude")
+    return items[: min(top_w, len(items))]
+
+
+def select_weight_candidates_by_gradient_numeric(
+    model: onnx.ModelProto,
+    cached_batches: Sequence[CachedBatch],
+    output_slices: Dict[str, slice],
+    input_shapes: Dict[str, Tuple[int, ...]],
+    top_w: int,
+    per_tensor_k: int,
+    allow_bias: bool,
+    restrict: Optional[List[str]],
+    providers: Sequence[str] = ("CPUExecutionProvider",),
+    epsilon: float = 1e-3,
+    sample_all: bool = False,
+) -> List[Tuple[str, int, float]]:
+    print("[Gradient] Numerical differentiation backend")
     print("[Gradient] Computing baseline loss...")
     active_providers = list(providers)
     model_bytes = model.SerializeToString()
@@ -399,8 +738,6 @@ def select_weight_candidates_by_gradient(
 
     base_bytes = model_bytes
     items: List[Tuple[str, int, float]] = []
-
-    # Iterate over all fp16 initializers
     tensor_list = list(iter_fp16_initializers(model, allow_bias=allow_bias, restrict=restrict))
     print(f"[Gradient] Computing gradients for {len(tensor_list)} tensors...")
 
@@ -409,22 +746,16 @@ def select_weight_candidates_by_gradient(
     ):
         flat = arr.reshape(-1)
         n = flat.size
-
-        # Sample indices if tensor is too large
         if sample_all:
-            # Test ALL weights in this tensor
             sample_idx = np.arange(n)
         elif per_tensor_k > 0 and per_tensor_k < n:
-            # First sample by magnitude to focus on larger weights
             flat_abs = np.abs(flat.astype(np.float32))
-            sample_k = min(per_tensor_k * 10, n)  # Sample 10x more for gradient computation
+            sample_k = min(per_tensor_k * 10, n)
             sample_idx = np.argpartition(flat_abs, -sample_k)[-sample_k:]
         else:
             sample_idx = np.arange(n)
 
         gradients = np.zeros(len(sample_idx), dtype=np.float32)
-
-        # Compute numerical gradient for sampled indices
         weight_pbar = tqdm(
             enumerate(sample_idx),
             total=len(sample_idx),
@@ -434,22 +765,17 @@ def select_weight_candidates_by_gradient(
             dynamic_ncols=True,
         )
         for i, flat_idx in weight_pbar:
-            # Perturb weight by epsilon
             m = onnx.load_from_string(base_bytes)
             for t in m.graph.initializer:
                 if t.name != name:
                     continue
                 arr_copy = numpy_helper.to_array(t).copy()
                 flat_arr = arr_copy.reshape(-1)
-
                 original_val = float(flat_arr[flat_idx])
-                # Add perturbation
                 flat_arr[flat_idx] = np.float16(original_val + epsilon)
-
                 t.CopyFrom(numpy_helper.from_array(arr_copy.astype(np.float16), name=t.name))
                 break
 
-            # Compute loss with perturbed weight
             perturbed_bytes = m.SerializeToString()
             try:
                 perturbed_sess = make_session(perturbed_bytes, providers=active_providers)
@@ -463,22 +789,17 @@ def select_weight_candidates_by_gradient(
                 else:
                     raise
 
-            # Numerical gradient (forward difference)
-            grad = (perturbed_loss - base_loss) / epsilon
-            gradients[i] = abs(grad)
+            gradients[i] = abs((perturbed_loss - base_loss) / epsilon)
 
-        # Select top-k by gradient magnitude
         k = min(per_tensor_k, len(sample_idx))
         if k <= 0:
             continue
-
         top_k_idx = np.argpartition(gradients, -k)[-k:]
         for i in top_k_idx:
             flat_idx = int(sample_idx[i])
             grad_mag = float(gradients[i])
             items.append((name, flat_idx, grad_mag))
 
-    # Sort by gradient magnitude and return top_w
     items.sort(key=lambda x: x[2], reverse=True)
     print(f"[Gradient] Selected {len(items[:top_w])} candidates by gradient magnitude")
     return items[: min(top_w, len(items))]
@@ -707,9 +1028,15 @@ def get_args() -> argparse.Namespace:
         "--weight-selection-method",
         choices=["magnitude", "gradient"],
         default="magnitude",
-        help="Weight selection method: magnitude (absolute value) or gradient (numerical gradient)"
+        help="Weight selection method: magnitude (absolute value) or gradient (PyTorch autograd, fallback: numerical)"
     )
-    p.add_argument("--gradient-epsilon", type=float, default=1e-3, help="Epsilon for numerical gradient computation")
+    p.add_argument("--gradient-epsilon", type=float, default=1e-3, help="Epsilon for numerical-gradient fallback")
+    p.add_argument(
+        "--gradient-torch-dtype",
+        choices=["auto", "fp16", "fp32"],
+        default="auto",
+        help="Torch dtype for autograd gradient backend (auto is recommended; uses fp32 for stability)",
+    )
     p.add_argument("--sample-all-weights", action="store_true", help="Compute gradients for ALL weights in each tensor (ignores per-tensor-k)")
     return p.parse_args()
 
@@ -765,6 +1092,7 @@ def main() -> None:
                 providers=providers,
                 epsilon=args.gradient_epsilon,
                 sample_all=args.sample_all_weights,
+                torch_dtype_mode=args.gradient_torch_dtype,
             )
         else:
             print(f"[Weights] Using magnitude-based selection")
@@ -862,6 +1190,7 @@ def main() -> None:
                 providers=providers,
                 epsilon=args.gradient_epsilon,
                 sample_all=args.sample_all_weights,
+                torch_dtype_mode=args.gradient_torch_dtype,
             )
         else:
             print(f"[Weights] Using magnitude-based selection")
