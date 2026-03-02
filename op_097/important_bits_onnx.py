@@ -513,13 +513,15 @@ def select_weight_candidates(
     items: List[Tuple[str, int, float]] = []
     for name, arr in iter_fp16_initializers(model, allow_bias=allow_bias, restrict=restrict):
         flat_abs = np.abs(arr.reshape(-1).astype(np.float32))
-        k = min(per_tensor_k, flat_abs.size)
+        k = flat_abs.size if per_tensor_k <= 0 else min(per_tensor_k, flat_abs.size)
         if k <= 0:
             continue
         idx = np.argpartition(flat_abs, -k)[-k:]
         for i in idx:
             items.append((name, int(i), float(flat_abs[i])))
     items.sort(key=lambda x: x[2], reverse=True)
+    if top_w <= 0:
+        return items
     return items[: min(top_w, len(items))]
 
 
@@ -701,7 +703,7 @@ def select_weight_candidates_by_gradient(
         else:
             sample_idx = np.arange(n)
 
-        k = min(per_tensor_k, len(sample_idx))
+        k = len(sample_idx) if per_tensor_k <= 0 else min(per_tensor_k, len(sample_idx))
         if k <= 0:
             continue
 
@@ -713,6 +715,9 @@ def select_weight_candidates_by_gradient(
             items.append((name, flat_idx, grad_mag))
 
     items.sort(key=lambda x: x[2], reverse=True)
+    if top_w <= 0:
+        print(f"[Gradient] Selected {len(items)} candidates by gradient magnitude (all)")
+        return items
     print(f"[Gradient] Selected {len(items[:top_w])} candidates by gradient magnitude")
     return items[: min(top_w, len(items))]
 
@@ -802,7 +807,7 @@ def select_weight_candidates_by_gradient_numeric(
 
             gradients[i] = abs((perturbed_loss - base_loss) / epsilon)
 
-        k = min(per_tensor_k, len(sample_idx))
+        k = len(sample_idx) if per_tensor_k <= 0 else min(per_tensor_k, len(sample_idx))
         if k <= 0:
             continue
         top_k_idx = np.argpartition(gradients, -k)[-k:]
@@ -812,6 +817,9 @@ def select_weight_candidates_by_gradient_numeric(
             items.append((name, flat_idx, grad_mag))
 
     items.sort(key=lambda x: x[2], reverse=True)
+    if top_w <= 0:
+        print(f"[Gradient] Selected {len(items)} candidates by gradient magnitude (all)")
+        return items
     print(f"[Gradient] Selected {len(items[:top_w])} candidates by gradient magnitude")
     return items[: min(top_w, len(items))]
 
@@ -1015,8 +1023,8 @@ def get_args() -> argparse.Namespace:
     p.add_argument("--val-index", default=str(default_split_dir / "comma2k19_val_non_overlap.txt"))
     p.add_argument("--batch-size", type=int, default=1)
     p.add_argument("--num-val-batches", type=int, default=2)
-    p.add_argument("--top-w", type=int, default=50)
-    p.add_argument("--per-tensor-k", type=int, default=1)
+    p.add_argument("--top-w", type=int, default=50, help="global candidate cap; <=0 means keep all selected scalars")
+    p.add_argument("--per-tensor-k", type=int, default=1, help="max scalars per tensor; <=0 means keep all scalars in each tensor")
     p.add_argument("--top-b", type=int, default=1)
     p.add_argument("--bitset", default="exponent_sign", help="fp16 bit set: mantissa/exponent/sign/exponent_sign/all or csv")
     p.add_argument("--allow-bias", action="store_true")
@@ -1185,10 +1193,14 @@ def main() -> None:
         return
 
     base_model = onnx.load(args.onnx)
+    weights_source_mode = "computed_in_run"
+    weights_source_file: Optional[str] = None
     if args.weights_in:
         selected = load_weight_candidates(args.weights_in)
         if args.top_w > 0:
             selected = selected[: min(args.top_w, len(selected))]
+        weights_source_mode = "loaded_from_file"
+        weights_source_file = os.path.abspath(args.weights_in)
         print(f"[Weights] loaded {len(selected)} candidates from {args.weights_in}")
     else:
         if args.weight_selection_method == "gradient":
@@ -1230,6 +1242,7 @@ def main() -> None:
                 selection_method=args.weight_selection_method,
                 gradient_epsilon=args.gradient_epsilon if args.weight_selection_method == "gradient" else None,
             )
+            weights_source_file = os.path.abspath(weights_out_path)
             print(f"[Weights] saved {len(selected)} candidates to {weights_out_path}")
     if not selected:
         raise RuntimeError("No fp16 initializer candidates selected.")
@@ -1270,6 +1283,8 @@ def main() -> None:
             "eval_metric": args.eval_metric,
             "search_mode": "progressive",
             "weight_selection_method": args.weight_selection_method,
+            "weights_source_mode": weights_source_mode,
+            "weights_source_file": weights_source_file,
         },
         "ranked": ranked,
         "plan": plan,

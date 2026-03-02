@@ -10,4 +10,5 @@ module load cuda
 
 cd /home/xzha135/work/projects_ws/DAC/STAFI
 
-./test_gradient_all_tensors.sh
+#./test_gradient_all_tensors.sh
+./test_rank_bits_from_previous_json.sh op_097/weights_candidates_097_top500.json

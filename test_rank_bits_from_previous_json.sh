@@ -31,14 +31,20 @@ echo ""
 ONNX_PATH="op_097/models/supercombo.onnx"
 METADATA_PATH="op_097/models/supercombo_metadata.pkl"
 OUT_DIR="op_097/out"
+DEFAULT_TOP500_JSON="op_097/weights_candidates_097_top500.json"
 
 # Optional input:
 #   1) first arg: explicit JSON path
 #   2) WEIGHTS_JSON env var
-#   3) fallback: latest weights_candidates_097_*.json in op_097/out
+#   3) default: op_097/weights_candidates_097_top500.json (if exists)
+#   4) fallback: latest weights_candidates_097_*.json in op_097/out
 WEIGHTS_JSON="${1:-${WEIGHTS_JSON:-}}"
 if [ -z "$WEIGHTS_JSON" ]; then
-    WEIGHTS_JSON="$(ls -1t "$OUT_DIR"/weights_candidates_097_*.json 2>/dev/null | head -n 1 || true)"
+    if [ -f "$DEFAULT_TOP500_JSON" ]; then
+        WEIGHTS_JSON="$DEFAULT_TOP500_JSON"
+    else
+        WEIGHTS_JSON="$(ls -1t "$OUT_DIR"/weights_candidates_097_*.json 2>/dev/null | head -n 1 || true)"
+    fi
 fi
 
 if [ ! -f "$ONNX_PATH" ]; then
@@ -52,16 +58,16 @@ fi
 if [ -z "$WEIGHTS_JSON" ] || [ ! -f "$WEIGHTS_JSON" ]; then
     echo "Error: No valid weights JSON found."
     echo "Hint: pass a path as first argument, e.g."
-    echo "  ./test_rank_bits_from_previous_json.sh op_097/out/weights_candidates_097_YYYYMMDD-HHMMSS.json"
+    echo "  ./test_rank_bits_from_previous_json.sh op_097/weights_candidates_097_top500.json"
     exit 1
 fi
 
 PROVIDER="${PROVIDER:-cuda}"
-NUM_VAL_BATCHES="${NUM_VAL_BATCHES:-3}"
+NUM_VAL_BATCHES="${NUM_VAL_BATCHES:-8}"
 EVAL_SEQ_LEN="${EVAL_SEQ_LEN:-20}"
-TOP_B="${TOP_B:-5}"
+TOP_B="${TOP_B:-20}"
 BITSET="${BITSET:-exponent_sign}"
-EVAL_METRIC="${EVAL_METRIC:-loss}"
+EVAL_METRIC="${EVAL_METRIC:-"+diffx"}"
 OUT_JSON="${OUT_JSON:-op_097/important_bits_097_from_prev_weights.json}"
 
 echo "[Input] weights_json=$WEIGHTS_JSON"

@@ -1,5 +1,10 @@
 #!/bin/bash
-# Test gradient selection on ALL tensors (no restriction)
+#SBATCH -N 1
+#SBATCH -n 32
+#SBATCH -t 20:00:00
+#SBATCH -p gpu2
+#SBATCH --gres=gpu:1
+#SBATCH -A loni_depedlab11
 
 set -e
 
@@ -24,11 +29,14 @@ conda activate "$CONDA_ENV"
 
 echo ""
 echo "========================================="
-echo "Gradient Selection - ALL Tensors"
+echo "Gradient Selection - FULL Candidate Pool"
 echo "========================================="
 echo ""
-echo "WARNING: This will process ~313 FP16 tensors"
-echo "Expected time: ~30 minutes"
+echo "WARNING: Full-mode enabled:"
+echo "  - include all FP16 tensors"
+echo "  - include bias tensors"
+echo "  - keep all scalar candidates (no truncation)"
+echo "Expected time/storage: significantly larger than quick tests"
 echo ""
 
 # Test parameters
@@ -68,6 +76,7 @@ python op_097/important_bits_onnx.py \
     --gradient-epsilon 1e-3 \
     --gradient-torch-dtype auto \
     --top-w 500 \
+    --per-tensor-k 0 \
     --sample-all-weights \
     --num-val-batches 128 \
     --dataloader-inner-progress \
