@@ -280,38 +280,63 @@ def resolve_providers(provider_mode: str) -> List[str]:
     return ["CPUExecutionProvider"]
 
 
-def parse_bitset(name: str) -> List[int]:
-    key = name.strip().lower()
+def parse_bitset_with_mode(name: str) -> Tuple[List[int], str]:
+    raw = name.strip()
+    key = raw.lower()
+    if not key:
+        raise ValueError("bitset cannot be empty")
+
     if key in ("all", "full"):
-        return list(range(16))
+        return list(range(16)), "all"
     if key == "mantissa":
-        return list(range(10))
+        return list(range(10)), "mantissa"
     if key == "exponent":
-        return list(range(10, 15))
+        return list(range(10, 15)), "exp"
     if key in ("exponent_sign", "exp_sign", "exponent&sign"):
-        return list(range(10, 16))
+        return list(range(10, 16)), "sign_exp"
     if key == "sign":
-        return [15]
-    bits = [int(x) for x in key.split(",") if x.strip()]
-    for b in bits:
+        return [15], "sign"
+    if key.startswith(">="):
+        raw_k = key[2:].strip()
+        if not raw_k:
+            raise ValueError("Invalid >= specification: missing lower bound")
+        try:
+            k = int(raw_k)
+        except ValueError:
+            raise ValueError(f"Invalid >= specification: {key}")
+
+        if k < 0 or k > 15:
+            raise ValueError("fp16 bit must satisfy 0 <= k <= 15")
+
+        return list(range(k, 16)), f">={k}"
+
+    tokens = [x.strip() for x in key.split(",") if x.strip()]
+    if not tokens:
+        raise ValueError(f"Invalid bitset specification: {name!r}")
+
+    bits: List[int] = []
+    seen = set()
+    for token in tokens:
+        try:
+            b = int(token)
+        except ValueError:
+            raise ValueError(f"Invalid fp16 bit index: {token!r}")
         if b < 0 or b > 15:
             raise ValueError(f"fp16 bit out of range: {b}")
+        if b not in seen:
+            bits.append(b)
+            seen.add(b)
+    return bits, ",".join(str(b) for b in bits)
+
+
+def parse_bitset(name: str) -> List[int]:
+    bits, _ = parse_bitset_with_mode(name)
     return bits
 
 
 def canonical_bitset_mode(name: str) -> str:
-    key = name.strip().lower()
-    if key in ("all", "full"):
-        return "all"
-    if key == "mantissa":
-        return "mantissa"
-    if key == "exponent":
-        return "exp"
-    if key in ("exponent_sign", "exp_sign", "exponent&sign"):
-        return "sign_exp"
-    if key == "sign":
-        return "sign"
-    return "custom"
+    _, mode = parse_bitset_with_mode(name)
+    return mode
 
 
 def requested_model_keys(target_model: str) -> List[str]:
@@ -1486,8 +1511,7 @@ def main() -> None:
     policy_input_shapes: Dict[str, Tuple[int, ...]] = policy_metadata["input_shapes"]
 
     restrict = [x.strip() for x in args.restrict.split(",") if x.strip()] or None
-    bitset = parse_bitset(args.bitset)
-    bitset_mode = canonical_bitset_mode(args.bitset)
+    bitset, bitset_mode = parse_bitset_with_mode(args.bitset)
 
     models_for_selection: Dict[str, onnx.ModelProto] = {}
     need_both_models = args.weight_selection_method == "gradient"
