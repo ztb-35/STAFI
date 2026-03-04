@@ -1,12 +1,13 @@
 #!/bin/bash
 #SBATCH -N 1
 #SBATCH -n 32
-#SBATCH -t 10:00:00
+#SBATCH -t 72:00:00
 #SBATCH -p gpu2
 #SBATCH --gres=gpu:1
 #SBATCH -A loni_depedlab11
 
 set -euo pipefail
+module load cuda
 
 # Activate conda environment
 USER_NAME="${USER:-$(whoami)}"
@@ -61,7 +62,7 @@ python op_0103/important_bits_onnx.py \
    --weight-selection-method gradient \
    --target-model both \
    --data-root $DATA_ROOT \
-   --num-val-batches 8 \
+   --num-val-batches 128 \
    --eval-seq-len 20 \
    --top-w 500 \
    --per-tensor-k 0 \
@@ -71,7 +72,7 @@ python op_0103/important_bits_onnx.py \
    --weights-out op_0103/out/weights_candidates_0103_gpu.json \
    --out op_0103/out/important_bits_0103_gpu.json
 
-# # 3) 仅 rank-bits（使用已有 weights JSON）
+# 3) 仅 rank-bits（使用已有 weights JSON）
 # python op_0103/important_bits_onnx.py \
 #   --stage rank-bits \
 #   --provider cuda \
@@ -79,10 +80,11 @@ python op_0103/important_bits_onnx.py \
 #   --target-model both \
 #   --data-root $DATA_ROOT \
 #   --weights-in op_0103/out/weights_candidates_0103_gpu.json \
-#   --num-val-batches 8 \
+#   --num-val-batches 64 \
 #   --eval-seq-len 20 \
 #   --top-w 500 \
 #   --top-b 100 \
 #   --bitset ">=8" \
 #   --eval-metric +diffx \
 #   --out op_0103/out/important_bits_0103_from_prev_weights_gpu.json
+

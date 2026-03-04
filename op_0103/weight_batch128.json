@@ -1,0 +1,3016 @@
+{
+  "meta": {
+    "created_at": "2026-03-04T13:22:39",
+    "vision_onnx": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/models/driving_vision.onnx",
+    "policy_onnx": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/models/driving_policy.onnx",
+    "target_model": "both",
+    "restrict": null,
+    "allow_bias": false,
+    "top_w": 500,
+    "per_tensor_k": 0,
+    "num_candidates": 500,
+    "selection_method": "gradient"
+  },
+  "candidates": [
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1509,
+      "score": 5985.58154296875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2597,
+      "score": 5361.46435546875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 61200,
+      "score": 4727.95556640625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 61243,
+      "score": 4497.72021484375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4681,
+      "score": 4317.88916015625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 61329,
+      "score": 4229.88330078125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 6345,
+      "score": 3677.0869140625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 83216,
+      "score": 3644.07666015625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3365,
+      "score": 3588.212890625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 83259,
+      "score": 3466.18701171875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 14025,
+      "score": 3330.86376953125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 83345,
+      "score": 3262.349609375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 200976,
+      "score": 3254.340576171875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 54032,
+      "score": 3203.024658203125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 3785,
+      "score": 3188.97412109375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 201019,
+      "score": 3095.185546875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 54075,
+      "score": 3048.908203125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 14153,
+      "score": 3021.140869140625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 408336,
+      "score": 2960.42041015625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 201105,
+      "score": 2911.32275390625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 54161,
+      "score": 2865.548095703125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 408379,
+      "score": 2821.6123046875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1529,
+      "score": 2692.726806640625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 408465,
+      "score": 2649.974609375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 11849,
+      "score": 2633.9775390625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 181520,
+      "score": 2612.408935546875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 172304,
+      "score": 2549.775634765625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2617,
+      "score": 2502.74169921875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1534,
+      "score": 2498.906005859375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 181563,
+      "score": 2482.1220703125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 158480,
+      "score": 2440.57763671875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 172347,
+      "score": 2425.023681640625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4809,
+      "score": 2374.752685546875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 181649,
+      "score": 2338.069091796875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 158523,
+      "score": 2328.50537109375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 61248,
+      "score": 2311.189453125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 344336,
+      "score": 2303.702880859375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 172433,
+      "score": 2282.113525390625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 235792,
+      "score": 2234.5693359375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2725,
+      "score": 2203.528076171875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 262416,
+      "score": 2195.3623046875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 344379,
+      "score": 2191.763671875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 158609,
+      "score": 2184.941650390625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 235835,
+      "score": 2131.070068359375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 262459,
+      "score": 2084.8955078125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 344465,
+      "score": 2061.75146484375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.1.reparam_conv.weight",
+      "flat": 358,
+      "score": 2059.421142578125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 363792,
+      "score": 2048.86083984375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 218896,
+      "score": 2047.138427734375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.1.reparam_conv.weight",
+      "flat": 359,
+      "score": 2044.357177734375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.1.reparam_conv.weight",
+      "flat": 356,
+      "score": 2036.09814453125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.1.reparam_conv.weight",
+      "flat": 353,
+      "score": 2033.7545166015625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.1.reparam_conv.weight",
+      "flat": 357,
+      "score": 2019.005859375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.1.reparam_conv.weight",
+      "flat": 355,
+      "score": 2017.8154296875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.1.reparam_conv.weight",
+      "flat": 352,
+      "score": 2015.1553955078125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 6335,
+      "score": 2011.666259765625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 235921,
+      "score": 2000.229736328125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.1.reparam_conv.weight",
+      "flat": 354,
+      "score": 1998.568359375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.1.reparam_conv.weight",
+      "flat": 351,
+      "score": 1987.659423828125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 47376,
+      "score": 1971.52978515625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 262545,
+      "score": 1963.51220703125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 363835,
+      "score": 1948.843994140625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.0.blocks.0.token_mixer.reparam_conv.weight",
+      "flat": 552,
+      "score": 1947.981689453125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 218939,
+      "score": 1947.453125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4704,
+      "score": 1946.3363037109375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1472,
+      "score": 1938.9913330078125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.0.blocks.0.token_mixer.reparam_conv.weight",
+      "flat": 555,
+      "score": 1935.054443359375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1501,
+      "score": 1927.1236572265625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 6368,
+      "score": 1919.239990234375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.0.blocks.0.token_mixer.reparam_conv.weight",
+      "flat": 549,
+      "score": 1917.8775634765625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 47419,
+      "score": 1880.5638427734375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 193369,
+      "score": 1878.372314453125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 363921,
+      "score": 1833.6934814453125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 219025,
+      "score": 1832.0897216796875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 2320,
+      "score": 1826.6075439453125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2601,
+      "score": 1810.9425048828125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.blocks.1.layer_scale.gamma",
+      "flat": 312,
+      "score": 1805.035888671875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 184080,
+      "score": 1789.7437744140625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 83264,
+      "score": 1786.8179931640625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1502,
+      "score": 1771.0972900390625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.0.blocks.0.token_mixer.reparam_conv.weight",
+      "flat": 550,
+      "score": 1767.8531494140625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 47505,
+      "score": 1764.7672119140625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.0.blocks.0.token_mixer.reparam_conv.weight",
+      "flat": 554,
+      "score": 1751.574462890625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3385,
+      "score": 1750.280517578125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3941,
+      "score": 1744.541748046875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.0.blocks.0.token_mixer.reparam_conv.weight",
+      "flat": 556,
+      "score": 1741.040771484375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1532,
+      "score": 1737.8507080078125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.0.blocks.0.token_mixer.reparam_conv.weight",
+      "flat": 361,
+      "score": 1735.712890625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.0.blocks.0.token_mixer.reparam_conv.weight",
+      "flat": 553,
+      "score": 1735.292236328125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2589,
+      "score": 1734.9569091796875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 2363,
+      "score": 1732.1513671875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.0.blocks.0.token_mixer.reparam_conv.weight",
+      "flat": 551,
+      "score": 1727.3564453125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.0.blocks.0.token_mixer.reparam_conv.weight",
+      "flat": 360,
+      "score": 1723.94970703125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2560,
+      "score": 1721.44287109375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1513,
+      "score": 1716.6456298828125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.0.blocks.0.token_mixer.reparam_conv.weight",
+      "flat": 557,
+      "score": 1712.7147216796875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 184123,
+      "score": 1706.904052734375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.0.blocks.0.token_mixer.reparam_conv.weight",
+      "flat": 362,
+      "score": 1705.4130859375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 19728,
+      "score": 1699.6578369140625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4685,
+      "score": 1682.820556640625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.final_conv.reparam_conv.weight",
+      "flat": 5545,
+      "score": 1674.5228271484375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 209168,
+      "score": 1652.0029296875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1518,
+      "score": 1648.4697265625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1511,
+      "score": 1644.6298828125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 193367,
+      "score": 1639.867431640625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 2449,
+      "score": 1633.9921875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.0.blocks.0.token_mixer.reparam_conv.weight",
+      "flat": 364,
+      "score": 1624.46044921875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 53520,
+      "score": 1621.0567626953125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 19771,
+      "score": 1615.2064208984375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.0.blocks.0.token_mixer.reparam_conv.weight",
+      "flat": 363,
+      "score": 1613.341064453125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.0.blocks.0.token_mixer.reparam_conv.weight",
+      "flat": 365,
+      "score": 1606.7447509765625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1478,
+      "score": 1606.694580078125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1476,
+      "score": 1604.20947265625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 184209,
+      "score": 1602.5562744140625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 201024,
+      "score": 1592.89404296875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 7241,
+      "score": 1588.9290771484375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 209211,
+      "score": 1571.53955078125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 54080,
+      "score": 1564.855712890625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 53563,
+      "score": 1538.1756591796875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 19857,
+      "score": 1521.2811279296875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2620,
+      "score": 1520.107177734375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 365328,
+      "score": 1518.9716796875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1497,
+      "score": 1510.357666015625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 242960,
+      "score": 1506.313720703125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1533,
+      "score": 1505.617919921875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 66832,
+      "score": 1494.26806640625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 6297,
+      "score": 1493.2921142578125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1527,
+      "score": 1487.474365234375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 15305,
+      "score": 1479.0621337890625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 209297,
+      "score": 1478.443359375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1523,
+      "score": 1475.0032958984375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2606,
+      "score": 1472.06494140625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.0.blocks.0.token_mixer.reparam_conv.weight",
+      "flat": 367,
+      "score": 1471.435302734375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.blocks.1.layer_scale.gamma",
+      "flat": 445,
+      "score": 1463.5345458984375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.0.blocks.0.token_mixer.reparam_conv.weight",
+      "flat": 366,
+      "score": 1462.3980712890625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4700,
+      "score": 1459.8763427734375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.0.blocks.0.token_mixer.reparam_conv.weight",
+      "flat": 368,
+      "score": 1456.772705078125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 53649,
+      "score": 1450.5828857421875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2564,
+      "score": 1449.1341552734375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1521,
+      "score": 1447.376220703125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 408384,
+      "score": 1446.9459228515625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 365371,
+      "score": 1444.10009765625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1516,
+      "score": 1436.17236328125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 243003,
+      "score": 1433.14501953125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2621,
+      "score": 1430.7197265625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4683,
+      "score": 1430.1209716796875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 66875,
+      "score": 1421.346923828125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1519,
+      "score": 1417.440185546875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1490,
+      "score": 1413.7088623046875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2585,
+      "score": 1412.3135986328125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1479,
+      "score": 1412.06787109375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2599,
+      "score": 1411.2547607421875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1512,
+      "score": 1411.0745849609375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2587,
+      "score": 1404.935302734375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 371472,
+      "score": 1404.461181640625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1531,
+      "score": 1401.5640869140625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2566,
+      "score": 1396.9996337890625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1530,
+      "score": 1394.67529296875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4699,
+      "score": 1391.198974609375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 166672,
+      "score": 1388.29052734375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2561,
+      "score": 1388.1090087890625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 246617,
+      "score": 1378.501708984375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4710,
+      "score": 1367.0592041015625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 365457,
+      "score": 1360.7476806640625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1526,
+      "score": 1358.977783203125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 243089,
+      "score": 1348.0594482421875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 66961,
+      "score": 1337.4742431640625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.final_conv.reparam_conv.weight",
+      "flat": 5547,
+      "score": 1336.7564697265625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 371515,
+      "score": 1333.578857421875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 165136,
+      "score": 1330.3192138671875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 6349,
+      "score": 1329.8572998046875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 14029,
+      "score": 1322.850830078125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 5193,
+      "score": 1321.591796875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 166715,
+      "score": 1320.6771240234375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1500,
+      "score": 1319.2081298828125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4671,
+      "score": 1318.3382568359375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 390928,
+      "score": 1312.36376953125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1473,
+      "score": 1307.464111328125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1498,
+      "score": 1302.3565673828125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1505,
+      "score": 1301.721435546875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 3401,
+      "score": 1293.7119140625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1499,
+      "score": 1290.7093505859375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.blocks.1.layer_scale.gamma",
+      "flat": 382,
+      "score": 1281.5712890625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 181568,
+      "score": 1281.3062744140625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.blocks.1.layer_scale.gamma",
+      "flat": 377,
+      "score": 1275.457763671875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 8993,
+      "score": 1274.380859375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2586,
+      "score": 1272.7315673828125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2567,
+      "score": 1272.2923583984375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 165179,
+      "score": 1269.6435546875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 193140,
+      "score": 1269.2318115234375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 14015,
+      "score": 1265.7930908203125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1491,
+      "score": 1262.47607421875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1486,
+      "score": 1257.1044921875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 371601,
+      "score": 1256.7276611328125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2600,
+      "score": 1254.7950439453125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2607,
+      "score": 1251.940673828125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 390971,
+      "score": 1249.1864013671875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3369,
+      "score": 1248.2532958984375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 172352,
+      "score": 1245.4344482421875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2590,
+      "score": 1244.43212890625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 166801,
+      "score": 1242.3599853515625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2604,
+      "score": 1241.26708984375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2572,
+      "score": 1241.13671875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3328,
+      "score": 1238.9801025390625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.1.reparam_conv.weight",
+      "flat": 55,
+      "score": 1235.8658447265625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2619,
+      "score": 1233.5743408203125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.1.reparam_conv.weight",
+      "flat": 54,
+      "score": 1233.4688720703125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 6312,
+      "score": 1225.609619140625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 11977,
+      "score": 1224.2572021484375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1514,
+      "score": 1220.6826171875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.final_conv.reparam_conv.weight",
+      "flat": 5549,
+      "score": 1219.0032958984375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2611,
+      "score": 1218.3240966796875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 14143,
+      "score": 1210.8714599609375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2588,
+      "score": 1208.99560546875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 6284,
+      "score": 1207.2418212890625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 3789,
+      "score": 1206.926025390625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.1.reparam_conv.weight",
+      "flat": 56,
+      "score": 1204.034912109375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 282896,
+      "score": 1203.0169677734375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 201,
+      "score": 1202.5234375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 158528,
+      "score": 1193.1142578125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 6300,
+      "score": 1192.6038818359375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 13521,
+      "score": 1191.150634765625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 165265,
+      "score": 1191.05126953125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4640,
+      "score": 1190.9298095703125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 482064,
+      "score": 1187.4176025390625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 36342,
+      "score": 1185.5595703125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 391057,
+      "score": 1174.6048583984375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.blocks.1.layer_scale.gamma",
+      "flat": 103,
+      "score": 1168.9967041015625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2578,
+      "score": 1167.908935546875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1484,
+      "score": 1165.6431884765625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2618,
+      "score": 1165.447021484375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1481,
+      "score": 1164.5595703125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 3775,
+      "score": 1160.698974609375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 25431,
+      "score": 1158.2490234375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1520,
+      "score": 1144.6229248046875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3357,
+      "score": 1142.8365478515625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 57616,
+      "score": 1142.0894775390625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.blocks.0.layer_scale.gamma",
+      "flat": 49,
+      "score": 1141.4307861328125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 282939,
+      "score": 1140.691650390625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 14133,
+      "score": 1140.25048828125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.blocks.1.layer_scale.gamma",
+      "flat": 400,
+      "score": 1138.466552734375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2593,
+      "score": 1137.7823486328125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1489,
+      "score": 1137.462646484375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4661,
+      "score": 1135.8045654296875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.1.reparam_conv.weight",
+      "flat": 57,
+      "score": 1133.544677734375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2574,
+      "score": 1133.2689208984375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.1.reparam_conv.weight",
+      "flat": 58,
+      "score": 1129.490478515625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 482107,
+      "score": 1127.6824951171875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.1.reparam_conv.weight",
+      "flat": 59,
+      "score": 1125.8204345703125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 344384,
+      "score": 1125.8094482421875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.1.reparam_conv.weight",
+      "flat": 60,
+      "score": 1125.5089111328125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 613,
+      "score": 1117.04052734375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.1.reparam_conv.weight",
+      "flat": 61,
+      "score": 1113.089599609375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 179472,
+      "score": 1112.3641357421875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4675,
+      "score": 1111.093505859375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2623,
+      "score": 1110.4593505859375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4678,
+      "score": 1109.7900390625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 233744,
+      "score": 1108.3240966796875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2609,
+      "score": 1108.0401611328125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2569,
+      "score": 1104.74169921875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1535,
+      "score": 1102.8902587890625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 6384,
+      "score": 1099.5848388671875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 97625,
+      "score": 1097.4764404296875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.1.reparam_conv.weight",
+      "flat": 62,
+      "score": 1096.909912109375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 198416,
+      "score": 1094.793701171875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 235840,
+      "score": 1093.109375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 58640,
+      "score": 1091.8785400390625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4720,
+      "score": 1091.121337890625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2614,
+      "score": 1087.6512451171875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 6348,
+      "score": 1087.0980224609375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2608,
+      "score": 1086.825927734375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 57659,
+      "score": 1083.21630859375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 5705,
+      "score": 1082.62451171875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1506,
+      "score": 1077.45751953125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 283025,
+      "score": 1075.7242431640625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 6298,
+      "score": 1074.9071044921875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 262464,
+      "score": 1074.66064453125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2580,
+      "score": 1074.004150390625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4633,
+      "score": 1072.3377685546875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 171865,
+      "score": 1066.667724609375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.blocks.1.layer_scale.gamma",
+      "flat": 238,
+      "score": 1064.8858642578125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4425,
+      "score": 1063.8250732421875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 482193,
+      "score": 1062.8114013671875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 6397,
+      "score": 1061.585693359375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 179515,
+      "score": 1059.3321533203125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 6339,
+      "score": 1056.529541015625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 233787,
+      "score": 1055.635009765625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 14157,
+      "score": 1049.378173828125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4733,
+      "score": 1047.999267578125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 14172,
+      "score": 1046.1334228515625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 6306,
+      "score": 1045.5186767578125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 6291,
+      "score": 1040.6187744140625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 58683,
+      "score": 1040.5521240234375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 198459,
+      "score": 1039.709716796875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1492,
+      "score": 1038.0946044921875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3388,
+      "score": 1037.803955078125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1474,
+      "score": 1033.851318359375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2605,
+      "score": 1033.70263671875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2577,
+      "score": 1031.3984375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 36301,
+      "score": 1027.313720703125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.blocks.1.mlp.fc2.weight",
+      "flat": 684986,
+      "score": 1024.89990234375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 9289,
+      "score": 1023.075927734375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 57745,
+      "score": 1021.4356689453125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3389,
+      "score": 1020.5718994140625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 14161,
+      "score": 1018.3709106445312
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2571,
+      "score": 1013.42626953125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 13516,
+      "score": 1012.0464477539062
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 13368,
+      "score": 1009.8338623046875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3353,
+      "score": 1008.7479858398438
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3374,
+      "score": 1007.5355224609375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 363840,
+      "score": 1005.685546875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1517,
+      "score": 1004.903076171875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 6325,
+      "score": 1002.3569946289062
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 218944,
+      "score": 1002.0673217773438
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 193169,
+      "score": 998.1021118164062
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2602,
+      "score": 997.4904174804688
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3332,
+      "score": 997.3900756835938
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 179601,
+      "score": 996.4642944335938
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2615,
+      "score": 996.407958984375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2745,
+      "score": 996.0560302734375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4650,
+      "score": 994.116943359375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 39769,
+      "score": 993.2990112304688
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 233873,
+      "score": 992.1748046875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 198545,
+      "score": 979.8958740234375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4636,
+      "score": 979.1831665039062
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 58769,
+      "score": 977.7129516601562
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3367,
+      "score": 976.00830078125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 267024,
+      "score": 972.6743774414062
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 7264,
+      "score": 971.5519409179688
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 14114,
+      "score": 969.8338623046875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 6363,
+      "score": 966.7437133789062
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 47424,
+      "score": 962.4553833007812
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 13513,
+      "score": 956.9655151367188
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 13971,
+      "score": 955.9259643554688
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 193496,
+      "score": 950.099853515625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 11853,
+      "score": 949.4287109375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3334,
+      "score": 948.289794921875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 86288,
+      "score": 943.6804809570312
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 213264,
+      "score": 939.4210815429688
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2562,
+      "score": 937.536865234375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 193375,
+      "score": 937.0701904296875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 2257,
+      "score": 934.34130859375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3355,
+      "score": 932.4779663085938
+    },
+    {
+      "model": "vision",
+      "name": "summarizer.resblock.block_a.0.weight",
+      "flat": 100327,
+      "score": 930.1351928710938
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 9673,
+      "score": 929.6385498046875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 6287,
+      "score": 928.1419677734375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 267067,
+      "score": 925.152099609375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4645,
+      "score": 922.80126953125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 71952,
+      "score": 917.8147583007812
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 15313,
+      "score": 913.456787109375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 13387,
+      "score": 910.207275390625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 301328,
+      "score": 910.1945190429688
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1483,
+      "score": 909.891845703125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 301840,
+      "score": 908.5422973632812
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 14005,
+      "score": 908.3497314453125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4813,
+      "score": 908.2584228515625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3329,
+      "score": 908.1758422851562
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 13388,
+      "score": 905.3426513671875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 108816,
+      "score": 902.6713256835938
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 14122,
+      "score": 901.1283569335938
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 2368,
+      "score": 896.9801025390625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 213307,
+      "score": 896.482421875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 86331,
+      "score": 895.6609497070312
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.blocks.1.layer_scale.gamma",
+      "flat": 426,
+      "score": 895.0914306640625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 6317,
+      "score": 894.7273559570312
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 3740,
+      "score": 892.3609619140625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 15052,
+      "score": 880.0123901367188
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 10697,
+      "score": 877.745849609375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 9033,
+      "score": 876.9718017578125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 184128,
+      "score": 876.1178588867188
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4717,
+      "score": 875.9468383789062
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3358,
+      "score": 875.0071411132812
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 71995,
+      "score": 873.340576171875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 13980,
+      "score": 873.3243408203125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 267153,
+      "score": 870.4824829101562
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3335,
+      "score": 870.0081176757812
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 171664,
+      "score": 866.9439697265625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3354,
+      "score": 865.0809936523438
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 301371,
+      "score": 864.761962890625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 393488,
+      "score": 864.5498657226562
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 6273,
+      "score": 863.5849609375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 301883,
+      "score": 863.2249145507812
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 13322,
+      "score": 862.9395141601562
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 13367,
+      "score": 858.5574951171875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 108859,
+      "score": 857.9296875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 13559,
+      "score": 857.839599609375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 3746,
+      "score": 857.156005859375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 6314,
+      "score": 856.0003051757812
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 193202,
+      "score": 855.0032958984375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3375,
+      "score": 852.270263671875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 14173,
+      "score": 851.5556640625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 13530,
+      "score": 851.0421752929688
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 29649,
+      "score": 850.4163208007812
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3387,
+      "score": 849.9349975585938
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4697,
+      "score": 849.2625122070312
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 24026,
+      "score": 846.2619018554688
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 193386,
+      "score": 846.1130981445312
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 193137,
+      "score": 845.2245483398438
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 9176,
+      "score": 844.896728515625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 194391,
+      "score": 844.4505615234375
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 86417,
+      "score": 844.2412719726562
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 6303,
+      "score": 842.8580932617188
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3368,
+      "score": 841.7431640625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 14108,
+      "score": 841.5914916992188
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 231184,
+      "score": 841.5372924804688
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 13978,
+      "score": 841.473876953125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 14155,
+      "score": 841.0408325195312
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 213393,
+      "score": 840.6408081054688
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 36269,
+      "score": 840.638916015625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 25872,
+      "score": 840.3649291992188
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 13993,
+      "score": 839.708740234375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 29496,
+      "score": 835.093017578125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 29658,
+      "score": 833.5753784179688
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 353552,
+      "score": 832.4517211914062
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 29446,
+      "score": 831.8839111328125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 19776,
+      "score": 831.0718994140625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3340,
+      "score": 830.8235473632812
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4690,
+      "score": 830.705810546875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 6365,
+      "score": 830.3905639648438
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3379,
+      "score": 830.3639526367188
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 15160,
+      "score": 829.0956420898438
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 433936,
+      "score": 828.2547607421875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 23841,
+      "score": 827.9674072265625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3356,
+      "score": 826.5259399414062
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 13994,
+      "score": 826.3676147460938
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2622,
+      "score": 824.9696655273438
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4799,
+      "score": 823.8786010742188
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 6353,
+      "score": 823.7149658203125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 393531,
+      "score": 821.7672729492188
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 72081,
+      "score": 821.7515869140625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3372,
+      "score": 821.1829223632812
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 13525,
+      "score": 820.5955810546875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.final_conv.reparam_conv.weight",
+      "flat": 5147,
+      "score": 818.7987670898438
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.blocks.1.layer_scale.gamma",
+      "flat": 405,
+      "score": 818.7510986328125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4668,
+      "score": 814.489501953125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 193159,
+      "score": 814.3657836914062
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 301457,
+      "score": 814.0005493164062
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4649,
+      "score": 813.5595092773438
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 301969,
+      "score": 812.4773559570312
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2594,
+      "score": 811.3286743164062
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4609,
+      "score": 810.1982421875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 209216,
+      "score": 809.4990844726562
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 108945,
+      "score": 808.8631591796875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 36293,
+      "score": 805.9386596679688
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 231227,
+      "score": 804.7808837890625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.final_conv.reparam_conv.weight",
+      "flat": 5892,
+      "score": 804.6344604492188
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 11593,
+      "score": 803.1492309570312
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3386,
+      "score": 802.6893310546875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 11851,
+      "score": 802.6146240234375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4716,
+      "score": 802.5545654296875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 9195,
+      "score": 802.1597290039062
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4701,
+      "score": 800.4236450195312
+    },
+    {
+      "model": "vision",
+      "name": "summarizer.resblock.block_a.0.weight",
+      "flat": 407015,
+      "score": 799.312744140625
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 25915,
+      "score": 798.3735961914062
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 545,
+      "score": 797.421142578125
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 53568,
+      "score": 796.656982421875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3346,
+      "score": 795.5001831054688
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 353595,
+      "score": 794.9442749023438
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 24017,
+      "score": 793.3690185546875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 3737,
+      "score": 792.9573974609375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 14001,
+      "score": 789.4682006835938
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 3787,
+      "score": 789.1961059570312
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1508,
+      "score": 787.9682006835938
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 35872,
+      "score": 786.7733764648438
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3361,
+      "score": 786.6658325195312
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 433979,
+      "score": 786.0942993164062
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4657,
+      "score": 784.5179443359375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 3765,
+      "score": 783.1300659179688
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 193102,
+      "score": 781.6903076171875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 1524,
+      "score": 779.4691772460938
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3342,
+      "score": 779.2821044921875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.final_conv.reparam_conv.weight",
+      "flat": 5097,
+      "score": 778.2677612304688
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 69392,
+      "score": 777.4657592773438
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2729,
+      "score": 776.8056030273438
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 3757,
+      "score": 776.1947021484375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 193340,
+      "score": 774.1940307617188
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 393617,
+      "score": 773.8927001953125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 85335,
+      "score": 773.7667846679688
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 193366,
+      "score": 772.1387939453125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 39767,
+      "score": 768.8257446289062
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 298768,
+      "score": 767.29638671875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 25433,
+      "score": 767.1151733398438
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 13526,
+      "score": 766.703857421875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 13318,
+      "score": 766.0902709960938
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 14022,
+      "score": 765.0655517578125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3377,
+      "score": 764.0022583007812
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3391,
+      "score": 763.151123046875
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 193255,
+      "score": 762.4115600585938
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 442640,
+      "score": 761.53125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 193488,
+      "score": 760.6463012695312
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 16201,
+      "score": 760.4574584960938
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 9064,
+      "score": 755.401611328125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 6316,
+      "score": 755.0103759765625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3337,
+      "score": 754.5458374023438
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 26065,
+      "score": 753.9140014648438
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 231313,
+      "score": 753.7921142578125
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 193288,
+      "score": 753.5826416015625
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.2.downsample.proj.1.reparam_conv.weight",
+      "flat": 56529,
+      "score": 752.81982421875
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 26001,
+      "score": 752.507568359375
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 3382,
+      "score": 751.7208862304688
+    }
+  ]
+}
