@@ -26,9 +26,9 @@ from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 import numpy as np
 import onnx
-import onnxruntime as ort
 import torch
 import torch.nn.functional as F
+import onnxruntime as ort
 import cv2
 from onnx import TensorProto, numpy_helper
 from torch.utils.data import DataLoader
@@ -53,7 +53,25 @@ def make_session(model_bytes_or_path: Any, providers: Sequence[str]) -> ort.Infe
     so.intra_op_num_threads = 1
     so.inter_op_num_threads = 1
     so.graph_optimization_level = ort.GraphOptimizationLevel.ORT_DISABLE_ALL
-    return ort.InferenceSession(model_bytes_or_path, sess_options=so, providers=list(providers))
+    provider_cfg: List[Any] = []
+    for p in providers:
+        # RTX50 + recent CUDA stacks may hit cublas invalid-value on some GEMM paths
+        # and cuDNN frontend plan failures on exhaustive conv algo search.
+        # Use conservative CUDA EP options for stability.
+        if p == "CUDAExecutionProvider":
+            provider_cfg.append(
+                (
+                    "CUDAExecutionProvider",
+                    {
+                        "use_tf32": 0,
+                        "cudnn_conv_algo_search": "HEURISTIC",
+                        "cudnn_conv_use_max_workspace": 0,
+                    },
+                )
+            )
+        else:
+            provider_cfg.append(p)
+    return ort.InferenceSession(model_bytes_or_path, sess_options=so, providers=provider_cfg)
 
 
 def is_cuda_runtime_error(exc: BaseException) -> bool:
@@ -926,8 +944,7 @@ def build_torch_models_for_eval(
     device: torch.device,
 ) -> Tuple[torch.nn.Module, torch.nn.Module, List[str], List[str], torch.dtype, torch.dtype]:
     patch_torch_linear_dtype_mismatch()
-    if device.type == "cuda":
-        patch_onnx2torch_cuda_matmul()
+    patch_onnx2torch_cuda_matmul()
     vision_input_order = get_model_input_order(vision_model)
     policy_input_order = get_model_input_order(policy_model)
     vision_torch = convert_onnx_to_torch_with_compat(sanitize_onnx_for_onnx2torch(vision_model)).to(device)
