@@ -298,4 +298,3 @@ echo "[Done] Benchmark finished"
 echo "CSV:     $CSV_PATH"
 echo "Summary: $SUMMARY_PATH"
 echo ""
-
