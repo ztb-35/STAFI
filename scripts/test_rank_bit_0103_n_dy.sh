@@ -60,5 +60,5 @@ python op_0103/important_bits_onnx.py \
   --top-w 500 \
   --top-b 5 \
   --bitset ">=8" \
-  --eval-metric "-diffy" \
+  --eval-metric=-diffy \
   --out op_0103/out/important_bits_0103_n_dy.json

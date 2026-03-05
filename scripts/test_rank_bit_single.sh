@@ -6,7 +6,7 @@
  # @Email: ureinsecure@outlook.com
  # @Date: 2026-03-04 16:35:28
  # @LastEditors: Zx
- # @LastEditTime: 2026-03-05 14:00:40
+ # @LastEditTime: 2026-03-05 14:13:12
  # @FilePath: /STAFI/scripts/test_rank_bit_single.sh
 ### 
 #SBATCH -N 1
@@ -83,7 +83,7 @@ cd /home/xzha135/work/projects_ws/DAC/STAFI
 #    --out op_0103/out/important_bits_0103_gpu.json
 
 # 3) 仅 rank-bits（使用已有 weights JSON）
-python op_0103/important_bits_onnx.py \
+python op_0103/rank_single_bitflip_losses.py \
   --stage rank-bits \
   --provider cuda \
   --eval-backend torch \
