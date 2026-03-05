@@ -77,6 +77,37 @@ def decode_policy_losses(
     }, pred_pos
 
 
+def decode_policy_losses_torch(
+    policy_raw_outputs: torch.Tensor,
+    policy_output_slices: Dict[str, slice],
+    gt: torch.Tensor,
+) -> Tuple[Dict[str, float], torch.Tensor]:
+    out = policy_raw_outputs.float()
+    plan_slice = policy_output_slices["plan"]
+    plan_raw = out[:, plan_slice]
+    if plan_raw.shape[1] % 2 != 0:
+        raise ValueError(f"Unexpected policy plan width: {plan_raw.shape[1]}")
+
+    n_values = plan_raw.shape[1] // 2
+    if n_values % 33 != 0:
+        raise ValueError(f"Policy plan width is not divisible by 33: {n_values}")
+    plan_width = n_values // 33
+    if plan_width < 3:
+        raise ValueError(f"Policy plan width too small: {plan_width}")
+
+    pred_mu = plan_raw[:, :n_values].view(out.shape[0], 33, plan_width)
+    pred_pos = pred_mu[:, :, :3]
+
+    l_smooth_l1 = float(F.smooth_l1_loss(pred_pos, gt, reduction="mean").item())
+    l_l1 = float(F.l1_loss(pred_pos, gt, reduction="mean").item())
+    l_mse = float(F.mse_loss(pred_pos, gt, reduction="mean").item())
+    return {
+        "loss_smooth_l1": l_smooth_l1,
+        "loss_l1": l_l1,
+        "loss_mse": l_mse,
+    }, pred_pos
+
+
 def eval_metrics_for_session(
     vision_session: "ib.ort.InferenceSession",
     policy_session: "ib.ort.InferenceSession",
@@ -134,6 +165,72 @@ def eval_metrics_for_session(
     return {m: (float(np.mean(v)) if v else float("nan")) for m, v in vals.items()}
 
 
+def eval_metrics_for_torch_models(
+    vision_model_torch: torch.nn.Module,
+    policy_model_torch: torch.nn.Module,
+    cached_batches: Sequence[ib.CachedBatch],
+    vision_output_slices: Dict[str, slice],
+    policy_output_slices: Dict[str, slice],
+    policy_input_shapes: Dict[str, Tuple[int, ...]],
+    vision_input_order: Sequence[str],
+    policy_input_order: Sequence[str],
+    device: torch.device,
+    vision_input_dtype_torch: torch.dtype,
+    policy_input_dtype_torch: torch.dtype,
+    metrics: Sequence[str],
+) -> Dict[str, float]:
+    vals: Dict[str, List[float]] = {m: [] for m in metrics}
+    with torch.no_grad():
+        for cb in cached_batches:
+            imgs = torch.from_numpy(cb.seq_imgs12).to(device=device, dtype=vision_input_dtype_torch)
+            gt = cb.seq_gt.to(device=device, dtype=torch.float32)
+            bsz, t, _, _, _ = imgs.shape
+
+            desire_shape = policy_input_shapes["desire_pulse"]
+            features_shape = policy_input_shapes["features_buffer"]
+            traffic_shape = policy_input_shapes["traffic_convention"]
+            desire_len = ib.shape_dim(desire_shape, 1, 25)
+            desire_dim = ib.shape_dim(desire_shape, 2, 8)
+            feat_len = ib.shape_dim(features_shape, 1, 25)
+            feat_dim = ib.shape_dim(features_shape, 2, 512)
+            traffic_dim = ib.shape_dim(traffic_shape, 1, 2)
+
+            desire_pulse = torch.zeros((bsz, desire_len, desire_dim), device=device, dtype=policy_input_dtype_torch)
+            traffic = torch.zeros((bsz, traffic_dim), device=device, dtype=policy_input_dtype_torch)
+            if traffic_dim >= 2:
+                traffic[:, 0] = 1.0
+            features_buffer = torch.zeros((bsz, feat_len, feat_dim), device=device, dtype=policy_input_dtype_torch)
+
+            for ti in range(t):
+                vision_inputs = {"img": imgs[:, ti], "big_img": imgs[:, ti]}
+                vision_feed = [vision_inputs[k] for k in vision_input_order]
+                vision_raw = vision_model_torch(*vision_feed)
+                if not isinstance(vision_raw, torch.Tensor):
+                    raise RuntimeError(f"Unexpected vision torch output type: {type(vision_raw)}")
+
+                hidden = vision_raw[:, vision_output_slices["hidden_state"]].to(policy_input_dtype_torch)
+                features_buffer = torch.cat([features_buffer[:, 1:, :], hidden[:, None, :]], dim=1)
+
+                policy_inputs = {
+                    "desire_pulse": desire_pulse,
+                    "traffic_convention": traffic,
+                    "features_buffer": features_buffer,
+                }
+                policy_feed = [policy_inputs[k] for k in policy_input_order]
+                policy_raw = policy_model_torch(*policy_feed)
+                if not isinstance(policy_raw, torch.Tensor):
+                    raise RuntimeError(f"Unexpected policy torch output type: {type(policy_raw)}")
+
+                losses, pred_pos = decode_policy_losses_torch(policy_raw, policy_output_slices, gt[:, ti])
+                for m in metrics:
+                    if m in losses:
+                        vals[m].append(losses[m])
+                    elif m in {"+diffx", "-diffx", "+diffy", "-diffy"}:
+                        vals[m].append(ib.traj_metric(pred_pos.detach().cpu(), m))
+
+    return {m: (float(np.mean(v)) if v else float("nan")) for m, v in vals.items()}
+
+
 def eval_metrics_with_fallback(
     vision_model: object,
     policy_model: object,
@@ -185,6 +282,31 @@ def eval_metrics_with_fallback(
         raise
 
 
+def build_torch_flip_targets(
+    base_vision_model: onnx.ModelProto,
+    base_policy_model: onnx.ModelProto,
+    vision_model_torch: torch.nn.Module,
+    policy_model_torch: torch.nn.Module,
+    candidates: Sequence[Tuple[str, str, int, float]],
+    allow_bias: bool,
+    restrict: Optional[List[str]],
+) -> Dict[Tuple[str, str, int], ib.TorchFlipTarget]:
+    refs_by_model = {
+        "vision": ib.build_onnx_to_torch_refs(base_vision_model, vision_model_torch, allow_bias=allow_bias, restrict=restrict),
+        "policy": ib.build_onnx_to_torch_refs(base_policy_model, policy_model_torch, allow_bias=allow_bias, restrict=restrict),
+    }
+    flip_targets: Dict[Tuple[str, str, int], ib.TorchFlipTarget] = {}
+    for model_key, name, flat_idx, _score in candidates:
+        tref = refs_by_model.get(model_key, {}).get(name)
+        if tref is None:
+            continue
+        if flat_idx < 0 or flat_idx >= int(tref.numel()):
+            continue
+        idx = tuple(np.unravel_index(int(flat_idx), tuple(tref.shape)))
+        flip_targets[(model_key, name, int(flat_idx))] = ib.TorchFlipTarget(tensor=tref, index=idx)
+    return flip_targets
+
+
 def timestamp_id() -> str:
     return datetime.now().strftime("%Y%m%d-%H%M%S")
 
@@ -212,11 +334,12 @@ def get_args() -> argparse.Namespace:
     p.add_argument("--num-val-batches", type=int, default=2)
     p.add_argument("--eval-seq-len", type=int, default=20)
     p.add_argument("--provider", choices=["auto", "cpu", "cuda"], default="auto")
+    p.add_argument("--eval-backend", choices=["ort", "torch"], default="torch")
     p.add_argument("--target-model", choices=["vision", "policy", "both"], default="both")
     p.add_argument("--weights-in", default="", help="Optional precomputed weight candidates JSON")
     p.add_argument("--top-w", type=int, default=500)
     p.add_argument("--per-tensor-k", type=int, default=1)
-    p.add_argument("--allow-bias", action="store_true")
+    p.add_argument("--allow-bias", action=argparse.BooleanOptionalAction, default=True)
     p.add_argument("--restrict", default="")
     p.add_argument("--bitset", default="exponent_sign")
     p.add_argument("--metrics", default="loss_smooth_l1,loss_l1,loss_mse")
@@ -258,16 +381,39 @@ def main() -> None:
     if not cached_batches:
         raise RuntimeError("No validation batches cached. Check dataset path/splits.")
 
-    baseline_metrics, providers = eval_metrics_with_fallback(
-        args.vision_onnx,
-        args.policy_onnx,
-        providers,
-        cached_batches,
-        vision_output_slices,
-        policy_output_slices,
-        policy_input_shapes,
-        metrics,
-    )
+    torch_eval_device = torch.device("cuda" if (args.provider == "cuda" and torch.cuda.is_available()) else "cpu")
+    if args.eval_backend == "torch":
+        print(f"[Eval] using torch backend on device={torch_eval_device}")
+        v_torch, p_torch, v_order, p_order, v_dtype, p_dtype = ib.build_torch_models_for_eval(
+            onnx.load(args.vision_onnx),
+            onnx.load(args.policy_onnx),
+            device=torch_eval_device,
+        )
+        baseline_metrics = eval_metrics_for_torch_models(
+            v_torch,
+            p_torch,
+            cached_batches,
+            vision_output_slices,
+            policy_output_slices,
+            policy_input_shapes,
+            v_order,
+            p_order,
+            torch_eval_device,
+            v_dtype,
+            p_dtype,
+            metrics,
+        )
+    else:
+        baseline_metrics, providers = eval_metrics_with_fallback(
+            args.vision_onnx,
+            args.policy_onnx,
+            providers,
+            cached_batches,
+            vision_output_slices,
+            policy_output_slices,
+            policy_input_shapes,
+            metrics,
+        )
     print("[Baseline] " + ", ".join(f"{k}={v:.6f}" for k, v in baseline_metrics.items()))
 
     base_vision_model = onnx.load(args.vision_onnx)
@@ -314,25 +460,60 @@ def main() -> None:
         "vision": base_vision_model.SerializeToString(),
         "policy": base_policy_model.SerializeToString(),
     }
+    if args.eval_backend == "torch":
+        flip_targets = build_torch_flip_targets(
+            base_vision_model,
+            base_policy_model,
+            v_torch,
+            p_torch,
+            selected,
+            allow_bias=args.allow_bias,
+            restrict=restrict,
+        )
 
     records: List[Dict[str, object]] = []
     pbar = tqdm(pending, desc="Single-flip scan", unit="flip", dynamic_ncols=True)
     for model_key, name, flat_idx, bit, weight_score in pbar:
-        flipped_bytes, old, new = ib.make_flipped_model_bytes(base_model_bytes[model_key], name, flat_idx, bit)
-        if flipped_bytes is None:
-            continue
-        cand_vision_bytes = flipped_bytes if model_key == "vision" else base_model_bytes["vision"]
-        cand_policy_bytes = flipped_bytes if model_key == "policy" else base_model_bytes["policy"]
-        flipped_metrics, providers = eval_metrics_with_fallback(
-            cand_vision_bytes,
-            cand_policy_bytes,
-            providers,
-            cached_batches,
-            vision_output_slices,
-            policy_output_slices,
-            policy_input_shapes,
-            metrics,
-        )
+        if args.eval_backend == "torch":
+            target = flip_targets.get((model_key, name, int(flat_idx)))
+            if target is None:
+                continue
+            applied, old, new = ib.apply_torch_fp16_flip_inplace(target, bit)
+            if not applied:
+                continue
+            try:
+                flipped_metrics = eval_metrics_for_torch_models(
+                    v_torch,
+                    p_torch,
+                    cached_batches,
+                    vision_output_slices,
+                    policy_output_slices,
+                    policy_input_shapes,
+                    v_order,
+                    p_order,
+                    torch_eval_device,
+                    v_dtype,
+                    p_dtype,
+                    metrics,
+                )
+            finally:
+                ib.restore_torch_scalar_inplace(target, old)
+        else:
+            flipped_bytes, old, new = ib.make_flipped_model_bytes(base_model_bytes[model_key], name, flat_idx, bit)
+            if flipped_bytes is None:
+                continue
+            cand_vision_bytes = flipped_bytes if model_key == "vision" else base_model_bytes["vision"]
+            cand_policy_bytes = flipped_bytes if model_key == "policy" else base_model_bytes["policy"]
+            flipped_metrics, providers = eval_metrics_with_fallback(
+                cand_vision_bytes,
+                cand_policy_bytes,
+                providers,
+                cached_batches,
+                vision_output_slices,
+                policy_output_slices,
+                policy_input_shapes,
+                metrics,
+            )
         if not all(np.isfinite(v) for v in flipped_metrics.values()):
             continue
         delta = {m: float(flipped_metrics[m] - baseline_metrics[m]) for m in metrics}
@@ -370,7 +551,9 @@ def main() -> None:
             "val_index": os.path.abspath(args.val_index),
             "target_model": args.target_model,
             "provider": args.provider,
+            "eval_backend": args.eval_backend,
             "active_providers_end": providers,
+            "torch_device": str(torch_eval_device) if args.eval_backend == "torch" else "",
             "num_val_batches": int(args.num_val_batches),
             "eval_seq_len": int(args.eval_seq_len),
             "top_w": int(args.top_w),

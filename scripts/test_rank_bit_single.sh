@@ -6,7 +6,7 @@
  # @Email: ureinsecure@outlook.com
  # @Date: 2026-03-04 16:35:28
  # @LastEditors: Zx
- # @LastEditTime: 2026-03-05 14:13:12
+ # @LastEditTime: 2026-03-05 14:18:23
  # @FilePath: /STAFI/scripts/test_rank_bit_single.sh
 ### 
 #SBATCH -N 1
@@ -84,7 +84,6 @@ cd /home/xzha135/work/projects_ws/DAC/STAFI
 
 # 3) 仅 rank-bits（使用已有 weights JSON）
 python op_0103/rank_single_bitflip_losses.py \
-  --stage rank-bits \
   --provider cuda \
   --eval-backend torch \
   --target-model both \
@@ -93,7 +92,7 @@ python op_0103/rank_single_bitflip_losses.py \
   --num-val-batches 8 \
   --eval-seq-len 20 \
   --top-w 500 \
-  --top-b 500 \
   --bitset ">=8" \
-  --eval-metric "loss_mse,+diffx,-diffx,+diffy,-diffy" \
-  --out op_0103/out/important_bits_0103_gpu.json
+  --metrics=loss_mse,+diffx,-diffx,+diffy,-diffy \
+  --top-k 500 \
+  --out op_0103/out/single_flip_top_bits_0103_all_metrics.json
