@@ -6,7 +6,7 @@
  # @Email: ureinsecure@outlook.com
  # @Date: 2026-03-04 16:35:28
  # @LastEditors: Zx
- # @LastEditTime: 2026-03-04 16:36:08
+ # @LastEditTime: 2026-03-05 14:00:40
  # @FilePath: /STAFI/scripts/test_rank_bit_single.sh
 ### 
 #SBATCH -N 1
@@ -93,8 +93,7 @@ python op_0103/important_bits_onnx.py \
   --num-val-batches 8 \
   --eval-seq-len 20 \
   --top-w 500 \
-  --top-b 5 \
+  --top-b 500 \
   --bitset ">=8" \
-  --eval-metric +diffx \
+  --eval-metric "loss_mse,+diffx,-diffx,+diffy,-diffy" \
   --out op_0103/out/important_bits_0103_gpu.json
-
