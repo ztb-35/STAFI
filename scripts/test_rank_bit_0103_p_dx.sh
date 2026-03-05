@@ -6,7 +6,7 @@
  # @Email: ureinsecure@outlook.com
  # @Date: 2026-03-05 14:02:57
  # @LastEditors: Zx
- # @LastEditTime: 2026-03-05 14:09:00
+ # @LastEditTime: 2026-03-05 14:10:40
  # @FilePath: /STAFI/scripts/test_rank_bit_0103_p_dx.sh
 ### 
 #SBATCH -N 1
@@ -93,7 +93,7 @@ python op_0103/important_bits_onnx.py \
   --num-val-batches 8 \
   --eval-seq-len 20 \
   --top-w 500 \
-  --top-b 500 \
+  --top-b 5 \
   --bitset ">=8" \
   --eval-metric "+diffx" \
   --out op_0103/out/important_bits_0103_p_dx.json
