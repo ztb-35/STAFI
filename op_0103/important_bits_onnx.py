@@ -463,6 +463,15 @@ def build_loaders(args: argparse.Namespace) -> Tuple[DataLoader, DataLoader]:
         use_memcache=False,
         inner_progress=bool(args.dataloader_inner_progress),
     )
+    # Speed up cache/eval path: when eval_seq_len is provided, only decode/process
+    # as many timesteps as needed instead of dataset default (800).
+    if args.eval_seq_len > 0 and hasattr(val_ds, "fix_seq_length"):
+        old_len = int(getattr(val_ds, "fix_seq_length"))
+        new_len = min(old_len, int(args.eval_seq_len))
+        if new_len != old_len:
+            setattr(val_ds, "fix_seq_length", new_len)
+            print(f"[Data] val fix_seq_length: {old_len} -> {new_len} (from --eval-seq-len)")
+
     train_ds = SafeDataset(train_ds)
     val_ds = SafeDataset(val_ds)
 
@@ -884,58 +893,59 @@ def eval_metric_value_torch(
     policy_input_dtype_torch: torch.dtype,
     metric: str,
 ) -> float:
-    vals: List[float] = []
-    for cb in cached_batches:
-        imgs = torch.from_numpy(cb.seq_imgs12).to(device=device, dtype=vision_input_dtype_torch)
-        gt = cb.seq_gt.to(device=device, dtype=torch.float32)
-        bsz, t, _, _, _ = imgs.shape
+    with torch.no_grad():
+        vals: List[float] = []
+        for cb in cached_batches:
+            imgs = torch.from_numpy(cb.seq_imgs12).to(device=device, dtype=vision_input_dtype_torch)
+            gt = cb.seq_gt.to(device=device, dtype=torch.float32)
+            bsz, t, _, _, _ = imgs.shape
 
-        desire_shape = policy_input_shapes["desire_pulse"]
-        features_shape = policy_input_shapes["features_buffer"]
-        traffic_shape = policy_input_shapes["traffic_convention"]
-        desire_len = shape_dim(desire_shape, 1, 25)
-        desire_dim = shape_dim(desire_shape, 2, 8)
-        feat_len = shape_dim(features_shape, 1, 25)
-        feat_dim = shape_dim(features_shape, 2, 512)
-        traffic_dim = shape_dim(traffic_shape, 1, 2)
+            desire_shape = policy_input_shapes["desire_pulse"]
+            features_shape = policy_input_shapes["features_buffer"]
+            traffic_shape = policy_input_shapes["traffic_convention"]
+            desire_len = shape_dim(desire_shape, 1, 25)
+            desire_dim = shape_dim(desire_shape, 2, 8)
+            feat_len = shape_dim(features_shape, 1, 25)
+            feat_dim = shape_dim(features_shape, 2, 512)
+            traffic_dim = shape_dim(traffic_shape, 1, 2)
 
-        desire_pulse = torch.zeros((bsz, desire_len, desire_dim), device=device, dtype=policy_input_dtype_torch)
-        traffic = torch.zeros((bsz, traffic_dim), device=device, dtype=policy_input_dtype_torch)
-        if traffic_dim >= 2:
-            traffic[:, 0] = 1.0
-        features_buffer = torch.zeros((bsz, feat_len, feat_dim), device=device, dtype=policy_input_dtype_torch)
+            desire_pulse = torch.zeros((bsz, desire_len, desire_dim), device=device, dtype=policy_input_dtype_torch)
+            traffic = torch.zeros((bsz, traffic_dim), device=device, dtype=policy_input_dtype_torch)
+            if traffic_dim >= 2:
+                traffic[:, 0] = 1.0
+            features_buffer = torch.zeros((bsz, feat_len, feat_dim), device=device, dtype=policy_input_dtype_torch)
 
-        per_step_vals: List[float] = []
-        for i in range(t):
-            vision_inputs = {"img": imgs[:, i], "big_img": imgs[:, i]}
-            vision_feed = [vision_inputs[k] for k in vision_input_order]
-            vision_raw = vision_model_torch(*vision_feed)
-            if not isinstance(vision_raw, torch.Tensor):
-                raise RuntimeError(f"Unexpected vision torch output type: {type(vision_raw)}")
+            per_step_vals: List[float] = []
+            for i in range(t):
+                vision_inputs = {"img": imgs[:, i], "big_img": imgs[:, i]}
+                vision_feed = [vision_inputs[k] for k in vision_input_order]
+                vision_raw = vision_model_torch(*vision_feed)
+                if not isinstance(vision_raw, torch.Tensor):
+                    raise RuntimeError(f"Unexpected vision torch output type: {type(vision_raw)}")
 
-            hidden = vision_raw[:, vision_output_slices["hidden_state"]].to(policy_input_dtype_torch)
-            features_buffer = torch.cat([features_buffer[:, 1:, :], hidden[:, None, :]], dim=1)
+                hidden = vision_raw[:, vision_output_slices["hidden_state"]].to(policy_input_dtype_torch)
+                features_buffer = torch.cat([features_buffer[:, 1:, :], hidden[:, None, :]], dim=1)
 
-            policy_inputs = {
-                "desire_pulse": desire_pulse,
-                "traffic_convention": traffic,
-                "features_buffer": features_buffer,
-            }
-            policy_feed = [policy_inputs[k] for k in policy_input_order]
-            policy_raw = policy_model_torch(*policy_feed)
-            if not isinstance(policy_raw, torch.Tensor):
-                raise RuntimeError(f"Unexpected policy torch output type: {type(policy_raw)}")
+                policy_inputs = {
+                    "desire_pulse": desire_pulse,
+                    "traffic_convention": traffic,
+                    "features_buffer": features_buffer,
+                }
+                policy_feed = [policy_inputs[k] for k in policy_input_order]
+                policy_raw = policy_model_torch(*policy_feed)
+                if not isinstance(policy_raw, torch.Tensor):
+                    raise RuntimeError(f"Unexpected policy torch output type: {type(policy_raw)}")
 
-            loss_t, pred_pos = decode_policy_plan_torch(policy_raw, policy_output_slices, gt[:, i])
-            if metric == "loss":
-                per_step_vals.append(float(loss_t.detach().cpu().item()))
-            else:
-                per_step_vals.append(traj_metric(pred_pos.detach().cpu(), metric))
+                loss_t, pred_pos = decode_policy_plan_torch(policy_raw, policy_output_slices, gt[:, i])
+                if metric == "loss":
+                    per_step_vals.append(float(loss_t.detach().cpu().item()))
+                else:
+                    per_step_vals.append(traj_metric(pred_pos.detach().cpu(), metric))
 
-        if per_step_vals:
-            vals.append(float(np.mean(per_step_vals)))
+            if per_step_vals:
+                vals.append(float(np.mean(per_step_vals)))
 
-    return float(np.mean(vals)) if vals else float("nan")
+        return float(np.mean(vals)) if vals else float("nan")
 
 
 def build_torch_models_for_eval(
@@ -991,6 +1001,13 @@ def select_weight_candidates(
 def rank_bits_progressive_torch(
     base_vision_model: onnx.ModelProto,
     base_policy_model: onnx.ModelProto,
+    vision_model_torch: torch.nn.Module,
+    policy_model_torch: torch.nn.Module,
+    vision_input_order: Sequence[str],
+    policy_input_order: Sequence[str],
+    vision_input_dtype_torch: torch.dtype,
+    policy_input_dtype_torch: torch.dtype,
+    device: torch.device,
     original_score: float,
     cached_batches: Sequence[CachedBatch],
     vision_output_slices: Dict[str, slice],
@@ -1000,22 +1017,46 @@ def rank_bits_progressive_torch(
     bitset: Sequence[int],
     top_b: int,
     eval_metric: str,
-    device: torch.device,
 ) -> List[Dict[str, Any]]:
     if not np.isfinite(original_score):
         raise RuntimeError(f"Baseline metric score is non-finite: {original_score}")
 
-    current_model_bytes = {
-        "vision": base_vision_model.SerializeToString(),
-        "policy": base_policy_model.SerializeToString(),
+    refs_by_model = {
+        "vision": build_onnx_to_torch_refs(base_vision_model, vision_model_torch, allow_bias=True, restrict=None),
+        "policy": build_onnx_to_torch_refs(base_policy_model, policy_model_torch, allow_bias=True, restrict=None),
     }
+
+    flip_targets: Dict[Tuple[str, str, int], TorchFlipTarget] = {}
+    skipped_unmapped = 0
+    skipped_oob = 0
+    for model_key, name, flat_idx in candidates:
+        tref = refs_by_model.get(model_key, {}).get(name)
+        if tref is None:
+            skipped_unmapped += 1
+            continue
+        if flat_idx < 0 or flat_idx >= int(tref.numel()):
+            skipped_oob += 1
+            continue
+        idx = tuple(np.unravel_index(int(flat_idx), tuple(tref.shape)))
+        flip_targets[(model_key, name, int(flat_idx))] = TorchFlipTarget(tensor=tref, index=idx)
+
+    if skipped_unmapped > 0:
+        print(f"[RankTorch] skipped {skipped_unmapped} candidates due to unmapped ONNX initializers")
+    if skipped_oob > 0:
+        print(f"[RankTorch] skipped {skipped_oob} candidates due to out-of-bound flat index")
+
+    pending: List[Tuple[str, str, int, int]] = []
+    for model_key, name, flat_idx in candidates:
+        key = (model_key, name, int(flat_idx))
+        if key not in flip_targets:
+            continue
+        for bit in bitset:
+            pending.append((model_key, name, int(flat_idx), int(bit)))
+    if not pending:
+        return []
+
     current_score = float(original_score)
     records: List[Dict[str, Any]] = []
-
-    pending: List[Tuple[str, str, int, int]] = [(mk, n, fi, b) for (mk, n, fi) in candidates for b in bitset]
-    if not pending:
-        return records
-
     total_steps = min(top_b, len(pending))
     skipped_non_finite = 0
 
@@ -1028,40 +1069,34 @@ def rank_bits_progressive_torch(
         best_item: Optional[Dict[str, Any]] = None
         inner = tqdm(total=len(pending), desc=f"Scan step {step + 1}", unit="flip", leave=False, dynamic_ncols=True)
         for idx, (model_key, name, flat_idx, bit) in enumerate(pending):
-            model_bytes, old, new = make_flipped_model_bytes(current_model_bytes[model_key], name, flat_idx, int(bit))
-            if model_bytes is None:
+            target = flip_targets[(model_key, name, flat_idx)]
+            applied, old, new = apply_torch_fp16_flip_inplace(target, bit)
+            if not applied:
                 inner.update(1)
                 continue
 
-            cand_vision_bytes = model_bytes if model_key == "vision" else current_model_bytes["vision"]
-            cand_policy_bytes = model_bytes if model_key == "policy" else current_model_bytes["policy"]
-
-            cand_vision_model = onnx.load_from_string(cand_vision_bytes)
-            cand_policy_model = onnx.load_from_string(cand_policy_bytes)
             try:
-                v_torch, p_torch, v_order, p_order, v_dtype, p_dtype = build_torch_models_for_eval(
-                    cand_vision_model,
-                    cand_policy_model,
-                    device=device,
-                )
                 flipped_score = eval_metric_value_torch(
-                    v_torch,
-                    p_torch,
+                    vision_model_torch,
+                    policy_model_torch,
                     cached_batches,
                     vision_output_slices,
                     policy_output_slices,
                     policy_input_shapes,
-                    v_order,
-                    p_order,
+                    vision_input_order,
+                    policy_input_order,
                     device,
-                    v_dtype,
-                    p_dtype,
+                    vision_input_dtype_torch,
+                    policy_input_dtype_torch,
                     eval_metric,
                 )
             except Exception:
                 skipped_non_finite += 1
                 inner.update(1)
+                restore_torch_scalar_inplace(target, old)
                 continue
+
+            restore_torch_scalar_inplace(target, old)
 
             if not np.isfinite(flipped_score):
                 skipped_non_finite += 1
@@ -1083,8 +1118,6 @@ def rank_bits_progressive_torch(
                     "old": float(old),
                     "new": float(new),
                     "step": int(step + 1),
-                    "_vision_bytes": cand_vision_bytes,
-                    "_policy_bytes": cand_policy_bytes,
                 }
                 inner.set_postfix(best_score=f"{score:.4f}")
             inner.update(1)
@@ -1094,8 +1127,15 @@ def rank_bits_progressive_torch(
             print("[Rank] stop early: no finite candidate remained.")
             break
 
-        current_model_bytes["vision"] = best_item.pop("_vision_bytes")
-        current_model_bytes["policy"] = best_item.pop("_policy_bytes")
+        chosen = (best_item["model"], best_item["name"], int(best_item["flat"]), int(best_item["bit"]))
+        chosen_target = flip_targets[(chosen[0], chosen[1], chosen[2])]
+        applied, old, new = apply_torch_fp16_flip_inplace(chosen_target, chosen[3])
+        if not applied:
+            print("[Rank] stop early: best candidate became invalid at commit.")
+            break
+
+        best_item["old"] = float(old)
+        best_item["new"] = float(new)
         current_score = float(best_item["flipped_score"])
         records.append(best_item)
 
@@ -1104,7 +1144,6 @@ def rank_bits_progressive_torch(
         outer.set_postfix(current_score=f"{current_score:.4f}", kept=len(records), pending=len(pending), skipped_nan=skipped_non_finite)
     outer.close()
     return records
-
 
 def select_weight_candidates_by_gradient(
     models: Dict[str, onnx.ModelProto],
@@ -1248,6 +1287,37 @@ def make_flipped_model_bytes(base_bytes: bytes, name: str, flat_idx: int, bit: i
     raise KeyError(f"Initializer not found: {name}")
 
 
+@dataclass
+class TorchFlipTarget:
+    tensor: torch.Tensor
+    index: Tuple[int, ...]
+
+
+def fp16_flip_scalar(current_value: float, bit: int) -> Tuple[float, float]:
+    """Flip one fp16 bit on scalar value and return old/new float values."""
+    old = np.float16(current_value)
+    raw = np.array([old], dtype=np.float16).view(np.uint16)
+    raw[0] ^= np.uint16(1 << int(bit))
+    new = raw.view(np.float16)[0]
+    return float(old), float(new)
+
+
+def apply_torch_fp16_flip_inplace(target: TorchFlipTarget, bit: int) -> Tuple[bool, float, float]:
+    """Apply fp16 bit flip to one tensor element in-place. Return (applied, old, new)."""
+    old_val = float(target.tensor[target.index].detach().item())
+    old, new = fp16_flip_scalar(old_val, bit)
+    if (not np.isfinite(new)) or (new == old):
+        return False, old, old
+    with torch.no_grad():
+        target.tensor[target.index] = new
+    return True, old, new
+
+
+def restore_torch_scalar_inplace(target: TorchFlipTarget, value: float) -> None:
+    with torch.no_grad():
+        target.tensor[target.index] = value
+
+
 def rank_bits_progressive(
     base_vision_model: onnx.ModelProto,
     base_policy_model: onnx.ModelProto,
@@ -1388,6 +1458,9 @@ def save_weight_candidates(
     target_model: str,
     restrict: Optional[List[str]],
     allow_bias: bool,
+    batch_size: int,
+    num_val_batches: int,
+    eval_seq_len: int,
     top_w: int,
     per_tensor_k: int,
     selection_method: str = "magnitude",
@@ -1400,6 +1473,9 @@ def save_weight_candidates(
             "target_model": target_model,
             "restrict": restrict,
             "allow_bias": bool(allow_bias),
+            "batch_size": int(batch_size),
+            "num_val_batches": int(num_val_batches),
+            "eval_seq_len": int(eval_seq_len),
             "top_w": int(top_w),
             "per_tensor_k": int(per_tensor_k),
             "num_candidates": int(len(candidates)),
@@ -1462,7 +1538,7 @@ def get_args() -> argparse.Namespace:
     p.add_argument("--per-tensor-k", type=int, default=1, help="max scalars per tensor; <=0 means keep all scalars in each tensor")
     p.add_argument("--top-b", type=int, default=1)
     p.add_argument("--bitset", default="exponent_sign", help="fp16 bit set: mantissa/exponent/sign/exponent_sign/all or csv")
-    p.add_argument("--allow-bias", action="store_true")
+    p.add_argument("--allow-bias", action=argparse.BooleanOptionalAction, default=True)
     p.add_argument("--restrict", default="", help="comma-separated substrings to keep, e.g. Conv,Gemm")
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--stage", choices=["all", "select-weights", "rank-bits"], default="all")
@@ -1580,6 +1656,9 @@ def main() -> None:
             target_model=args.target_model,
             restrict=restrict,
             allow_bias=args.allow_bias,
+            batch_size=args.batch_size,
+            num_val_batches=args.num_val_batches,
+            eval_seq_len=args.eval_seq_len,
             top_w=args.top_w,
             per_tensor_k=args.per_tensor_k,
             selection_method=args.weight_selection_method,
@@ -1777,6 +1856,9 @@ def main() -> None:
                 target_model=args.target_model,
                 restrict=restrict,
                 allow_bias=args.allow_bias,
+                batch_size=args.batch_size,
+                num_val_batches=args.num_val_batches,
+                eval_seq_len=args.eval_seq_len,
                 top_w=args.top_w,
                 per_tensor_k=args.per_tensor_k,
                 selection_method=args.weight_selection_method,
@@ -1792,6 +1874,13 @@ def main() -> None:
         ranked = rank_bits_progressive_torch(
             base_vision_model=base_vision_model,
             base_policy_model=base_policy_model,
+            vision_model_torch=v_torch,
+            policy_model_torch=p_torch,
+            vision_input_order=v_order,
+            policy_input_order=p_order,
+            vision_input_dtype_torch=v_dtype,
+            policy_input_dtype_torch=p_dtype,
+            device=torch_eval_device,
             original_score=original_metric_score,
             cached_batches=cached_batches,
             vision_output_slices=vision_output_slices,
@@ -1801,7 +1890,6 @@ def main() -> None:
             bitset=bitset,
             top_b=args.top_b,
             eval_metric=args.eval_metric,
-            device=torch_eval_device,
         )
     else:
         ranked = rank_bits_progressive(

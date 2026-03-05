@@ -1,4 +1,14 @@
 #!/bin/bash
+###
+ # @Descripttion: 
+ # @version: 1.0
+ # @Author: Zx
+ # @Email: ureinsecure@outlook.com
+ # @Date: 2026-03-04 16:35:28
+ # @LastEditors: Zx
+ # @LastEditTime: 2026-03-04 16:36:08
+ # @FilePath: /STAFI/scripts/test_rank_bit_single.sh
+### 
 #SBATCH -N 1
 #SBATCH -n 32
 #SBATCH -t 72:00:00
