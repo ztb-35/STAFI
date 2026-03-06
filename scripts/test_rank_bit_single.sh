@@ -88,11 +88,11 @@ python op_0103/rank_single_bitflip_losses.py \
   --eval-backend torch \
   --target-model both \
   --data-root $DATA_ROOT \
-  --weights-in op_0103/weight_batch128.json \
+  --weights-in op_0103/out/weights_candidates_0103_with_bias_20260305-143550.json \
   --num-val-batches 8 \
   --eval-seq-len 20 \
-  --top-w 500 \
+  --top-w 3000 \
   --bitset ">=8" \
   --metrics=loss_mse,+diffx,-diffx,+diffy,-diffy \
-  --top-k 500 \
+  --top-k 3000 \
   --out op_0103/out/single_flip_top_bits_0103_all_metrics.json
