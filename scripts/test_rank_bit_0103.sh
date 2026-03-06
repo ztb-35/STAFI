@@ -1,6 +1,7 @@
 #!/bin/bash
 #SBATCH -N 1
-#SBATCH -n 32
+#SBATCH -n 1
+#SBATCH -c 32
 #SBATCH -t 72:00:00
 #SBATCH -p gpu2
 #SBATCH --gres=gpu:1

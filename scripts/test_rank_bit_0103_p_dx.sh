@@ -6,12 +6,13 @@
  # @Email: ureinsecure@outlook.com
  # @Date: 2026-03-05 14:02:57
  # @LastEditors: Zx
- # @LastEditTime: 2026-03-05 14:10:40
+ # @LastEditTime: 2026-03-05 14:49:25
  # @FilePath: /STAFI/scripts/test_rank_bit_0103_p_dx.sh
 ### 
 #SBATCH -N 1
-#SBATCH -n 32
-#SBATCH -t 24:00:00
+#SBATCH -n 1
+#SBATCH -c 32
+#SBATCH -t 72:00:00
 #SBATCH -p gpu2
 #SBATCH --gres=gpu:1
 #SBATCH -A loni_depedlab11

@@ -1,10 +1,53 @@
 #!/bin/bash
 #SBATCH -N 1
-#SBATCH -n 32
+#SBATCH -n 1
+#SBATCH -c 32
 #SBATCH -t 72:00:00
 #SBATCH -p gpu2
 #SBATCH --gres=gpu:1
 #SBATCH -A loni_depedlab11
+#SBATCH --cpu-bind=cores
+#SBATCH --hint=nomultithread
+
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+export MKL_NUM_THREADS=$SLURM_CPUS_PER_TASK
+
+echo "================ JOB INFO ================"
+echo "JOB ID: $SLURM_JOB_ID"
+echo "NODE: $SLURM_NODELIST"
+echo "CPUS PER TASK: $SLURM_CPUS_PER_TASK"
+echo "CUDA_VISIBLE_DEVICES: $CUDA_VISIBLE_DEVICES"
+echo "=========================================="
+
+echo
+echo "========== CPU INFO =========="
+lscpu
+echo "==============================="
+
+echo
+echo "========== NUMA INFO =========="
+numactl --hardware
+echo "================================"
+
+echo
+echo "========== GPU INFO =========="
+nvidia-smi
+echo "================================"
+
+echo
+echo "========== GPU TOPOLOGY =========="
+nvidia-smi topo -m
+echo "=================================="
+
+echo
+echo "========== CPU BINDING =========="
+taskset -p $$
+echo "================================="
+
+echo
+echo "========== ENVIRONMENT =========="
+env | grep SLURM
+echo "================================="
 
 set -euo pipefail
 module load cuda

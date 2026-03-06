@@ -6,11 +6,12 @@
  # @Email: ureinsecure@outlook.com
  # @Date: 2026-03-04 16:35:28
  # @LastEditors: Zx
- # @LastEditTime: 2026-03-05 14:18:23
+ # @LastEditTime: 2026-03-05 14:49:38
  # @FilePath: /STAFI/scripts/test_rank_bit_single.sh
 ### 
 #SBATCH -N 1
-#SBATCH -n 32
+#SBATCH -n 1
+#SBATCH -c 32
 #SBATCH -t 72:00:00
 #SBATCH -p gpu2
 #SBATCH --gres=gpu:1
