@@ -6,16 +6,58 @@
  # @Email: ureinsecure@outlook.com
  # @Date: 2026-03-05 14:06:12
  # @LastEditors: Zx
- # @LastEditTime: 2026-03-05 14:49:19
+ # @LastEditTime: 2026-03-05 18:34:44
  # @FilePath: /STAFI/scripts/test_rank_bit_0103_n_dy.sh
 ###
 #SBATCH -N 1
 #SBATCH -n 1
 #SBATCH -c 32
-#SBATCH -t 72:00:00
+#SBATCH -t 24:00:00
 #SBATCH -p gpu2
 #SBATCH --gres=gpu:1
 #SBATCH -A loni_depedlab11
+#SBATCH --cpu-bind=cores
+#SBATCH --hint=nomultithread
+
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+export MKL_NUM_THREADS=$SLURM_CPUS_PER_TASK
+
+echo "================ JOB INFO ================"
+echo "JOB ID: $SLURM_JOB_ID"
+echo "NODE: $SLURM_NODELIST"
+echo "CPUS PER TASK: $SLURM_CPUS_PER_TASK"
+echo "CUDA_VISIBLE_DEVICES: $CUDA_VISIBLE_DEVICES"
+echo "=========================================="
+
+echo
+echo "========== CPU INFO =========="
+lscpu
+echo "==============================="
+
+echo
+echo "========== NUMA INFO =========="
+numactl --hardware
+echo "================================"
+
+echo
+echo "========== GPU INFO =========="
+nvidia-smi
+echo "================================"
+
+echo
+echo "========== GPU TOPOLOGY =========="
+nvidia-smi topo -m
+echo "=================================="
+
+echo
+echo "========== CPU BINDING =========="
+taskset -p $$
+echo "================================="
+
+echo
+echo "========== ENVIRONMENT =========="
+env | grep SLURM
+echo "================================="
 
 set -euo pipefail
 module load cuda
