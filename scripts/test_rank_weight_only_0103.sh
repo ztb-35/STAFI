@@ -2,12 +2,13 @@
 #SBATCH -N 1
 #SBATCH -n 1
 #SBATCH -c 32
-#SBATCH -t 72:00:00
+#SBATCH -t 24:00:00
 #SBATCH -p gpu2
 #SBATCH --gres=gpu:1
 #SBATCH -A loni_depedlab11
-#SBATCH --cpu-bind=cores
-#SBATCH --hint=nomultithread
+
+set -euo pipefail
+module load cuda
 
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 export MKL_NUM_THREADS=$SLURM_CPUS_PER_TASK
@@ -48,9 +49,6 @@ echo
 echo "========== ENVIRONMENT =========="
 env | grep SLURM
 echo "================================="
-
-set -euo pipefail
-module load cuda
 
 USER_NAME="${USER:-$(whoami)}"
 if [ "$USER_NAME" = "zx" ]; then

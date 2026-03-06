@@ -6,7 +6,7 @@
  # @Email: ureinsecure@outlook.com
  # @Date: 2026-03-05 14:02:57
  # @LastEditors: Zx
- # @LastEditTime: 2026-03-05 18:34:47
+ # @LastEditTime: 2026-03-05 18:37:42
  # @FilePath: /STAFI/scripts/test_rank_bit_0103_p_dx.sh
 ### 
 #SBATCH -N 1
@@ -16,8 +16,9 @@
 #SBATCH -p gpu2
 #SBATCH --gres=gpu:1
 #SBATCH -A loni_depedlab11
-#SBATCH --cpu-bind=cores
-#SBATCH --hint=nomultithread
+
+set -euo pipefail
+module load cuda
 
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 export MKL_NUM_THREADS=$SLURM_CPUS_PER_TASK
@@ -58,9 +59,6 @@ echo
 echo "========== ENVIRONMENT =========="
 env | grep SLURM
 echo "================================="
-
-set -euo pipefail
-module load cuda
 
 # Activate conda environment
 USER_NAME="${USER:-$(whoami)}"
