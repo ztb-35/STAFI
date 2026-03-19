@@ -6,7 +6,7 @@
  # @Email: ureinsecure@outlook.com
  # @Date: 2026-03-05 14:06:12
  # @LastEditors: Zx
- # @LastEditTime: 2026-03-05 18:37:48
+ # @LastEditTime: 2026-03-19 15:11:59
  # @FilePath: /STAFI/scripts/test_rank_bit_0103_p_dy.sh
 ###
 #SBATCH -N 1
@@ -102,5 +102,6 @@ python op_0103/important_bits_onnx.py \
   --top-w 100 \
   --top-b 5 \
   --bitset ">=5" \
+  --per-tensor-k 0 \
   --eval-metric=+diffy \
   --out op_0103/out/important_bits_0103_taylor_seq100_b2_p_dy.json

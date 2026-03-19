@@ -1547,7 +1547,7 @@ def get_args() -> argparse.Namespace:
     p.add_argument("--batch-size", type=int, default=1)
     p.add_argument("--num-val-batches", type=int, default=2)
     p.add_argument("--top-w", type=int, default=50, help="global candidate cap; <=0 means keep all selected scalars")
-    p.add_argument("--per-tensor-k", type=int, default=1, help="max scalars per tensor; <=0 means keep all scalars in each tensor")
+    p.add_argument("--per-tensor-k", type=int, default=0, help="max scalars per tensor; <=0 means keep all scalars in each tensor")
     p.add_argument("--top-b", type=int, default=1)
     p.add_argument("--bitset", default="exponent_sign", help="fp16 bit set: mantissa/exponent/sign/exponent_sign/all or csv")
     p.add_argument("--allow-bias", action=argparse.BooleanOptionalAction, default=True)

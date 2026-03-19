@@ -51,3 +51,18 @@
 ```
 
 输出统一写到 `op_0103/out/`，文件名带时间戳。
+
+### 3) 按已有 `important_bits` JSON 导出翻转后的 ONNX
+
+例如基于 `op_0103/out/important_bits_0103_taylor_seq100_b2_p_dy_20260317-163910.json`，
+导出 `vision` 模型的前 3 个 bit flip，输出名会自动按 JSON 时间戳命名为
+`vision_model_20260317-163910_top3.onnx`：
+
+```bash
+.venv/bin/python op_0103/export_flipped_onnx.py \
+  --plan-json op_0103/out/important_bits_0103_taylor_seq100_b2_p_dy_20260317-163910.json \
+  --target-model vision \
+  --topn 3
+```
+
+默认输出到 `op_0103/out/`。也可用 `--target-model policy`，或 `--target-model both` 同时导出两个模型。
