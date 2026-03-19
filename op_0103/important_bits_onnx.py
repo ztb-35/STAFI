@@ -48,6 +48,19 @@ class CachedBatch:
     seq_gt: torch.Tensor
 
 
+@dataclass
+class CachedVisionRefs:
+    lane_lines: List[torch.Tensor]
+    lead_best: List[torch.Tensor]
+    lead_prob_best: List[torch.Tensor]
+
+
+MODEL_DT = 1.0 / 20.0
+LAT_SMOOTH_SECONDS = 0.1
+LONG_SMOOTH_SECONDS = 0.3
+MIN_LAT_CONTROL_SPEED = 0.3
+
+
 def make_session(model_bytes_or_path: Any, providers: Sequence[str]) -> ort.InferenceSession:
     so = ort.SessionOptions()
     so.intra_op_num_threads = 1
@@ -522,9 +535,8 @@ def decode_policy_plan(
         raise ValueError(f"Policy plan width too small: {plan_width}")
 
     pred_mu = plan_raw[:, :n_values].view(out.shape[0], 33, plan_width)
-    pred_pos = pred_mu[:, :, :3]
-    reg = F.smooth_l1_loss(pred_pos, gt, reduction="mean")
-    return float(reg.item()), pred_pos
+    reg = F.smooth_l1_loss(pred_mu[:, :, :3], gt, reduction="mean")
+    return float(reg.item()), pred_mu
 
 
 def decode_policy_plan_torch(
@@ -546,12 +558,154 @@ def decode_policy_plan_torch(
         raise ValueError(f"Policy plan width too small: {plan_width}")
 
     pred_mu = plan_raw[:, :n_values].view(out.shape[0], 33, plan_width)
-    pred_pos = pred_mu[:, :, :3]
-    reg = F.smooth_l1_loss(pred_pos, gt, reduction="mean")
-    return reg, pred_pos
+    reg = F.smooth_l1_loss(pred_mu[:, :, :3], gt, reduction="mean")
+    return reg, pred_mu
 
 
-def traj_metric(pred_pos: torch.Tensor, metric: str) -> float:
+def _split_lane_lines_torch(vision_raw_outputs: torch.Tensor, vision_output_slices: Dict[str, slice]) -> torch.Tensor:
+    lane_raw = vision_raw_outputs[:, vision_output_slices["lane_lines"]].float()
+    if lane_raw.shape[1] != 4 * 132:
+        raise ValueError(f"Unexpected lane_lines width: {lane_raw.shape[1]}")
+    return lane_raw.view(vision_raw_outputs.shape[0], 4, 2, 66)
+
+
+def _split_lead_torch(
+    vision_raw_outputs: torch.Tensor,
+    vision_output_slices: Dict[str, slice],
+) -> Tuple[torch.Tensor, torch.Tensor]:
+    lead_raw = vision_raw_outputs[:, vision_output_slices["lead"]].float()
+    lead_prob_raw = vision_raw_outputs[:, vision_output_slices["lead_prob"]].float()
+    num_modes = lead_prob_raw.shape[1]
+    if lead_raw.shape[1] != num_modes * 48:
+        raise ValueError(f"Unexpected lead width: {lead_raw.shape[1]} for num_modes={num_modes}")
+    return lead_raw.view(vision_raw_outputs.shape[0], num_modes, 48), torch.sigmoid(lead_prob_raw)
+
+
+def _lead_best_mode_torch(
+    vision_raw_outputs: torch.Tensor,
+    vision_output_slices: Dict[str, slice],
+) -> Tuple[torch.Tensor, torch.Tensor]:
+    lead, lead_prob = _split_lead_torch(vision_raw_outputs, vision_output_slices)
+    best_idx = torch.argmax(lead_prob, dim=1)
+    batch_idx = torch.arange(lead.shape[0], device=lead.device)
+    return lead[batch_idx, best_idx], lead_prob[batch_idx, best_idx]
+
+
+def _critical_vision_slices_finite_torch(
+    vision_raw_outputs: torch.Tensor,
+    vision_output_slices: Dict[str, slice],
+) -> bool:
+    critical_names = [
+        "meta",
+        "pose",
+        "wide_from_device_euler",
+        "road_transform",
+        "lane_lines",
+        "lane_lines_prob",
+        "road_edges",
+        "lead",
+        "lead_prob",
+        "hidden_state",
+    ]
+    for name in critical_names:
+        if name not in vision_output_slices:
+            continue
+        if not torch.isfinite(vision_raw_outputs[:, vision_output_slices[name]]).all().item():
+            return False
+    return True
+
+
+def _critical_vision_slices_finite_np(
+    vision_raw_outputs: np.ndarray,
+    vision_output_slices: Dict[str, slice],
+) -> bool:
+    critical_names = [
+        "meta",
+        "pose",
+        "wide_from_device_euler",
+        "road_transform",
+        "lane_lines",
+        "lane_lines_prob",
+        "road_edges",
+        "lead",
+        "lead_prob",
+        "hidden_state",
+    ]
+    for name in critical_names:
+        if name not in vision_output_slices:
+            continue
+        if not np.isfinite(vision_raw_outputs[:, vision_output_slices[name]]).all():
+            return False
+    return True
+
+
+def _metric_uses_clean_vision_ref(metric: str) -> bool:
+    return metric.startswith(("+lane", "-lane", "+lead", "-lead"))
+
+
+def _require_plan_width(pred_plan: torch.Tensor, min_width: int, metric: str) -> None:
+    if pred_plan.ndim != 3 or pred_plan.shape[2] < min_width:
+        raise ValueError(
+            f"Metric {metric} requires decoded policy plan width>={min_width}, got shape={tuple(pred_plan.shape)}"
+        )
+
+
+def _smooth_value_np(val: np.ndarray, prev_val: np.ndarray, tau: float, dt: float = MODEL_DT) -> np.ndarray:
+    alpha = 1.0 - np.exp(-dt / tau) if tau > 0 else 1.0
+    return alpha * val + (1.0 - alpha) * prev_val
+
+
+def _compute_action_targets_from_plan(
+    pred_plan: torch.Tensor,
+    prev_desired_accel: np.ndarray,
+    prev_desired_curvature: np.ndarray,
+    action_t: float = MODEL_DT,
+) -> Tuple[Dict[str, np.ndarray], np.ndarray, np.ndarray]:
+    _require_plan_width(pred_plan, 15, "action")
+
+    plan_np = pred_plan.detach().cpu().numpy()
+    t_idxs = 10.0 * (np.arange(33, dtype=np.float32) / 32.0) ** 2
+
+    speeds = plan_np[:, :, 3]
+    accels = plan_np[:, :, 6]
+    yaws = plan_np[:, :, 11]
+    yaw_rates = plan_np[:, :, 14]
+
+    v_now = speeds[:, 0]
+    a_now = accels[:, 0]
+    v_target = np.array([np.interp(action_t, t_idxs, spd) for spd in speeds], dtype=np.float32)
+    a_target = (2.0 * (v_target - v_now) / action_t) - a_now
+    desired_accel = _smooth_value_np(a_target, prev_desired_accel, LONG_SMOOTH_SECONDS)
+
+    psi_target = np.array([np.interp(action_t, t_idxs, yaw) for yaw in yaws], dtype=np.float32)
+    psi_rate = yaw_rates[:, 0]
+    v_ego = np.maximum(np.abs(v_now), 1.0)
+    desired_curvature_raw = 2.0 * (psi_target / (v_ego * action_t)) - (psi_rate / v_ego)
+    desired_curvature = np.where(
+        np.abs(v_now) > MIN_LAT_CONTROL_SPEED,
+        _smooth_value_np(desired_curvature_raw, prev_desired_curvature, LAT_SMOOTH_SECONDS),
+        prev_desired_curvature,
+    ).astype(np.float32, copy=False)
+
+    return (
+        {
+            "action.desiredAcceleration": desired_accel,
+            "action.desiredCurvature": desired_curvature,
+        },
+        desired_accel.astype(np.float32, copy=False),
+        desired_curvature,
+    )
+
+
+def output_metric_torch(
+    pred_pos: torch.Tensor,
+    vision_raw_outputs: torch.Tensor,
+    vision_output_slices: Dict[str, slice],
+    metric: str,
+    clean_vision_ref: Optional[CachedVisionRefs] = None,
+    step_idx: Optional[int] = None,
+    action_targets: Optional[Dict[str, np.ndarray]] = None,
+) -> float:
     if metric == "+diffx":
         return float(pred_pos[:, :, 0].mean().item())
     if metric == "-diffx":
@@ -560,13 +714,145 @@ def traj_metric(pred_pos: torch.Tensor, metric: str) -> float:
         return float(pred_pos[:, :, 1].mean().item())
     if metric == "-diffy":
         return float((-pred_pos[:, :, 1]).mean().item())
-    raise ValueError(f"Unknown trajectory metric: {metric}")
+    if metric == "+endx":
+        return float(pred_pos[:, -1, 0].mean().item())
+    if metric == "-endx":
+        return float((-pred_pos[:, -1, 0]).mean().item())
+    if metric == "+endy":
+        return float(pred_pos[:, -1, 1].mean().item())
+    if metric == "-endy":
+        return float((-pred_pos[:, -1, 1]).mean().item())
+    if metric == "modelV2.position.x":
+        return float(pred_pos[:, :, 0].mean().item())
+    if metric == "modelV2.velocity.x":
+        _require_plan_width(pred_pos, 6, metric)
+        return float(pred_pos[:, :, 3].mean().item())
+    if metric == "modelV2.acceleration.x":
+        _require_plan_width(pred_pos, 9, metric)
+        return float(pred_pos[:, :, 6].mean().item())
+    if metric == "action.desiredAcceleration":
+        if action_targets is None:
+            raise ValueError(f"Metric {metric} requires action_targets.")
+        return float(np.mean(action_targets[metric]))
+    if metric == "-action.desiredAcceleration":
+        if action_targets is None:
+            raise ValueError(f"Metric {metric} requires action_targets.")
+        return float(-np.mean(action_targets["action.desiredAcceleration"]))
+    if metric == "action.desiredCurvature":
+        if action_targets is None:
+            raise ValueError(f"Metric {metric} requires action_targets.")
+        return float(np.mean(action_targets[metric]))
+    if metric == "-action.desiredCurvature":
+        if action_targets is None:
+            raise ValueError(f"Metric {metric} requires action_targets.")
+        return float(-np.mean(action_targets["action.desiredCurvature"]))
+    if metric in {"+lanex", "-lanex", "+laney", "-laney"}:
+        if clean_vision_ref is None or step_idx is None:
+            raise ValueError(f"Metric {metric} requires clean vision references.")
+        lane = _split_lane_lines_torch(vision_raw_outputs, vision_output_slices)
+        lane = lane - clean_vision_ref.lane_lines[step_idx]
+        axis = 0 if metric.endswith("x") else 1
+        val = lane[:, :, axis, :].mean()
+        return float(val.item()) if metric.startswith("+") else float((-val).item())
+    if metric in {"+leadx", "-leadx", "+leady", "-leady"}:
+        if clean_vision_ref is None or step_idx is None:
+            raise ValueError(f"Metric {metric} requires clean vision references.")
+        lead_best, _ = _lead_best_mode_torch(vision_raw_outputs, vision_output_slices)
+        lead_best = lead_best - clean_vision_ref.lead_best[step_idx]
+        idxs = slice(0, 48, 4) if metric.endswith("x") else slice(1, 48, 4)
+        val = lead_best[:, idxs].mean()
+        return float(val.item()) if metric.startswith("+") else float((-val).item())
+    if metric == "+leadprob":
+        if clean_vision_ref is None or step_idx is None:
+            raise ValueError(f"Metric {metric} requires clean vision references.")
+        _, lead_prob_best = _lead_best_mode_torch(vision_raw_outputs, vision_output_slices)
+        return float((lead_prob_best - clean_vision_ref.lead_prob_best[step_idx]).mean().item())
+    if metric == "-leadprob":
+        if clean_vision_ref is None or step_idx is None:
+            raise ValueError(f"Metric {metric} requires clean vision references.")
+        _, lead_prob_best = _lead_best_mode_torch(vision_raw_outputs, vision_output_slices)
+        return float((-(lead_prob_best - clean_vision_ref.lead_prob_best[step_idx]).mean()).item())
+    raise ValueError(f"Unknown metric: {metric}")
+
+
+def traj_metric(pred_pos: torch.Tensor, metric: str) -> float:
+    if metric.startswith(("+lane", "-lane", "+lead", "-lead")):
+        raise ValueError(f"Metric {metric} requires vision outputs; use output_metric_torch instead.")
+    return output_metric_torch(
+        pred_pos=pred_pos,
+        vision_raw_outputs=pred_pos.new_zeros((pred_pos.shape[0], 0)),
+        vision_output_slices={},
+        metric=metric,
+    )
+
+
+def collect_clean_vision_refs_ort(
+    vision_session: ort.InferenceSession,
+    cached_batches: Sequence[CachedBatch],
+    vision_output_slices: Dict[str, slice],
+    vision_input_dtype: np.dtype,
+) -> List[CachedVisionRefs]:
+    refs: List[CachedVisionRefs] = []
+    for cb in cached_batches:
+        _bsz, t, _, _, _ = cb.seq_imgs12.shape
+        lane_steps: List[torch.Tensor] = []
+        lead_steps: List[torch.Tensor] = []
+        lead_prob_steps: List[torch.Tensor] = []
+        for ti in range(t):
+            vision_inputs = {
+                "img": cast_vision_input_for_ort(cb.seq_imgs12[:, ti], vision_input_dtype),
+                "big_img": cast_vision_input_for_ort(cb.seq_imgs12[:, ti], vision_input_dtype),
+            }
+            vision_raw = vision_session.run(["outputs"], vision_inputs)[0]
+            if not _critical_vision_slices_finite_np(vision_raw, vision_output_slices):
+                raise RuntimeError("Clean vision outputs contain non-finite values.")
+            vision_t = torch.from_numpy(vision_raw.astype(np.float32))
+            lane_steps.append(_split_lane_lines_torch(vision_t, vision_output_slices))
+            lead_best, lead_prob_best = _lead_best_mode_torch(vision_t, vision_output_slices)
+            lead_steps.append(lead_best)
+            lead_prob_steps.append(lead_prob_best)
+        refs.append(CachedVisionRefs(lane_lines=lane_steps, lead_best=lead_steps, lead_prob_best=lead_prob_steps))
+    return refs
+
+
+def collect_clean_vision_refs_torch(
+    vision_model_torch: torch.nn.Module,
+    cached_batches: Sequence[CachedBatch],
+    vision_output_slices: Dict[str, slice],
+    vision_input_order: Sequence[str],
+    device: torch.device,
+    vision_input_dtype_torch: torch.dtype,
+) -> List[CachedVisionRefs]:
+    refs: List[CachedVisionRefs] = []
+    with torch.no_grad():
+        for cb in cached_batches:
+            imgs = torch.from_numpy(cb.seq_imgs12).to(device=device, dtype=vision_input_dtype_torch)
+            _bsz, t, _, _, _ = imgs.shape
+            lane_steps: List[torch.Tensor] = []
+            lead_steps: List[torch.Tensor] = []
+            lead_prob_steps: List[torch.Tensor] = []
+            for ti in range(t):
+                vision_inputs = {"img": imgs[:, ti], "big_img": imgs[:, ti]}
+                vision_feed = [vision_inputs[k] for k in vision_input_order]
+                vision_raw = vision_model_torch(*vision_feed)
+                if not isinstance(vision_raw, torch.Tensor):
+                    raise RuntimeError(f"Unexpected vision torch output type: {type(vision_raw)}")
+                if not _critical_vision_slices_finite_torch(vision_raw, vision_output_slices):
+                    raise RuntimeError("Clean vision outputs contain non-finite values.")
+                vision_cpu = vision_raw.detach().cpu().float()
+                lane_steps.append(_split_lane_lines_torch(vision_cpu, vision_output_slices))
+                lead_best, lead_prob_best = _lead_best_mode_torch(vision_cpu, vision_output_slices)
+                lead_steps.append(lead_best)
+                lead_prob_steps.append(lead_prob_best)
+            refs.append(CachedVisionRefs(lane_lines=lane_steps, lead_best=lead_steps, lead_prob_best=lead_prob_steps))
+    return refs
 
 
 def eval_metric_for_sequence(
     vision_session: ort.InferenceSession,
     policy_session: ort.InferenceSession,
     batch: CachedBatch,
+    clean_vision_ref: Optional[CachedVisionRefs],
     vision_output_slices: Dict[str, slice],
     policy_output_slices: Dict[str, slice],
     vision_input_dtype: np.dtype,
@@ -592,6 +878,8 @@ def eval_metric_for_sequence(
     features_buffer = np.zeros((bsz, feat_len, feat_dim), dtype=policy_input_dtype)
 
     values: List[float] = []
+    prev_desired_accel = np.zeros((bsz,), dtype=np.float32)
+    prev_desired_curvature = np.zeros((bsz,), dtype=np.float32)
     for ti in range(t):
         vision_inputs = {
             "img": cast_vision_input_for_ort(batch.seq_imgs12[:, ti], vision_input_dtype),
@@ -608,12 +896,34 @@ def eval_metric_for_sequence(
             "features_buffer": features_buffer,
         }
         policy_raw = policy_session.run(["outputs"], policy_inputs)[0]
+        if not _critical_vision_slices_finite_np(vision_raw, vision_output_slices):
+            return float("nan")
+        if not np.isfinite(policy_raw[:, policy_output_slices["plan"]]).all():
+            return float("nan")
         loss, pred_pos = decode_policy_plan(policy_raw, policy_output_slices, batch.seq_gt[:, ti])
 
         if metric == "loss":
             values.append(loss)
         else:
-            values.append(traj_metric(pred_pos, metric))
+            action_targets = None
+            if metric.startswith("action."):
+                action_targets, prev_desired_accel, prev_desired_curvature = _compute_action_targets_from_plan(
+                    pred_pos,
+                    prev_desired_accel,
+                    prev_desired_curvature,
+                )
+            vision_t = torch.from_numpy(vision_raw.astype(np.float32))
+            values.append(
+                output_metric_torch(
+                    pred_pos,
+                    vision_t,
+                    vision_output_slices,
+                    metric,
+                    clean_vision_ref=clean_vision_ref,
+                    step_idx=ti,
+                    action_targets=action_targets,
+                )
+            )
 
     return float(np.mean(values)) if values else float("nan")
 
@@ -622,6 +932,7 @@ def eval_metric_value(
     vision_session: ort.InferenceSession,
     policy_session: ort.InferenceSession,
     cached_batches: Sequence[CachedBatch],
+    clean_vision_refs: Optional[Sequence[CachedVisionRefs]],
     vision_output_slices: Dict[str, slice],
     policy_output_slices: Dict[str, slice],
     vision_input_dtype: np.dtype,
@@ -630,11 +941,12 @@ def eval_metric_value(
     metric: str,
 ) -> float:
     vals: List[float] = []
-    for cb in cached_batches:
+    for batch_idx, cb in enumerate(cached_batches):
         score = eval_metric_for_sequence(
             vision_session,
             policy_session,
             cb,
+            None if clean_vision_refs is None else clean_vision_refs[batch_idx],
             vision_output_slices,
             policy_output_slices,
             vision_input_dtype,
@@ -883,6 +1195,7 @@ def eval_metric_value_torch(
     vision_model_torch: torch.nn.Module,
     policy_model_torch: torch.nn.Module,
     cached_batches: Sequence[CachedBatch],
+    clean_vision_refs: Optional[Sequence[CachedVisionRefs]],
     vision_output_slices: Dict[str, slice],
     policy_output_slices: Dict[str, slice],
     policy_input_shapes: Dict[str, Tuple[int, ...]],
@@ -895,7 +1208,7 @@ def eval_metric_value_torch(
 ) -> float:
     with torch.no_grad():
         vals: List[float] = []
-        for cb in cached_batches:
+        for batch_idx, cb in enumerate(cached_batches):
             imgs = torch.from_numpy(cb.seq_imgs12).to(device=device, dtype=vision_input_dtype_torch)
             gt = cb.seq_gt.to(device=device, dtype=torch.float32)
             bsz, t, _, _, _ = imgs.shape
@@ -914,6 +1227,8 @@ def eval_metric_value_torch(
             if traffic_dim >= 2:
                 traffic[:, 0] = 1.0
             features_buffer = torch.zeros((bsz, feat_len, feat_dim), device=device, dtype=policy_input_dtype_torch)
+            prev_desired_accel = np.zeros((bsz,), dtype=np.float32)
+            prev_desired_curvature = np.zeros((bsz,), dtype=np.float32)
 
             per_step_vals: List[float] = []
             for i in range(t):
@@ -936,11 +1251,32 @@ def eval_metric_value_torch(
                 if not isinstance(policy_raw, torch.Tensor):
                     raise RuntimeError(f"Unexpected policy torch output type: {type(policy_raw)}")
 
+                if not _critical_vision_slices_finite_torch(vision_raw, vision_output_slices):
+                    return float("nan")
+                if not torch.isfinite(policy_raw[:, policy_output_slices["plan"]]).all().item():
+                    return float("nan")
                 loss_t, pred_pos = decode_policy_plan_torch(policy_raw, policy_output_slices, gt[:, i])
                 if metric == "loss":
                     per_step_vals.append(float(loss_t.detach().cpu().item()))
                 else:
-                    per_step_vals.append(traj_metric(pred_pos.detach().cpu(), metric))
+                    action_targets = None
+                    if metric.startswith("action."):
+                        action_targets, prev_desired_accel, prev_desired_curvature = _compute_action_targets_from_plan(
+                            pred_pos.detach().cpu(),
+                            prev_desired_accel,
+                            prev_desired_curvature,
+                        )
+                    per_step_vals.append(
+                        output_metric_torch(
+                            pred_pos.detach().cpu(),
+                            vision_raw.detach().cpu().float(),
+                            vision_output_slices,
+                            metric,
+                            clean_vision_ref=None if clean_vision_refs is None else clean_vision_refs[batch_idx],
+                            step_idx=i,
+                            action_targets=action_targets,
+                        )
+                    )
 
             if per_step_vals:
                 vals.append(float(np.mean(per_step_vals)))
@@ -1010,6 +1346,7 @@ def rank_bits_progressive_torch(
     device: torch.device,
     original_score: float,
     cached_batches: Sequence[CachedBatch],
+    clean_vision_refs: Optional[Sequence[CachedVisionRefs]],
     vision_output_slices: Dict[str, slice],
     policy_output_slices: Dict[str, slice],
     policy_input_shapes: Dict[str, Tuple[int, ...]],
@@ -1080,6 +1417,7 @@ def rank_bits_progressive_torch(
                     vision_model_torch,
                     policy_model_torch,
                     cached_batches,
+                    clean_vision_refs,
                     vision_output_slices,
                     policy_output_slices,
                     policy_input_shapes,
@@ -1335,6 +1673,7 @@ def rank_bits_progressive(
     base_policy_model: onnx.ModelProto,
     original_score: float,
     cached_batches: Sequence[CachedBatch],
+    clean_vision_refs: Optional[Sequence[CachedVisionRefs]],
     vision_output_slices: Dict[str, slice],
     policy_output_slices: Dict[str, slice],
     policy_input_shapes: Dict[str, Tuple[int, ...]],
@@ -1388,6 +1727,7 @@ def rank_bits_progressive(
                     vision_sess,
                     policy_sess,
                     cached_batches,
+                    clean_vision_refs,
                     vision_output_slices,
                     policy_output_slices,
                     vision_dtype,
@@ -1407,6 +1747,7 @@ def rank_bits_progressive(
                         vision_sess,
                         policy_sess,
                         cached_batches,
+                        clean_vision_refs,
                         vision_output_slices,
                         policy_output_slices,
                         vision_dtype,
@@ -1558,9 +1899,19 @@ def get_args() -> argparse.Namespace:
     p.add_argument("--weights-out", default=str(root / "op_0103" / "weights_candidates_0103.json"))
     p.add_argument(
         "--eval-metric",
-        choices=["loss", "+diffx", "-diffx", "+diffy", "-diffy"],
+        choices=[
+            "loss",
+            "action.desiredCurvature", "-action.desiredCurvature",
+            "action.desiredAcceleration", "-action.desiredAcceleration",
+            "modelV2.position.x", "modelV2.velocity.x", "modelV2.acceleration.x",
+            "+diffx", "-diffx", "+diffy", "-diffy",
+            "+endx", "-endx", "+endy", "-endy",
+            "+lanex", "-lanex", "+laney", "-laney",
+            "+leadx", "-leadx", "+leady", "-leady",
+            "+leadprob", "-leadprob",
+        ],
         default="loss",
-        help="ranking score: loss delta, or signed trajectory delta on final policy trajectory",
+        help="ranking score: plan loss, selected modelV2/action proxies, lane-line delta, lead delta, or lead-prob delta",
     )
     p.add_argument("--out", default=str(root / "op_0103" / "important_bits_0103.json"))
     p.add_argument("--eval-seq-len", type=int, default=20, help="timesteps used per cached sequence; <=0 means full sequence")
@@ -1605,6 +1956,7 @@ def main() -> None:
     result_out_path = with_timestamp(args.out, run_ts, out_dir)
     providers = resolve_providers(args.provider)
     print(f"[ORT] providers={providers}")
+    clean_vision_refs: Optional[List[CachedVisionRefs]] = None
 
     with open(args.vision_metadata, "rb") as f:
         vision_metadata = pickle.load(f)
@@ -1714,6 +2066,7 @@ def main() -> None:
                 vision_sess,
                 policy_sess,
                 cached_batches,
+                None,
                 vision_output_slices,
                 policy_output_slices,
                 vision_dtype,
@@ -1721,10 +2074,18 @@ def main() -> None:
                 policy_input_shapes,
                 "loss",
             )
+            if _metric_uses_clean_vision_ref(args.eval_metric):
+                clean_vision_refs = collect_clean_vision_refs_ort(
+                    vision_sess,
+                    cached_batches,
+                    vision_output_slices,
+                    vision_dtype,
+                )
             original_metric_score = eval_metric_value(
                 vision_sess,
                 policy_sess,
                 cached_batches,
+                clean_vision_refs,
                 vision_output_slices,
                 policy_output_slices,
                 vision_dtype,
@@ -1754,6 +2115,7 @@ def main() -> None:
                     vision_sess,
                     policy_sess,
                     cached_batches,
+                    None,
                     vision_output_slices,
                     policy_output_slices,
                     vision_dtype,
@@ -1761,10 +2123,18 @@ def main() -> None:
                     policy_input_shapes,
                     "loss",
                 )
+                if _metric_uses_clean_vision_ref(args.eval_metric):
+                    clean_vision_refs = collect_clean_vision_refs_ort(
+                        vision_sess,
+                        cached_batches,
+                        vision_output_slices,
+                        vision_dtype,
+                    )
                 original_metric_score = eval_metric_value(
                     vision_sess,
                     policy_sess,
                     cached_batches,
+                    clean_vision_refs,
                     vision_output_slices,
                     policy_output_slices,
                     vision_dtype,
@@ -1787,6 +2157,7 @@ def main() -> None:
             v_torch,
             p_torch,
             cached_batches,
+            None,
             vision_output_slices,
             policy_output_slices,
             policy_input_shapes,
@@ -1797,10 +2168,20 @@ def main() -> None:
             p_dtype,
             "loss",
         )
+        if _metric_uses_clean_vision_ref(args.eval_metric):
+            clean_vision_refs = collect_clean_vision_refs_torch(
+                v_torch,
+                cached_batches,
+                vision_output_slices,
+                v_order,
+                torch_eval_device,
+                v_dtype,
+            )
         original_metric_score = eval_metric_value_torch(
             v_torch,
             p_torch,
             cached_batches,
+            clean_vision_refs,
             vision_output_slices,
             policy_output_slices,
             policy_input_shapes,
@@ -1897,6 +2278,7 @@ def main() -> None:
             device=torch_eval_device,
             original_score=original_metric_score,
             cached_batches=cached_batches,
+            clean_vision_refs=clean_vision_refs,
             vision_output_slices=vision_output_slices,
             policy_output_slices=policy_output_slices,
             policy_input_shapes=policy_input_shapes,
@@ -1911,6 +2293,7 @@ def main() -> None:
             base_policy_model=base_policy_model,
             original_score=original_metric_score,
             cached_batches=cached_batches,
+            clean_vision_refs=clean_vision_refs,
             vision_output_slices=vision_output_slices,
             policy_output_slices=policy_output_slices,
             policy_input_shapes=policy_input_shapes,

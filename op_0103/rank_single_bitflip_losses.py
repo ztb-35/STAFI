@@ -29,10 +29,31 @@ SUPPORTED_METRICS = {
     "loss_smooth_l1",
     "loss_l1",
     "loss_mse",
+    "action.desiredCurvature",
+    "-action.desiredCurvature",
+    "action.desiredAcceleration",
+    "-action.desiredAcceleration",
+    "modelV2.position.x",
+    "modelV2.velocity.x",
+    "modelV2.acceleration.x",
     "+diffx",
     "-diffx",
     "+diffy",
     "-diffy",
+    "+endx",
+    "-endx",
+    "+endy",
+    "-endy",
+    "+lanex",
+    "-lanex",
+    "+laney",
+    "-laney",
+    "+leadx",
+    "-leadx",
+    "+leady",
+    "-leady",
+    "+leadprob",
+    "-leadprob",
 }
 
 
@@ -74,7 +95,7 @@ def decode_policy_losses(
         "loss_smooth_l1": l_smooth_l1,
         "loss_l1": l_l1,
         "loss_mse": l_mse,
-    }, pred_pos
+    }, pred_mu
 
 
 def decode_policy_losses_torch(
@@ -105,13 +126,14 @@ def decode_policy_losses_torch(
         "loss_smooth_l1": l_smooth_l1,
         "loss_l1": l_l1,
         "loss_mse": l_mse,
-    }, pred_pos
+    }, pred_mu
 
 
 def eval_metrics_for_session(
     vision_session: "ib.ort.InferenceSession",
     policy_session: "ib.ort.InferenceSession",
     cached_batches: Sequence[ib.CachedBatch],
+    clean_vision_refs: Optional[Sequence[ib.CachedVisionRefs]],
     vision_output_slices: Dict[str, slice],
     policy_output_slices: Dict[str, slice],
     vision_input_dtype: np.dtype,
@@ -121,7 +143,7 @@ def eval_metrics_for_session(
 ) -> Dict[str, float]:
     vals: Dict[str, List[float]] = {m: [] for m in metrics}
 
-    for cb in cached_batches:
+    for batch_idx, cb in enumerate(cached_batches):
         bsz, t, _, _, _ = cb.seq_imgs12.shape
 
         desire_shape = policy_input_shapes["desire_pulse"]
@@ -138,6 +160,8 @@ def eval_metrics_for_session(
         if traffic_dim >= 2:
             traffic[:, 0] = 1.0
         features_buffer = np.zeros((bsz, feat_len, feat_dim), dtype=policy_input_dtype)
+        prev_desired_accel = np.zeros((bsz,), dtype=np.float32)
+        prev_desired_curvature = np.zeros((bsz,), dtype=np.float32)
 
         for ti in range(t):
             vision_inputs = {
@@ -155,12 +179,29 @@ def eval_metrics_for_session(
             }
             policy_raw = policy_session.run(["outputs"], policy_inputs)[0]
             losses, pred_pos = decode_policy_losses(policy_raw, policy_output_slices, cb.seq_gt[:, ti])
+            action_targets = None
+            if any(m.startswith("action.") for m in metrics):
+                action_targets, prev_desired_accel, prev_desired_curvature = ib._compute_action_targets_from_plan(
+                    pred_pos,
+                    prev_desired_accel,
+                    prev_desired_curvature,
+                )
 
             for m in metrics:
                 if m in losses:
                     vals[m].append(losses[m])
-                elif m in {"+diffx", "-diffx", "+diffy", "-diffy"}:
-                    vals[m].append(ib.traj_metric(pred_pos, m))
+                else:
+                    vals[m].append(
+                        ib.output_metric_torch(
+                            pred_pos=pred_pos,
+                            vision_raw_outputs=torch.from_numpy(vision_raw.astype(np.float32)),
+                            vision_output_slices=vision_output_slices,
+                            metric=m,
+                            clean_vision_ref=None if clean_vision_refs is None else clean_vision_refs[batch_idx],
+                            step_idx=ti,
+                            action_targets=action_targets,
+                        )
+                    )
 
     return {m: (float(np.mean(v)) if v else float("nan")) for m, v in vals.items()}
 
@@ -169,6 +210,7 @@ def eval_metrics_for_torch_models(
     vision_model_torch: torch.nn.Module,
     policy_model_torch: torch.nn.Module,
     cached_batches: Sequence[ib.CachedBatch],
+    clean_vision_refs: Optional[Sequence[ib.CachedVisionRefs]],
     vision_output_slices: Dict[str, slice],
     policy_output_slices: Dict[str, slice],
     policy_input_shapes: Dict[str, Tuple[int, ...]],
@@ -181,7 +223,7 @@ def eval_metrics_for_torch_models(
 ) -> Dict[str, float]:
     vals: Dict[str, List[float]] = {m: [] for m in metrics}
     with torch.no_grad():
-        for cb in cached_batches:
+        for batch_idx, cb in enumerate(cached_batches):
             imgs = torch.from_numpy(cb.seq_imgs12).to(device=device, dtype=vision_input_dtype_torch)
             gt = cb.seq_gt.to(device=device, dtype=torch.float32)
             bsz, t, _, _, _ = imgs.shape
@@ -200,6 +242,8 @@ def eval_metrics_for_torch_models(
             if traffic_dim >= 2:
                 traffic[:, 0] = 1.0
             features_buffer = torch.zeros((bsz, feat_len, feat_dim), device=device, dtype=policy_input_dtype_torch)
+            prev_desired_accel = np.zeros((bsz,), dtype=np.float32)
+            prev_desired_curvature = np.zeros((bsz,), dtype=np.float32)
 
             for ti in range(t):
                 vision_inputs = {"img": imgs[:, ti], "big_img": imgs[:, ti]}
@@ -222,11 +266,28 @@ def eval_metrics_for_torch_models(
                     raise RuntimeError(f"Unexpected policy torch output type: {type(policy_raw)}")
 
                 losses, pred_pos = decode_policy_losses_torch(policy_raw, policy_output_slices, gt[:, ti])
+                action_targets = None
+                if any(m.startswith("action.") for m in metrics):
+                    action_targets, prev_desired_accel, prev_desired_curvature = ib._compute_action_targets_from_plan(
+                        pred_pos.detach().cpu(),
+                        prev_desired_accel,
+                        prev_desired_curvature,
+                    )
                 for m in metrics:
                     if m in losses:
                         vals[m].append(losses[m])
-                    elif m in {"+diffx", "-diffx", "+diffy", "-diffy"}:
-                        vals[m].append(ib.traj_metric(pred_pos.detach().cpu(), m))
+                    else:
+                        vals[m].append(
+                            ib.output_metric_torch(
+                                pred_pos=pred_pos.detach().cpu(),
+                                vision_raw_outputs=vision_raw.detach().cpu().float(),
+                                vision_output_slices=vision_output_slices,
+                                metric=m,
+                                clean_vision_ref=None if clean_vision_refs is None else clean_vision_refs[batch_idx],
+                                step_idx=ti,
+                                action_targets=action_targets,
+                            )
+                        )
 
     return {m: (float(np.mean(v)) if v else float("nan")) for m, v in vals.items()}
 
@@ -236,6 +297,7 @@ def eval_metrics_with_fallback(
     policy_model: object,
     providers: List[str],
     cached_batches: Sequence[ib.CachedBatch],
+    clean_vision_refs: Optional[Sequence[ib.CachedVisionRefs]],
     vision_output_slices: Dict[str, slice],
     policy_output_slices: Dict[str, slice],
     policy_input_shapes: Dict[str, Tuple[int, ...]],
@@ -251,6 +313,7 @@ def eval_metrics_with_fallback(
             vision_sess,
             policy_sess,
             cached_batches,
+            clean_vision_refs,
             vision_output_slices,
             policy_output_slices,
             vision_dtype,
@@ -271,6 +334,7 @@ def eval_metrics_with_fallback(
                 vision_sess,
                 policy_sess,
                 cached_batches,
+                clean_vision_refs,
                 vision_output_slices,
                 policy_output_slices,
                 vision_dtype,
@@ -380,6 +444,8 @@ def main() -> None:
     cached_batches = ib.collect_cached_batches(val_loader, num_batches=args.num_val_batches, eval_seq_len=args.eval_seq_len)
     if not cached_batches:
         raise RuntimeError("No validation batches cached. Check dataset path/splits.")
+    needs_clean_vision_refs = any(ib._metric_uses_clean_vision_ref(m) for m in metrics)
+    clean_vision_refs: Optional[List[ib.CachedVisionRefs]] = None
 
     torch_eval_device = torch.device("cuda" if (args.provider == "cuda" and torch.cuda.is_available()) else "cpu")
     if args.eval_backend == "torch":
@@ -389,10 +455,20 @@ def main() -> None:
             onnx.load(args.policy_onnx),
             device=torch_eval_device,
         )
+        if needs_clean_vision_refs:
+            clean_vision_refs = ib.collect_clean_vision_refs_torch(
+                v_torch,
+                cached_batches,
+                vision_output_slices,
+                v_order,
+                torch_eval_device,
+                v_dtype,
+            )
         baseline_metrics = eval_metrics_for_torch_models(
             v_torch,
             p_torch,
             cached_batches,
+            clean_vision_refs,
             vision_output_slices,
             policy_output_slices,
             policy_input_shapes,
@@ -409,11 +485,32 @@ def main() -> None:
             args.policy_onnx,
             providers,
             cached_batches,
+            None,
             vision_output_slices,
             policy_output_slices,
             policy_input_shapes,
             metrics,
         )
+        if needs_clean_vision_refs:
+            vision_sess = ib.make_session(args.vision_onnx, providers=providers)
+            vision_dtype = ib.ort_type_to_numpy_dtype(vision_sess.get_inputs()[0].type)
+            clean_vision_refs = ib.collect_clean_vision_refs_ort(
+                vision_sess,
+                cached_batches,
+                vision_output_slices,
+                vision_dtype,
+            )
+            baseline_metrics, providers = eval_metrics_with_fallback(
+                args.vision_onnx,
+                args.policy_onnx,
+                providers,
+                cached_batches,
+                clean_vision_refs,
+                vision_output_slices,
+                policy_output_slices,
+                policy_input_shapes,
+                metrics,
+            )
     print("[Baseline] " + ", ".join(f"{k}={v:.6f}" for k, v in baseline_metrics.items()))
 
     base_vision_model = onnx.load(args.vision_onnx)
@@ -486,6 +583,7 @@ def main() -> None:
                     v_torch,
                     p_torch,
                     cached_batches,
+                    clean_vision_refs,
                     vision_output_slices,
                     policy_output_slices,
                     policy_input_shapes,
@@ -509,6 +607,7 @@ def main() -> None:
                 cand_policy_bytes,
                 providers,
                 cached_batches,
+                clean_vision_refs,
                 vision_output_slices,
                 policy_output_slices,
                 policy_input_shapes,

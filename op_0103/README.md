@@ -16,7 +16,20 @@
 
 支持指标：
 - `loss`：`smooth_l1(pred_pos, gt_pos)`
-- `+diffx/-diffx/+diffy/-diffy`：用于比较翻转前后输出趋势（脚本内部做 delta）
+- `action.desiredCurvature/-action.desiredCurvature`：按 `modeld.py` 风格，用 `plan` 的 yaw/yaw_rate 对 `action_t` 做插值并加上 `prev_action` 平滑
+- `action.desiredAcceleration/-action.desiredAcceleration`：按 `modeld.py` 风格，用 `plan` 的 velocity/acceleration 对 `action_t` 做插值并加上 `prev_action` 平滑
+- `modelV2.position.x`：`fill_model_msg.py` 里的 `modelV2.position.x`，这里取 33 个 timestep 的平均值
+- `modelV2.velocity.x`：`fill_model_msg.py` 里的 `modelV2.velocity.x`，这里取 33 个 timestep 的平均值
+- `modelV2.acceleration.x`：`fill_model_msg.py` 里的 `modelV2.acceleration.x`，这里取 33 个 timestep 的平均值
+- `+diffx/-diffx/+diffy/-diffy`：33 个 timestep 上的平均方向偏移
+- `+endx/-endx/+endy/-endy`：最后一个 timestep 的方向偏移
+- `+lanex/-lanex/+laney/-laney`：vision `lane_lines` 相对原始模型输出的平均位置偏移
+- `+leadx/-leadx/+leady/-leady`：vision `lead` 中最高 `lead_prob` 模式，相对原始模型输出的平均位置偏移
+- `+leadprob/-leadprob`：vision `lead_prob`（sigmoid 后）相对原始模型输出增大/减小；若想把 lead probability 压到 0，用 `-leadprob`
+
+在 rank-bits 阶段，候选 bit flip 现在还会额外过滤：
+- `policy plan` 不能出现 `NaN/Inf`
+- `vision` 的 `meta / lane_lines / lane_lines_prob / road_edges / lead / lead_prob / hidden_state` 必须保持有限值，可继续解析
 
 ## 运行示例（使用 `.venv`）
 
