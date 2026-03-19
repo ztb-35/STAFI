@@ -6,7 +6,7 @@
  # @Email: ureinsecure@outlook.com
  # @Date: 2026-03-05 14:06:12
  # @LastEditors: Zx
- # @LastEditTime: 2026-03-19 15:11:42
+ # @LastEditTime: 2026-03-19 15:19:00
  # @FilePath: /STAFI/scripts/test_rank_bit_0103_n_dx.sh
 ###
 #SBATCH -N 1
@@ -99,9 +99,9 @@ python op_0103/important_bits_onnx.py \
   --weights-in op_0103/saved_out/weights_0103_taylor_seq100.json \
   --num-val-batches 2 \
   --eval-seq-len 100 \
-  --top-w 100 \
+  --top-w 500 \
   --top-b 5 \
   --per-tensor-k 0 \
   --bitset ">=5" \
   --eval-metric=-diffx \
-  --out op_0103/out/important_bits_0103_taylor_seq100_b2_n_dx.json
+  --out op_0103/out/important_bits_0103_taylor_seq100_b2_n_dx_top500.json
