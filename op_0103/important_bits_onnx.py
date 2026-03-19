@@ -648,6 +648,10 @@ def _metric_uses_clean_vision_ref(metric: str) -> bool:
     return metric.startswith(("+lane", "-lane", "+lead", "-lead"))
 
 
+def _metric_uses_action_targets(metric: str) -> bool:
+    return metric.startswith(("action.", "-action."))
+
+
 def _require_plan_width(pred_plan: torch.Tensor, min_width: int, metric: str) -> None:
     if pred_plan.ndim != 3 or pred_plan.shape[2] < min_width:
         raise ValueError(
@@ -911,7 +915,7 @@ def eval_metric_for_sequence(
             values.append(loss)
         else:
             action_targets = None
-            if metric.startswith("action."):
+            if _metric_uses_action_targets(metric):
                 action_targets, prev_desired_accel, prev_desired_curvature = _compute_action_targets_from_plan(
                     pred_pos,
                     prev_desired_accel,
@@ -1265,7 +1269,7 @@ def eval_metric_value_torch(
                     per_step_vals.append(float(loss_t.detach().cpu().item()))
                 else:
                     action_targets = None
-                    if metric.startswith("action."):
+                    if _metric_uses_action_targets(metric):
                         action_targets, prev_desired_accel, prev_desired_curvature = _compute_action_targets_from_plan(
                             pred_pos.detach().cpu(),
                             prev_desired_accel,

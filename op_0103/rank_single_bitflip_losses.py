@@ -180,7 +180,7 @@ def eval_metrics_for_session(
             policy_raw = policy_session.run(["outputs"], policy_inputs)[0]
             losses, pred_pos = decode_policy_losses(policy_raw, policy_output_slices, cb.seq_gt[:, ti])
             action_targets = None
-            if any(m.startswith("action.") for m in metrics):
+            if any(ib._metric_uses_action_targets(m) for m in metrics):
                 action_targets, prev_desired_accel, prev_desired_curvature = ib._compute_action_targets_from_plan(
                     pred_pos,
                     prev_desired_accel,
@@ -267,7 +267,7 @@ def eval_metrics_for_torch_models(
 
                 losses, pred_pos = decode_policy_losses_torch(policy_raw, policy_output_slices, gt[:, ti])
                 action_targets = None
-                if any(m.startswith("action.") for m in metrics):
+                if any(ib._metric_uses_action_targets(m) for m in metrics):
                     action_targets, prev_desired_accel, prev_desired_curvature = ib._compute_action_targets_from_plan(
                         pred_pos.detach().cpu(),
                         prev_desired_accel,

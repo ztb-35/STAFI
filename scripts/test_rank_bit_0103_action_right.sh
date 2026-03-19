@@ -9,16 +9,19 @@
 #SBATCH --job-name=rank_bit_right
 
 set -euo pipefail
-module load cuda
+if command -v module >/dev/null 2>&1; then
+    module load cuda || true
+fi
 
-export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
-export MKL_NUM_THREADS=$SLURM_CPUS_PER_TASK
+CPU_COUNT="${SLURM_CPUS_PER_TASK:-$(nproc)}"
+export OMP_NUM_THREADS="$CPU_COUNT"
+export MKL_NUM_THREADS="$CPU_COUNT"
 
 echo "================ JOB INFO ================"
-echo "JOB ID: $SLURM_JOB_ID"
-echo "NODE: $SLURM_NODELIST"
-echo "CPUS PER TASK: $SLURM_CPUS_PER_TASK"
-echo "CUDA_VISIBLE_DEVICES: $CUDA_VISIBLE_DEVICES"
+echo "JOB ID: ${SLURM_JOB_ID:-local}"
+echo "NODE: ${SLURM_NODELIST:-local}"
+echo "CPUS PER TASK: ${SLURM_CPUS_PER_TASK:-$CPU_COUNT}"
+echo "CUDA_VISIBLE_DEVICES: ${CUDA_VISIBLE_DEVICES:-unset}"
 echo "=========================================="
 
 echo
@@ -48,7 +51,7 @@ echo "================================="
 
 echo
 echo "========== ENVIRONMENT =========="
-env | grep SLURM
+env | grep SLURM || true
 echo "================================="
 
 USER_NAME="${USER:-$(whoami)}"
@@ -56,10 +59,12 @@ if [ "$USER_NAME" = "zx" ]; then
     CONDA_BIN="/home/zx/miniconda3/condabin/conda"
     CONDA_ENV="op097"
     DATA_ROOT="/home/zx/Projects/comma2k19"
+    REPO_ROOT="/home/zx/Projects/DAC/STAFI"
 elif [ "$USER_NAME" = "xzha135" ]; then
     CONDA_BIN="/usr/local/packages/python/3.11.5-anaconda/bin/conda"
     CONDA_ENV="op97_py311"
     DATA_ROOT="/home/xzha135/work/comma2k19"
+    REPO_ROOT="/home/xzha135/work/projects_ws/DAC/STAFI"
 else
     echo "Error: Unsupported user '$USER_NAME'. Please set paths manually."
     exit 1
@@ -75,7 +80,7 @@ echo "Rank Bits For Right Turn"
 echo "========================================="
 echo ""
 
-cd /home/xzha135/work/projects_ws/DAC/STAFI
+cd "$REPO_ROOT"
 
 python op_0103/important_bits_onnx.py \
   --stage rank-bits \
