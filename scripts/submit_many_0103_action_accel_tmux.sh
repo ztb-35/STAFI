@@ -38,7 +38,11 @@ BITSET="${BITSET:-">=5"}"
 
 TS="$(date +%Y%m%d-%H%M%S)"
 LOG_DIR="$REPO_ROOT/logs/tmux"
+PY_SCRIPT="$REPO_ROOT/op_0103/important_bits_onnx.py"
+WEIGHTS_JSON="$REPO_ROOT/op_0103/saved_out/weights_0103_taylor_seq100.json"
+OUT_DIR="$REPO_ROOT/op_0103/out"
 mkdir -p "$LOG_DIR"
+mkdir -p "$OUT_DIR"
 
 echo "================ JOB INFO ================"
 echo "JOB ID: ${SLURM_JOB_ID:-local}"
@@ -60,18 +64,18 @@ pids=()
 for i in $(seq 1 "$COUNT"); do
     RUN_ID="$(printf '%02d' "$i")"
     LOG_FILE="$LOG_DIR/op0103_accel_multi_${TS}_run${RUN_ID}.log"
-    OUT_JSON="op_0103/out/important_bits_0103_taylor_seq100_b${NUM_VAL_BATCHES}_action_accel_top${TOP_W}_${TS}_run${RUN_ID}.json"
+    OUT_JSON="$OUT_DIR/important_bits_0103_taylor_seq100_b${NUM_VAL_BATCHES}_action_accel_top${TOP_W}_${TS}_run${RUN_ID}.json"
 
     echo "[Launch] run=${RUN_ID} log=${LOG_FILE} out=${OUT_JSON}"
 
     (
-        python op_0103/important_bits_onnx.py \
+        python "$PY_SCRIPT" \
           --stage rank-bits \
           --provider cuda \
           --eval-backend torch \
           --target-model both \
           --data-root "$DATA_ROOT" \
-          --weights-in op_0103/saved_out/weights_0103_taylor_seq100.json \
+          --weights-in "$WEIGHTS_JSON" \
           --num-val-batches "$NUM_VAL_BATCHES" \
           --eval-seq-len 100 \
           --top-w "$TOP_W" \
