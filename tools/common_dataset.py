@@ -81,6 +81,7 @@ def make_loader(
     shuffle: bool,
     device: torch.device,
     num_workers: int = 0,
+    generator: torch.Generator | None = None,
 ) -> DataLoader:
     return DataLoader(
         dataset,
@@ -88,4 +89,5 @@ def make_loader(
         shuffle=shuffle,
         num_workers=num_workers,
         pin_memory=(device.type == "cuda"),
+        generator=generator,
     )

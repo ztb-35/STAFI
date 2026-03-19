@@ -19,6 +19,7 @@ import os
 import pickle
 import re
 import sys
+import time
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -489,7 +490,11 @@ def build_loaders(args: argparse.Namespace) -> Tuple[DataLoader, DataLoader]:
     val_ds = SafeDataset(val_ds)
 
     train_loader = make_loader(train_ds, batch_size=args.batch_size, shuffle=True, device=device, num_workers=0)
-    val_loader = make_loader(val_ds, batch_size=1, shuffle=False, device=device, num_workers=0)
+    val_generator = torch.Generator()
+    val_seed = int(time.time_ns() % (2**63 - 1))
+    val_generator.manual_seed(val_seed)
+    print(f"[Data] val shuffle=True seed={val_seed}")
+    val_loader = make_loader(val_ds, batch_size=1, shuffle=True, device=device, num_workers=0, generator=val_generator)
     return train_loader, val_loader
 
 
