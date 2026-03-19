@@ -5,6 +5,8 @@
 2. `rank-bits`：progressive 搜索 bit flip，并按指标排序
 3. `all`：先选权重再排 bit
 
+默认 `--weight-selection-method` 现在是 `taylor-guided`，即按 `|grad * w|` 选择候选权重。
+
 ## 评估目标
 
 虽然 0.10.3 模型拆成了 vision / policy 两个 ONNX，但脚本做的是端到端评估：

@@ -1,0 +1,137 @@
+{
+  "meta": {
+    "created_at": "2026-03-05T19:59:36",
+    "vision_onnx": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/models/driving_vision.onnx",
+    "vision_metadata": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/models/driving_vision_metadata.pkl",
+    "policy_onnx": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/models/driving_policy.onnx",
+    "policy_metadata": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/models/driving_policy_metadata.pkl",
+    "target_model": "both",
+    "data_root": "/home/xzha135/work/comma2k19",
+    "train_index": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/splits/comma2k19_train_non_overlap.txt",
+    "val_index": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/splits/comma2k19_val_non_overlap.txt",
+    "num_val_batches": 8,
+    "eval_seq_len": 20,
+    "top_w": 100,
+    "top_b": 5,
+    "per_tensor_k": 1,
+    "bitset_mode": ">=8",
+    "bitset": [
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "allow_bias": true,
+    "restrict": null,
+    "original_metric_score": -0.15084397766258917,
+    "eval_metric": "-diffy",
+    "search_mode": "progressive",
+    "eval_backend": "torch",
+    "weight_selection_method": "magnitude",
+    "weights_source_mode": "loaded_from_file",
+    "weights_source_file": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/weights_3000_with_bias.json"
+  },
+  "ranked": [
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 19728,
+      "bit": 14,
+      "metric": "-diffy",
+      "score": 3906.694018721315,
+      "original_score": -0.15084397766258917,
+      "flipped_score": 3906.5431747436523,
+      "old": -0.006977081298828125,
+      "new": -457.25,
+      "step": 1
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 19771,
+      "bit": 14,
+      "metric": "-diffy",
+      "score": 3522.924122619629,
+      "original_score": 3906.5431747436523,
+      "flipped_score": 7429.467297363281,
+      "old": -0.006595611572265625,
+      "new": -432.25,
+      "step": 2
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 61243,
+      "bit": 14,
+      "metric": "-diffy",
+      "score": 3430.5577941894526,
+      "original_score": 7429.467297363281,
+      "flipped_score": 10860.025091552734,
+      "old": -0.003795623779296875,
+      "new": -248.75,
+      "step": 3
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 61243,
+      "bit": 13,
+      "metric": "-diffy",
+      "score": 408588.79287719727,
+      "original_score": 10860.025091552734,
+      "flipped_score": 419448.81796875,
+      "old": -248.75,
+      "new": -63680.0,
+      "step": 4
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2560,
+      "bit": 14,
+      "metric": "-diffy",
+      "score": 66425.1708984375,
+      "original_score": 419448.81796875,
+      "flipped_score": 485873.9888671875,
+      "old": 0.0196685791015625,
+      "new": 1289.0,
+      "step": 5
+    }
+  ],
+  "plan": [
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 19728,
+      "bit": 14
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 19771,
+      "bit": 14
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 61243,
+      "bit": 14
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 61243,
+      "bit": 13
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2560,
+      "bit": 14
+    }
+  ]
+}

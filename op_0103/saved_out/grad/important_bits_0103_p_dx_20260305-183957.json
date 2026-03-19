@@ -1,0 +1,137 @@
+{
+  "meta": {
+    "created_at": "2026-03-05T19:54:16",
+    "vision_onnx": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/models/driving_vision.onnx",
+    "vision_metadata": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/models/driving_vision_metadata.pkl",
+    "policy_onnx": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/models/driving_policy.onnx",
+    "policy_metadata": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/models/driving_policy_metadata.pkl",
+    "target_model": "both",
+    "data_root": "/home/xzha135/work/comma2k19",
+    "train_index": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/splits/comma2k19_train_non_overlap.txt",
+    "val_index": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/splits/comma2k19_val_non_overlap.txt",
+    "num_val_batches": 8,
+    "eval_seq_len": 20,
+    "top_w": 100,
+    "top_b": 5,
+    "per_tensor_k": 1,
+    "bitset_mode": ">=8",
+    "bitset": [
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "allow_bias": true,
+    "restrict": null,
+    "original_metric_score": 25.70044813156128,
+    "eval_metric": "+diffx",
+    "search_mode": "progressive",
+    "eval_backend": "torch",
+    "weight_selection_method": "magnitude",
+    "weights_source_mode": "loaded_from_file",
+    "weights_source_file": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/weights_3000_with_bias.json"
+  },
+  "ranked": [
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 19728,
+      "bit": 14,
+      "metric": "+diffx",
+      "score": 138755.19320421218,
+      "original_score": 25.70044813156128,
+      "flipped_score": 138780.89365234374,
+      "old": -0.006977081298828125,
+      "new": -457.25,
+      "step": 1
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 61243,
+      "bit": 14,
+      "metric": "+diffx",
+      "score": 124735.7359375,
+      "original_score": 138780.89365234374,
+      "flipped_score": 263516.62958984374,
+      "old": -0.003795623779296875,
+      "new": -248.75,
+      "step": 2
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 61243,
+      "bit": 13,
+      "metric": "+diffx",
+      "score": 24681154.395410154,
+      "original_score": 263516.62958984374,
+      "flipped_score": 24944671.025,
+      "old": -248.75,
+      "new": -63680.0,
+      "step": 3
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2560,
+      "bit": 14,
+      "metric": "+diffx",
+      "score": 3951795.0250000022,
+      "original_score": 24944671.025,
+      "flipped_score": 28896466.05,
+      "old": 0.0196685791015625,
+      "new": 1289.0,
+      "step": 4
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 19771,
+      "bit": 14,
+      "metric": "+diffx",
+      "score": 147255.92500000075,
+      "original_score": 28896466.05,
+      "flipped_score": 29043721.975,
+      "old": -0.006595611572265625,
+      "new": -432.25,
+      "step": 5
+    }
+  ],
+  "plan": [
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 19728,
+      "bit": 14
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 61243,
+      "bit": 14
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 61243,
+      "bit": 13
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2560,
+      "bit": 14
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 19771,
+      "bit": 14
+    }
+  ]
+}

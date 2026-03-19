@@ -16,6 +16,7 @@
 #SBATCH -p gpu2
 #SBATCH --gres=gpu:1
 #SBATCH -A loni_depedlab11
+#SBATCH --job-name=rank_bit_p_dx
 
 set -euo pipefail
 module load cuda
@@ -130,12 +131,11 @@ python op_0103/important_bits_onnx.py \
   --eval-backend torch \
   --target-model both \
   --data-root $DATA_ROOT \
-  --weights-in op_0103/weights_3000_with_bias.json \
-  --num-val-batches 8 \
-  --eval-seq-len 20 \
+  --weights-in op_0103/saved_out/weights_0103_taylor_seq100.json \
+  --num-val-batches 2 \
+  --eval-seq-len 100 \
   --top-w 100 \
   --top-b 5 \
-  --bitset ">=8" \
-  --eval-metric "+diffx" \
-  --out op_0103/out/important_bits_0103_p_dx.json
-
+  --bitset ">=5" \
+  --eval-metric=+diffx \
+  --out op_0103/out/important_bits_0103_taylor_seq100_b2_p_dx.json

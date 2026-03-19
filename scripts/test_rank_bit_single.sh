@@ -16,8 +16,6 @@
 #SBATCH -p gpu2
 #SBATCH --gres=gpu:1
 #SBATCH -A loni_depedlab11
-#SBATCH --cpu-bind=cores
-#SBATCH --hint=nomultithread
 
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 export MKL_NUM_THREADS=$SLURM_CPUS_PER_TASK
@@ -131,11 +129,12 @@ python op_0103/rank_single_bitflip_losses.py \
   --eval-backend torch \
   --target-model both \
   --data-root $DATA_ROOT \
-  --weights-in op_0103/out/weights_candidates_0103_with_bias_20260305-143550.json \
+  --weights-in op_0103/saved_out/weights_0103_taylor_seq100.json \
   --num-val-batches 8 \
   --eval-seq-len 20 \
   --top-w 3000 \
-  --bitset ">=8" \
+  --top-k 10000 \
+  --per-tensor-k 0 \
+  --bitset ">=6" \
   --metrics=loss_mse,+diffx,-diffx,+diffy,-diffy \
-  --top-k 3000 \
-  --out op_0103/out/single_flip_top_bits_0103_all_metrics.json
+  --out op_0103/out/single_flip_taylor_seq100.json

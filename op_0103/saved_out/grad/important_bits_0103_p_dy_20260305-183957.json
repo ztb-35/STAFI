@@ -1,0 +1,137 @@
+{
+  "meta": {
+    "created_at": "2026-03-05T20:00:07",
+    "vision_onnx": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/models/driving_vision.onnx",
+    "vision_metadata": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/models/driving_vision_metadata.pkl",
+    "policy_onnx": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/models/driving_policy.onnx",
+    "policy_metadata": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/models/driving_policy_metadata.pkl",
+    "target_model": "both",
+    "data_root": "/home/xzha135/work/comma2k19",
+    "train_index": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/splits/comma2k19_train_non_overlap.txt",
+    "val_index": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/splits/comma2k19_val_non_overlap.txt",
+    "num_val_batches": 8,
+    "eval_seq_len": 20,
+    "top_w": 100,
+    "top_b": 5,
+    "per_tensor_k": 1,
+    "bitset_mode": ">=8",
+    "bitset": [
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "allow_bias": true,
+    "restrict": null,
+    "original_metric_score": 0.15084398008402783,
+    "eval_metric": "+diffy",
+    "search_mode": "progressive",
+    "eval_backend": "torch",
+    "weight_selection_method": "magnitude",
+    "weights_source_mode": "loaded_from_file",
+    "weights_source_file": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/weights_3000_with_bias.json"
+  },
+  "ranked": [
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 365371,
+      "bit": 14,
+      "metric": "+diffy",
+      "score": 2316.736509535541,
+      "original_score": 0.15084398008402783,
+      "flipped_score": 2316.887353515625,
+      "old": -0.0037250518798828125,
+      "new": -244.125,
+      "step": 1
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 365371,
+      "bit": 13,
+      "metric": "+diffy",
+      "score": 590561.7974121094,
+      "original_score": 2316.887353515625,
+      "flipped_score": 592878.684765625,
+      "old": -244.125,
+      "new": -62496.0,
+      "step": 2
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2560,
+      "bit": 14,
+      "metric": "+diffy",
+      "score": 93942.439453125,
+      "original_score": 592878.684765625,
+      "flipped_score": 686821.12421875,
+      "old": 0.0196685791015625,
+      "new": 1289.0,
+      "step": 3
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 19728,
+      "bit": 14,
+      "metric": "+diffy",
+      "score": 3148.708984375,
+      "original_score": 686821.12421875,
+      "flipped_score": 689969.833203125,
+      "old": -0.006977081298828125,
+      "new": -457.25,
+      "step": 4
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 19771,
+      "bit": 14,
+      "metric": "+diffy",
+      "score": 3005.41914062493,
+      "original_score": 689969.833203125,
+      "flipped_score": 692975.25234375,
+      "old": -0.006595611572265625,
+      "new": -432.25,
+      "step": 5
+    }
+  ],
+  "plan": [
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 365371,
+      "bit": 14
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 365371,
+      "bit": 13
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stem.2.reparam_conv.weight",
+      "flat": 2560,
+      "bit": 14
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 19728,
+      "bit": 14
+    },
+    {
+      "model": "policy",
+      "name": "policy_model.temporal_hydra.resblock.block_a.0.weight",
+      "flat": 19771,
+      "bit": 14
+    }
+  ]
+}

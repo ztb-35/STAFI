@@ -5,7 +5,7 @@ Pipeline:
 1) Auto-build comma2k19 split files when missing.
 2) Build mini train/val loaders from Comma2k19SequenceDataset.
 3) Evaluate end-to-end image -> vision -> policy trajectory output.
-4) Select candidate scalar weights by absolute value or gradient magnitude.
+4) Select candidate scalar weights by absolute value, gradient magnitude, or Taylor score |grad * w|.
 5) Rank bit flips progressively by delta metric on final policy output.
 """
 
@@ -1157,6 +1157,7 @@ def select_weight_candidates_by_gradient(
     allow_bias: bool,
     restrict: Optional[List[str]],
     providers: Sequence[str],
+    selection_method: str = "gradient",
     sample_all: bool = False,
     torch_dtype_mode: str = "auto",
 ) -> List[Tuple[str, str, int, float]]:
@@ -1170,7 +1171,14 @@ def select_weight_candidates_by_gradient(
         patch_onnx2torch_cuda_matmul()
     device = torch.device("cuda" if use_cuda else "cpu")
 
-    print(f"[Gradient] backend=pytorch_autograd device={device}")
+    if selection_method == "gradient":
+        score_label = "gradient magnitude"
+    elif selection_method == "taylor-guided":
+        score_label = "Taylor score |grad * w|"
+    else:
+        raise ValueError(f"Unsupported gradient-based selection method: {selection_method}")
+
+    print(f"[Gradient] backend=pytorch_autograd device={device} method={selection_method}")
     vision_model = models["vision"]
     policy_model = models["policy"]
     vision_input_order = get_model_input_order(vision_model)
@@ -1230,9 +1238,13 @@ def select_weight_candidates_by_gradient(
             if tref is None or tref.grad is None:
                 continue
 
-            grad_abs = np.abs(tref.grad.detach().cpu().numpy().reshape(-1).astype(np.float32))
+            grad_flat = tref.grad.detach().cpu().numpy().reshape(-1).astype(np.float32)
             flat = arr.reshape(-1)
             n = flat.size
+            if selection_method == "gradient":
+                score_arr = np.abs(grad_flat)
+            else:
+                score_arr = np.abs(grad_flat * flat.astype(np.float32))
 
             if sample_all or per_tensor_k <= 0:
                 sample_idx = np.arange(n)
@@ -1246,18 +1258,18 @@ def select_weight_candidates_by_gradient(
             k = len(sample_idx) if per_tensor_k <= 0 else min(per_tensor_k, len(sample_idx))
             if k <= 0:
                 continue
-            sample_grad_abs = grad_abs[sample_idx]
-            top_k_local = np.argpartition(sample_grad_abs, -k)[-k:]
+            sample_scores = score_arr[sample_idx]
+            top_k_local = np.argpartition(sample_scores, -k)[-k:]
             for local_i in top_k_local:
                 flat_idx = int(sample_idx[local_i])
-                grad_mag = float(sample_grad_abs[local_i])
-                items.append((model_key, name, flat_idx, grad_mag))
+                score = float(sample_scores[local_i])
+                items.append((model_key, name, flat_idx, score))
 
     items.sort(key=lambda x: x[3], reverse=True)
     if top_w <= 0:
-        print(f"[Gradient] Selected {len(items)} candidates by gradient magnitude (all)")
+        print(f"[Gradient] Selected {len(items)} candidates by {score_label} (all)")
         return items
-    print(f"[Gradient] Selected {len(items[:top_w])} candidates by gradient magnitude")
+    print(f"[Gradient] Selected {len(items[:top_w])} candidates by {score_label}")
     return items[: min(top_w, len(items))]
 
 
@@ -1562,9 +1574,9 @@ def get_args() -> argparse.Namespace:
     p.add_argument("--target-model", choices=["vision", "policy", "both"], default="both", help="Which model(s) to search weights/bits on")
     p.add_argument(
         "--weight-selection-method",
-        choices=["magnitude", "gradient"],
-        default="magnitude",
-        help="Weight selection method: magnitude (absolute value) or gradient (PyTorch autograd)",
+        choices=["magnitude", "gradient", "taylor-guided"],
+        default="taylor-guided",
+        help="Weight selection method: magnitude, gradient, or taylor-guided (|grad * w| via PyTorch autograd)",
     )
     p.add_argument(
         "--gradient-torch-dtype",
@@ -1607,20 +1619,20 @@ def main() -> None:
     bitset, bitset_mode = parse_bitset_with_mode(args.bitset)
 
     models_for_selection: Dict[str, onnx.ModelProto] = {}
-    need_both_models = args.weight_selection_method == "gradient"
+    need_both_models = args.weight_selection_method in ("gradient", "taylor-guided")
     if need_both_models or args.target_model in ("vision", "both"):
         models_for_selection["vision"] = onnx.load(args.vision_onnx)
     if need_both_models or args.target_model in ("policy", "both"):
         models_for_selection["policy"] = onnx.load(args.policy_onnx)
 
     if args.stage == "select-weights":
-        if args.weight_selection_method == "gradient":
+        if args.weight_selection_method in ("gradient", "taylor-guided"):
             _, val_loader = build_loaders(args)
             cached_batches = collect_cached_batches(val_loader, num_batches=args.num_val_batches, eval_seq_len=args.eval_seq_len)
             if not cached_batches:
                 raise RuntimeError("No validation batches cached. Check dataset path/splits.")
             mode_str = "ALL weights" if args.sample_all_weights else f"sampled (per_tensor_k={args.per_tensor_k})"
-            print(f"[Weights] Using gradient-based selection (mode={mode_str})")
+            print(f"[Weights] Using {args.weight_selection_method} selection (mode={mode_str})")
             selected = select_weight_candidates_by_gradient(
                 models=models_for_selection,
                 target_model=args.target_model,
@@ -1633,6 +1645,7 @@ def main() -> None:
                 allow_bias=args.allow_bias,
                 restrict=restrict,
                 providers=providers,
+                selection_method=args.weight_selection_method,
                 sample_all=args.sample_all_weights,
                 torch_dtype_mode=args.gradient_torch_dtype,
             )
@@ -1819,9 +1832,9 @@ def main() -> None:
         weights_source_file = os.path.abspath(args.weights_in)
         print(f"[Weights] loaded {len(selected)} candidates from {args.weights_in}")
     else:
-        if args.weight_selection_method == "gradient":
+        if args.weight_selection_method in ("gradient", "taylor-guided"):
             mode_str = "ALL weights" if args.sample_all_weights else f"sampled (per_tensor_k={args.per_tensor_k})"
-            print(f"[Weights] Using gradient-based selection (mode={mode_str})")
+            print(f"[Weights] Using {args.weight_selection_method} selection (mode={mode_str})")
             selected = select_weight_candidates_by_gradient(
                 models=models_for_selection,
                 target_model=args.target_model,
@@ -1834,6 +1847,7 @@ def main() -> None:
                 allow_bias=args.allow_bias,
                 restrict=restrict,
                 providers=providers,
+                selection_method=args.weight_selection_method,
                 sample_all=args.sample_all_weights,
                 torch_dtype_mode=args.gradient_torch_dtype,
             )

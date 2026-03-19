@@ -1,0 +1,137 @@
+{
+  "meta": {
+    "created_at": "2026-03-05T19:59:16",
+    "vision_onnx": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/models/driving_vision.onnx",
+    "vision_metadata": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/models/driving_vision_metadata.pkl",
+    "policy_onnx": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/models/driving_policy.onnx",
+    "policy_metadata": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/models/driving_policy_metadata.pkl",
+    "target_model": "both",
+    "data_root": "/home/xzha135/work/comma2k19",
+    "train_index": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/splits/comma2k19_train_non_overlap.txt",
+    "val_index": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/splits/comma2k19_val_non_overlap.txt",
+    "num_val_batches": 8,
+    "eval_seq_len": 20,
+    "top_w": 100,
+    "top_b": 5,
+    "per_tensor_k": 1,
+    "bitset_mode": ">=8",
+    "bitset": [
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "allow_bias": true,
+    "restrict": null,
+    "original_metric_score": -25.700448244810104,
+    "eval_metric": "-diffx",
+    "search_mode": "progressive",
+    "eval_backend": "torch",
+    "weight_selection_method": "magnitude",
+    "weights_source_mode": "loaded_from_file",
+    "weights_source_file": "/ddnB/work/xzha135/projects_ws/DAC/STAFI/op_0103/weights_3000_with_bias.json"
+  },
+  "ranked": [
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 6368,
+      "bit": 13,
+      "metric": "-diffx",
+      "score": 23.81324195433408,
+      "original_score": -25.700448244810104,
+      "flipped_score": -1.8872062904760243,
+      "old": 0.0007872581481933594,
+      "new": 0.2015380859375,
+      "step": 1
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.0.blocks.0.token_mixer.reparam_conv.weight",
+      "flat": 553,
+      "bit": 10,
+      "metric": "-diffx",
+      "score": 1.400466196947673,
+      "original_score": -1.8872062904760243,
+      "flipped_score": -0.48674009352835124,
+      "old": 0.18701171875,
+      "new": 0.3740234375,
+      "step": 2
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.0.blocks.0.token_mixer.reparam_conv.weight",
+      "flat": 553,
+      "bit": 9,
+      "metric": "-diffx",
+      "score": 0.11251937899651232,
+      "original_score": -0.48674009352835124,
+      "flipped_score": -0.3742207145318389,
+      "old": 0.3740234375,
+      "new": 0.4990234375,
+      "step": 3
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4809,
+      "bit": 12,
+      "metric": "-diffx",
+      "score": 0.1252001101856877,
+      "original_score": -0.3742207145318389,
+      "flipped_score": -0.24902060434615123,
+      "old": -0.0083770751953125,
+      "new": -0.134033203125,
+      "step": 4
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 193369,
+      "bit": 13,
+      "metric": "-diffx",
+      "score": 0.11784556222755782,
+      "original_score": -0.24902060434615123,
+      "flipped_score": -0.1311750421185934,
+      "old": -0.00046753883361816406,
+      "new": -0.11968994140625,
+      "step": 5
+    }
+  ],
+  "plan": [
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 6368,
+      "bit": 13
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.0.blocks.0.token_mixer.reparam_conv.weight",
+      "flat": 553,
+      "bit": 10
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.0.blocks.0.token_mixer.reparam_conv.weight",
+      "flat": 553,
+      "bit": 9
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.1.downsample.proj.1.reparam_conv.weight",
+      "flat": 4809,
+      "bit": 12
+    },
+    {
+      "model": "vision",
+      "name": "vision_model.vision._en.stages.3.downsample.proj.1.reparam_conv.weight",
+      "flat": 193369,
+      "bit": 13
+    }
+  ]
+}
