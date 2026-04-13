@@ -79,3 +79,8 @@ Thumbs.db
 *.swp
 
 op_0103/models/modeld
+op_089/out/
+op_089/selected/
+.tmp_selected_smoke/
+op_089/supercombo.onnx
+op_089/selected089.zip
