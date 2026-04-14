@@ -1,0 +1,42 @@
+[
+  {
+    "scenario": "flipped_bits_20251031-15:27:39.json",
+    "flips": 2,
+    "detected": 1,
+    "repaired": 1,
+    "det_rate": 0.5,
+    "rep_rate": 0.5
+  },
+  {
+    "scenario": "flipped_bits_20251031-16:23:48.json",
+    "flips": 2,
+    "detected": 2,
+    "repaired": 2,
+    "det_rate": 1.0,
+    "rep_rate": 1.0
+  },
+  {
+    "scenario": "flipped_bits_20251114-21:04:09.json",
+    "flips": 2,
+    "detected": 2,
+    "repaired": 2,
+    "det_rate": 1.0,
+    "rep_rate": 1.0
+  },
+  {
+    "scenario": "flipped_bits_lead_prob_20251114-17:33:26.json",
+    "flips": 2,
+    "detected": 2,
+    "repaired": 2,
+    "det_rate": 1.0,
+    "rep_rate": 1.0
+  },
+  {
+    "scenario": "flipped_bits_left_steering_9.json",
+    "flips": 2,
+    "detected": 1,
+    "repaired": 1,
+    "det_rate": 0.5,
+    "rep_rate": 0.5
+  }
+]

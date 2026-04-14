@@ -1,0 +1,105 @@
+[
+  {
+    "scenario": "flipped_bits_20251031-15:27:39.json",
+    "flip_params": [
+      "vision_net.block2._bn2.weight"
+    ],
+    "Aspis-All": {
+      "det_rate": 1.0,
+      "l2_attacked": 243.1737,
+      "l2_repaired": 0.0,
+      "reduction_pct": 100.0,
+      "in_scope": true
+    },
+    "Aspis-Conv": {
+      "det_rate": 0.0,
+      "l2_attacked": 243.1737,
+      "l2_repaired": 243.1737,
+      "reduction_pct": 0.0,
+      "in_scope": false
+    }
+  },
+  {
+    "scenario": "flipped_bits_20251031-16:23:48.json",
+    "flip_params": [
+      "vision_net._conv_head._bn2.weight",
+      "vision_net.block18._bn0.weight"
+    ],
+    "Aspis-All": {
+      "det_rate": 1.0,
+      "l2_attacked": 1007.0119,
+      "l2_repaired": 0.0,
+      "reduction_pct": 100.0,
+      "in_scope": true
+    },
+    "Aspis-Conv": {
+      "det_rate": 0.0,
+      "l2_attacked": 1007.0119,
+      "l2_repaired": 1007.0119,
+      "reduction_pct": 0.0,
+      "in_scope": false
+    }
+  },
+  {
+    "scenario": "flipped_bits_20251114-21:04:09.json",
+    "flip_params": [
+      "temporal_policy.plan.in_layer.bias",
+      "temporal_summarizer._outfeats0.weight"
+    ],
+    "Aspis-All": {
+      "det_rate": 0.0,
+      "l2_attacked": Infinity,
+      "l2_repaired": Infinity,
+      "reduction_pct": NaN,
+      "in_scope": true
+    },
+    "Aspis-Conv": {
+      "det_rate": 0.0,
+      "l2_attacked": Infinity,
+      "l2_repaired": Infinity,
+      "reduction_pct": NaN,
+      "in_scope": false
+    }
+  },
+  {
+    "scenario": "flipped_bits_lead_prob_20251114-17:33:26.json",
+    "flip_params": [
+      "vision_net.block18._bn0.weight",
+      "vision_net.block8._bn2.weight"
+    ],
+    "Aspis-All": {
+      "det_rate": 1.0,
+      "l2_attacked": 9529.0615,
+      "l2_repaired": 0.0,
+      "reduction_pct": 100.0,
+      "in_scope": true
+    },
+    "Aspis-Conv": {
+      "det_rate": 0.0,
+      "l2_attacked": 9529.0615,
+      "l2_repaired": 9529.0615,
+      "reduction_pct": 0.0,
+      "in_scope": false
+    }
+  },
+  {
+    "scenario": "flipped_bits_left_steering_9.json",
+    "flip_params": [
+      "vision_net.block8._bn2.weight"
+    ],
+    "Aspis-All": {
+      "det_rate": 1.0,
+      "l2_attacked": 7245.0059,
+      "l2_repaired": 0.0,
+      "reduction_pct": 100.0,
+      "in_scope": true
+    },
+    "Aspis-Conv": {
+      "det_rate": 0.0,
+      "l2_attacked": 7245.0059,
+      "l2_repaired": 7245.0059,
+      "reduction_pct": 0.0,
+      "in_scope": false
+    }
+  }
+]

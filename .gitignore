@@ -1,0 +1,23 @@
+# data
+data/
+flipped_bits/
+imgs/
+
+# model
+*.pt
+*.pth
+*.ckpt
+
+# python
+__pycache__/
+*.pyc
+
+# mac
+.DS_Store
+
+# logs
+*.log
+
+# large files
+*.npy
+*.npz

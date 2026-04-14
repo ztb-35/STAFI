@@ -1,0 +1,52 @@
+[
+  {
+    "scenario": "flipped_bits_20251031-15:27:39.json",
+    "flipped_params": [
+      "vision_net.block2._bn2.weight",
+      "vision_net.block2._bn2.weight"
+    ],
+    "l2_no_ranger": 313.0477,
+    "l2_with_ranger": 362.8571,
+    "reduction_pct": -15.9
+  },
+  {
+    "scenario": "flipped_bits_20251031-16:23:48.json",
+    "flipped_params": [
+      "vision_net.block18._bn0.weight",
+      "vision_net._conv_head._bn2.weight"
+    ],
+    "l2_no_ranger": 1141.994,
+    "l2_with_ranger": 672.7331,
+    "reduction_pct": 41.1
+  },
+  {
+    "scenario": "flipped_bits_20251114-21:04:09.json",
+    "flipped_params": [
+      "temporal_policy.plan.in_layer.bias",
+      "temporal_summarizer._outfeats0.weight"
+    ],
+    "l2_no_ranger": Infinity,
+    "l2_with_ranger": 198.11,
+    "reduction_pct": 100.0
+  },
+  {
+    "scenario": "flipped_bits_lead_prob_20251114-17:33:26.json",
+    "flipped_params": [
+      "vision_net.block8._bn2.weight",
+      "vision_net.block18._bn0.weight"
+    ],
+    "l2_no_ranger": 9148.1852,
+    "l2_with_ranger": 342.9731,
+    "reduction_pct": 96.3
+  },
+  {
+    "scenario": "flipped_bits_left_steering_9.json",
+    "flipped_params": [
+      "vision_net.block8._bn2.weight",
+      "vision_net.block8._bn2.weight"
+    ],
+    "l2_no_ranger": 7345.0882,
+    "l2_with_ranger": 247.569,
+    "reduction_pct": 96.6
+  }
+]

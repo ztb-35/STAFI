@@ -1,0 +1,183 @@
+[
+  {
+    "scenario": "flipped_bits_20251031-15:27:39.json",
+    "flip_params": [
+      "vision_net.block2._bn2.weight"
+    ],
+    "l2_attacked": 244.2687,
+    "RADAR": {
+      "detected": true,
+      "in_scope": true,
+      "l2_attacked": 244.2687,
+      "l2_zero_repair": 372.4152,
+      "l2_oracle_repair": 0.0,
+      "reduc_zero_pct": -52.5,
+      "reduc_oracle_pct": 100.0,
+      "n_grains_affected": 1
+    },
+    "Aegis": {
+      "detected": true,
+      "max_fp_l2": 243.4825,
+      "threshold": 1.0,
+      "l2_attacked": 244.2687,
+      "l2_repaired": 0.0,
+      "reduc_pct": 100.0
+    },
+    "BitShield": {
+      "detected": true,
+      "in_scope": true,
+      "detected_tensors": [
+        "vision_net.block2._bn2.weight"
+      ],
+      "l2_attacked": 244.2687,
+      "l2_post_action": 244.2687,
+      "reduc_pct": 0.0
+    }
+  },
+  {
+    "scenario": "flipped_bits_20251031-16:23:48.json",
+    "flip_params": [
+      "vision_net._conv_head._bn2.weight",
+      "vision_net.block18._bn0.weight"
+    ],
+    "l2_attacked": 1002.4304,
+    "RADAR": {
+      "detected": true,
+      "in_scope": true,
+      "l2_attacked": 1002.4304,
+      "l2_zero_repair": 52.6735,
+      "l2_oracle_repair": 0.0,
+      "reduc_zero_pct": 94.7,
+      "reduc_oracle_pct": 100.0,
+      "n_grains_affected": 2
+    },
+    "Aegis": {
+      "detected": true,
+      "max_fp_l2": 1004.7347,
+      "threshold": 1.0,
+      "l2_attacked": 1002.4304,
+      "l2_repaired": 0.0,
+      "reduc_pct": 100.0
+    },
+    "BitShield": {
+      "detected": true,
+      "in_scope": true,
+      "detected_tensors": [
+        "vision_net._conv_head._bn2.weight",
+        "vision_net.block18._bn0.weight"
+      ],
+      "l2_attacked": 1002.4304,
+      "l2_post_action": 1002.4304,
+      "reduc_pct": 0.0
+    }
+  },
+  {
+    "scenario": "flipped_bits_20251114-21:04:09.json",
+    "flip_params": [
+      "temporal_policy.plan.in_layer.bias",
+      "temporal_summarizer._outfeats0.weight"
+    ],
+    "l2_attacked": Infinity,
+    "RADAR": {
+      "detected": true,
+      "in_scope": true,
+      "l2_attacked": Infinity,
+      "l2_zero_repair": 9.6782,
+      "l2_oracle_repair": 0.0,
+      "reduc_zero_pct": 100.0,
+      "reduc_oracle_pct": 100.0,
+      "n_grains_affected": 2
+    },
+    "Aegis": {
+      "detected": true,
+      "max_fp_l2": Infinity,
+      "threshold": 1.0,
+      "l2_attacked": Infinity,
+      "l2_repaired": 0.0,
+      "reduc_pct": 100.0
+    },
+    "BitShield": {
+      "detected": true,
+      "in_scope": true,
+      "detected_tensors": [
+        "temporal_policy.plan.in_layer.bias",
+        "temporal_summarizer._outfeats0.weight"
+      ],
+      "l2_attacked": Infinity,
+      "l2_post_action": Infinity,
+      "reduc_pct": 0.0
+    }
+  },
+  {
+    "scenario": "flipped_bits_lead_prob_20251114-17:33:26.json",
+    "flip_params": [
+      "vision_net.block18._bn0.weight",
+      "vision_net.block8._bn2.weight"
+    ],
+    "l2_attacked": 9507.7334,
+    "RADAR": {
+      "detected": true,
+      "in_scope": true,
+      "l2_attacked": 9507.7334,
+      "l2_zero_repair": 72.2545,
+      "l2_oracle_repair": 0.0,
+      "reduc_zero_pct": 99.2,
+      "reduc_oracle_pct": 100.0,
+      "n_grains_affected": 2
+    },
+    "Aegis": {
+      "detected": true,
+      "max_fp_l2": 9516.9336,
+      "threshold": 1.0,
+      "l2_attacked": 9507.7334,
+      "l2_repaired": 0.0,
+      "reduc_pct": 100.0
+    },
+    "BitShield": {
+      "detected": true,
+      "in_scope": true,
+      "detected_tensors": [
+        "vision_net.block18._bn0.weight",
+        "vision_net.block8._bn2.weight"
+      ],
+      "l2_attacked": 9507.7334,
+      "l2_post_action": 9507.7334,
+      "reduc_pct": 0.0
+    }
+  },
+  {
+    "scenario": "flipped_bits_left_steering_9.json",
+    "flip_params": [
+      "vision_net.block8._bn2.weight"
+    ],
+    "l2_attacked": 7220.4385,
+    "RADAR": {
+      "detected": true,
+      "in_scope": true,
+      "l2_attacked": 7220.4385,
+      "l2_zero_repair": 72.2554,
+      "l2_oracle_repair": 0.0,
+      "reduc_zero_pct": 99.0,
+      "reduc_oracle_pct": 100.0,
+      "n_grains_affected": 1
+    },
+    "Aegis": {
+      "detected": true,
+      "max_fp_l2": 7224.9189,
+      "threshold": 1.0,
+      "l2_attacked": 7220.4385,
+      "l2_repaired": 0.0,
+      "reduc_pct": 100.0
+    },
+    "BitShield": {
+      "detected": true,
+      "in_scope": true,
+      "detected_tensors": [
+        "vision_net.block8._bn2.weight"
+      ],
+      "l2_attacked": 7220.4385,
+      "l2_post_action": 7220.4385,
+      "reduc_pct": 0.0
+    }
+  }
+]
